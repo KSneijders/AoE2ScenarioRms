@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import math
 import random
-from enum import Enum
 from typing import List, Optional, Tuple
 
 from AoE2ScenarioParser.datasets.other import OtherInfo
@@ -11,12 +10,8 @@ from AoE2ScenarioParser.datasets.support.info_dataset_base import InfoDatasetBas
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
+from util.resources.grouping_method import GroupingMethod
 from util.spawn_grid import is_blocked_for_level, Level, is_blocked, tile_is_valid
-
-
-class SpreadMethod(Enum):
-    TOGETHER = 0
-    SCATTERED = 1
 
 
 def spawn_resource(scenario: AoE2DEScenario,
@@ -24,7 +19,7 @@ def spawn_resource(scenario: AoE2DEScenario,
                    amount: int,
                    separation_distance: int,
                    blob_size: int | Tuple[int, int],
-                   blob_spreading: SpreadMethod,
+                   blob_spreading: GroupingMethod,
                    block_area: int,
                    grid_map: List[List[int]],
                    blob_spread_distance: Optional[int] = -1):
@@ -37,7 +32,7 @@ def spawn_resource(scenario: AoE2DEScenario,
 def get_random_resource_spawn_locations(
         amount: int,
         separation_distance: int,
-        blob_spreading: SpreadMethod,
+        blob_spreading: GroupingMethod,
         blob_size: int | Tuple[int, int],
         grid_map: List[List[int]],
         blob_spread_distance: Optional[int] = -1,
@@ -55,10 +50,10 @@ def get_random_resource_spawn_locations(
         size -= 1  # Remove the first tile from the list (deduct one from size)
 
         while size > 0:
-            if blob_spreading == SpreadMethod.TOGETHER:
+            if blob_spreading == GroupingMethod.TOGETHER:
                 tile = random.choice(blob_tiles)
                 adjacent_tile = get_random_adjacent_tile(tile, grid_map)
-            elif blob_spreading == SpreadMethod.SCATTERED:
+            elif blob_spreading == GroupingMethod.SCATTERED:
                 adjacent_tile = get_random_tile_within_range(starting_tile, blob_spread_distance, grid_map)
             else:
                 raise ValueError(f"Unknown spreading method: {blob_spreading}")
@@ -75,7 +70,7 @@ def get_random_resource_spawn_locations(
 def spawn_resource_blob(scenario: AoE2DEScenario,
                         res: InfoDatasetBase,
                         starting_tile: Tile,
-                        blob_spreading: SpreadMethod,
+                        blob_spreading: GroupingMethod,
                         blob_spread_distance: int,
                         size: int | Tuple[int, int],
                         block_area: int,
@@ -92,10 +87,10 @@ def spawn_resource_blob(scenario: AoE2DEScenario,
     while size > 0:
         tries += 1
 
-        if blob_spreading == SpreadMethod.TOGETHER:
+        if blob_spreading == GroupingMethod.TOGETHER:
             tile = random.choice(tiles)
             adjacent_tile = get_random_adjacent_tile(tile, grid_map)
-        elif blob_spreading == SpreadMethod.SCATTERED:
+        elif blob_spreading == GroupingMethod.SCATTERED:
             adjacent_tile = get_random_tile_within_range(starting_tile, blob_spread_distance, grid_map)
         else:
             raise ValueError(f"Unknown spreading method: {blob_spreading}")

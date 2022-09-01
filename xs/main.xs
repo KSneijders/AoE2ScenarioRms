@@ -6,6 +6,7 @@ int __RESOURCE_COUNT = /* REPLACE:RESOURCE_VARIABLE_COUNT */;
 // Amount of potential spawns per resource
 int __RESOURCE_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS = -1;
+int __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = -1;
 
 // ---------< Arrays where resource ID is reference to other Array (2D) >--------- \\
 // Arrays for locations
@@ -32,7 +33,11 @@ bool spawnResource__024510896(int resourceId = -1) {
         return (false);
 
     int resourceSpawnCount = xsArrayGetInt(__RESOURCE_SPAWN_COUNTS, resourceId);
-    int resourceMaxSpawnCount = xsArrayGetInt(__RESOURCE_MAX_SPAWN_COUNTS, resourceId);
+    float resourceMaxSpawnCount = xsArrayGetFloat(__RESOURCE_MAX_SPAWN_COUNTS, resourceId);
+
+    if (xsArrayGetBool(__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER, resourceId)) {
+        resourceMaxSpawnCount = resourceMaxSpawnCount * xsGetNumPlayers();
+    }
 
     int resourceLocationsArray             = xsArrayGetInt(__ARRAY_RESOURCE_LOCATIONS, resourceId);
     int resourceIndicesArray               = xsArrayGetInt(__ARRAY_RESOURCE_INDICES, resourceId);
@@ -85,7 +90,7 @@ bool spawnResource__024510896(int resourceId = -1) {
             xsArraySetVector(resourcePlacedLocationsArray, placedResourcesCount, v);
             xsArraySetInt(progressArray, 0, placedResourcesCount + 1);
             
-            if (placedResourcesCount + 1 == resourceMaxSpawnCount) {
+            if (placedResourcesCount + 1 >= resourceMaxSpawnCount) {
                 // Next NOT allowed to be placed. Max is reached.
                 return (false);
             }
@@ -111,8 +116,11 @@ rule main_initialise__023658412
     __RESOURCE_SPAWN_COUNTS = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__RESOURCE_SPAWN_COUNTS__538652012");
 /* REPLACE:RESOURCE_COUNT_DECLARATION */
 
-    __RESOURCE_MAX_SPAWN_COUNTS = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__RESOURCE_MAX_SPAWN_COUNTS__503956013");
+    __RESOURCE_MAX_SPAWN_COUNTS = xsArrayCreateFloat(__RESOURCE_COUNT, -1, "__RESOURCE_MAX_SPAWN_COUNTS__503956013");
 /* REPLACE:RESOURCE_MAX_SPAWN_DECLARATION */
+
+    __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER__024698552");
+/* REPLACE:RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION */
 
     __ARRAY_RESOURCE_LOCATIONS      = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_LOCATIONS__056985215");
     __ARRAY_RESOURCE_INDICES        = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_INDICES__021548785");
@@ -149,13 +157,10 @@ rule main_initialise__023658412
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
     for (i = 0; < __RESOURCE_COUNT) {
-        // int count = -1;
         bool b = true;
         while (b) {
             b = spawnResource__024510896(i);
-            // count++;
         }
-        // xsChatData("Disabled [" + i + "] (Took: " + count + ")");
     }
 
     xsDisableSelf();
