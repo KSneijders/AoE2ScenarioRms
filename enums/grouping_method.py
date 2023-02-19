@@ -2,5 +2,5 @@ from enum import Enum
 
 
 class GroupingMethod(Enum):
-    TOGETHER = 0
-    SCATTERED = 1
+    TIGHT = 1
+    LOOSE = 2

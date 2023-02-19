@@ -6,7 +6,8 @@ from AoE2ScenarioParser.helper.helper import xy_to_i
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from util.spawn_grid import is_blocked, Level
+from util.spawn_grid import is_blocked
+from enums.tile_level import TileLevel
 
 
 def flatten_map(scenario: AoE2DEScenario):
@@ -46,13 +47,13 @@ def mark_blocked_terrain_with_flags(scenario: AoE2DEScenario, grid_map: List[Lis
     for y, col in enumerate(grid_map):
         for x, tile_open in enumerate(col):
             e, unit_player = grid_map[y][x], (None, 0)
-            if e == Level.NONE:
+            if e == TileLevel.NONE:
                 pass
-            elif e == Level.TERRAIN:
+            elif e == TileLevel.TERRAIN:
                 unit_player = OtherInfo.FLAG_C, 0
-            elif e == Level.RES_AREA:
+            elif e == TileLevel.RES_AREA:
                 unit_player = OtherInfo.FLAG_B, 2
-            elif e == Level.RES:
+            elif e == TileLevel.RES:
                 unit_player = OtherInfo.FLAG_C, 1
             else:
                 unit_player = OtherInfo.FLAG_M, 0
