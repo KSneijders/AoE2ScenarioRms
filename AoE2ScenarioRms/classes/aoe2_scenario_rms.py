@@ -10,25 +10,28 @@ from AoE2ScenarioParser.objects.data_objects.unit import Unit
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from classes.data import Data
-from flags.clear_options import ObjectClear
-from enums.tile_level import TileLevel
-from flags.object_marks import ObjectMark
-from flags.terrain_mark import TerrainMark
-from util.unit import get_tiles_around_object
+from AoE2ScenarioRms.rms.create_object import CreateObject
+from AoE2ScenarioRms.util.data import Data
+from AoE2ScenarioRms.flags.object_clear import ObjectClear
+from AoE2ScenarioRms.enums.tile_level import TileLevel
+from AoE2ScenarioRms.flags.object_marks import ObjectMark
+from AoE2ScenarioRms.flags.terrain_mark import TerrainMark
+from AoE2ScenarioRms.util.grid_map import GridMap
+from AoE2ScenarioRms.util.unit import get_tiles_around_object
 
 
-class AddRandomizedSpawns:
+class AoE2ScenarioRms:
     def __init__(self, scenario: AoE2DEScenario, debug: bool = False):
         self.scenario: AoE2DEScenario = scenario
-        self.grid_map: List[List[TileLevel]] = []
-
-        self.reset_grid_map()
+        self.grid_map: GridMap = GridMap(self.scenario.map_manager.map_size)
 
         scenario.xs_manager.initialise_xs_trigger()
 
         if debug:
             self.enable_debug_mode()
+
+    def resolve(self, configs: List[CreateObject]):
+        pass
 
     def enable_debug_mode(self) -> None:
         """
@@ -56,7 +59,11 @@ class AddRandomizedSpawns:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
+            fresh: bool = False
     ):
+        if fresh:
+            self.grid_map.reset_all()
+
         mm, um = self.scenario.map_manager, self.scenario.unit_manager
 
         terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.water_beach()
@@ -64,7 +71,7 @@ class AddRandomizedSpawns:
         terrain_ids = terrain_ids if terrain_ids is not None else []
         object_consts = object_consts if object_consts is not None else {}
 
-        # Mark everything selected terrains
+        # Mark all selected terrains
         terrain_ids = Data.get_terrain_ids_by_terrain_marks(terrain_marks) + terrain_ids
         marked_tiles: Set[Tile] = set()
         if len(terrain_ids):
@@ -74,16 +81,21 @@ class AddRandomizedSpawns:
 
         # Mark everything around trees and cliffs and optionally given consts
         trees, cliffs = Data.trees(), Data.cliffs()
+
+        mark_trees = object_marks & ObjectMark.TREES
+        mark_cliffs = object_marks & ObjectMark.CLIFFS
         for obj in um.units[PlayerId.GAIA]:
-            if object_marks & ObjectMark.TREES and obj.unit_const in trees:
+            if mark_trees and obj.unit_const in trees:
                 marked_tiles.update(get_tiles_around_object(obj, 1))
-            elif object_marks & ObjectMark.CLIFFS and obj.unit_const in cliffs:
+            elif mark_cliffs and obj.unit_const in cliffs:
                 marked_tiles.update(get_tiles_around_object(obj, 2))
-            elif obj.unit_const in object_consts:
-                marked_tiles.update(get_tiles_around_object(obj, object_consts[obj.unit_const]))
+
+        units = um.filter_units_by_const(list(object_consts.keys()))
+        for unit in units:
+            marked_tiles.update(get_tiles_around_object(unit, object_consts[unit.unit_const]))
 
         for tile in marked_tiles:
-            self.set_grid_map(tile.x, tile.y, TileLevel.TERRAIN)
+            self.grid_map.set(TileLevel.TERRAIN, tile)
 
     def clear_scenario(
             self,
@@ -94,7 +106,7 @@ class AddRandomizedSpawns:
         um, mm = self.scenario.unit_manager, self.scenario.map_manager
 
         if clear is None:
-            clear = ObjectClear.resource_objects() + ObjectClear.animal_objects()
+            clear = ObjectClear.RESOURCE_OBJECTS + ObjectClear.ANIMAL_OBJECTS
 
         consts = consts if consts is not None else []
         units = units if units is not None else []
@@ -127,10 +139,3 @@ class AddRandomizedSpawns:
         # Clear all given objects
         for unit in units:
             um.remove_unit(unit=unit)
-
-    def set_grid_map(self, x: int, y: int, level: TileLevel):
-        self.grid_map[y][x] = level
-
-    def reset_grid_map(self) -> None:
-        map_size = self.scenario.map_manager.map_size
-        self.grid_map = [[TileLevel.NONE for _ in range(map_size)] for _ in range(map_size)]

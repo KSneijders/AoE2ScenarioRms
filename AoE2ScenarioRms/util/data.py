@@ -4,9 +4,8 @@ from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.terrains import TerrainId
 from AoE2ScenarioParser.datasets.units import UnitInfo
 
-from flags.clear_options import ObjectClear
-from flags.object_marks import ObjectMark
-from flags.terrain_mark import TerrainMark
+from AoE2ScenarioRms.flags.object_clear import ObjectClear
+from AoE2ScenarioRms.flags.terrain_mark import TerrainMark
 
 
 class Data:
@@ -23,7 +22,7 @@ class Data:
 
     @staticmethod
     def get_terrain_ids_by_terrain_marks(marks: TerrainMark) -> List[TerrainId]:
-        ids: List[int] = []
+        ids: List[TerrainId] = []
 
         if marks & TerrainMark.WATER:
             ids.extend(TerrainId.water_terrains())
@@ -37,7 +36,7 @@ class Data:
 
     @staticmethod
     def get_object_consts_by_clear_options(clear: ObjectClear) -> List[int]:
-        consts = []
+        consts: List[int] = []
 
         if clear & ObjectClear.BOARS:
             consts.extend([

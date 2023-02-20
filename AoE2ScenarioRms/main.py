@@ -1,101 +1,45 @@
+"""
+> THIS FILE WILL BE REMOVED IN THE FUTURE <
+"""
 from __future__ import annotations
 
 import random
 import sys
 from pathlib import Path
-from typing import Tuple, List
+from typing import Tuple
 
 from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.players import PlayerId
 from AoE2ScenarioParser.datasets.units import UnitInfo
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from classes.add_randomized_spawns import AddRandomizedSpawns
-from classes.create_object import CreateObject
-from enums.grouping_method import GroupingMethod
-from flags.clear_options import ObjectClear
-from util.resources.spawning import get_random_resource_spawn_locations
-from util.xs import replace_xs_key, to_xs_bool
+from AoE2ScenarioRms.classes import AoE2ScenarioRms, GroupsConfig
+from AoE2ScenarioRms.enums.grouping_method import GroupingMethod
+from AoE2ScenarioRms.flags import ObjectClear, TerrainMark, ObjectMark
+from AoE2ScenarioRms.local_config import folder_de
+from AoE2ScenarioRms.util.xs import replace_xs_key, to_xs_bool
+from examples.create_objects import create_objects
+
 
 seed = random.randrange(sys.maxsize)
 seed = 7647799647017082024
 random.seed(seed)
 print("Seed:", seed)
 
-filename = "defense"
-folder_de = "C:/Users/Kerwin Sneijders/Games/Age of Empires 2 DE/76561198140740017/resources/_common/scenario/"
+filename = "defense2"
 scenario = AoE2DEScenario.from_file(f"{folder_de}{filename}.aoe2scenario")
 tm, um, mm, xm, pm, msm = scenario.trigger_manager, scenario.unit_manager, scenario.map_manager, scenario.xs_manager, \
     scenario.player_manager, scenario.message_manager
 
-randomized = AddRandomizedSpawns(scenario, debug=True)
-randomized.clear_scenario(ObjectClear.all())
+asr = AoE2ScenarioRms(scenario, debug=True)
 
-randomized.mark_blocked_tiles()
+asr.clear_scenario(ObjectClear.ALL & ~ObjectClear.CLIFFS)
+asr.mark_blocked_tiles(
+    terrain_marks=TerrainMark.water_beach(),
+    object_marks=ObjectMark.all(),
+)
 
-
-create_objects: List[CreateObject] = [
-    CreateObject(
-        name='gold',
-        object=OtherInfo.GOLD_MINE.ID,
-        grouping=GroupingMethod.TIGHT,
-        number_of_objects=(4, 5),
-        temp_min_distance_group_placement=24,
-        min_distance_group_placement=5,
-    ),
-    CreateObject(
-        name='stone',
-        object=OtherInfo.STONE_MINE.ID,
-        grouping=GroupingMethod.TIGHT,
-        number_of_objects=(3, 4),
-        temp_min_distance_group_placement=27,
-        min_distance_group_placement=5,
-    ),
-    CreateObject(
-        name='berries',
-        object=OtherInfo.FORAGE_BUSH.ID,
-        grouping=GroupingMethod.TIGHT,
-        number_of_objects=(5, 6),
-        temp_min_distance_group_placement=40,
-        min_distance_group_placement=5,
-    ),
-    CreateObject(
-        name='deer',
-        object=UnitInfo.DEER.ID,
-        grouping=GroupingMethod.LOOSE,
-        loose_grouping_distance=3,
-        number_of_objects=(3, 4),
-        temp_min_distance_group_placement=25,
-        min_distance_group_placement=5,
-    ),
-    CreateObject(
-        name='boar',
-        object=UnitInfo.WILD_BOAR.ID,
-        number_of_objects=1,
-        temp_min_distance_group_placement=40,
-        min_distance_group_placement=3,
-        _max_potential_group_count=100,
-    ),
-    CreateObject(
-        name='relic',
-        object=OtherInfo.RELIC.ID,
-        number_of_objects=1,
-        temp_min_distance_group_placement=50,
-        min_distance_group_placement=3,
-        number_of_groups=10,
-        _max_potential_group_count=100,
-    ),
-    CreateObject(
-        name='llama',
-        object=UnitInfo.LLAMA.ID,
-        number_of_objects=1,
-        temp_min_distance_group_placement=10,
-        min_distance_group_placement=0,
-        number_of_groups=2,
-        scale_to_player_number=True,
-        _max_potential_group_count=100,
-    ),
-]
+asr.resolve(create_objects)
 
 xs_resource_variable_declaration = []
 xs_resource_count_declaration = []
@@ -108,23 +52,15 @@ for resource_index, create_object in enumerate(create_objects):
     # @formatter:off
     name: str                                       = create_object.name
     unit_type: int                                  = create_object.object
-    defined_grouping_method: str | GroupingMethod   = create_object.grouping
-    min_distance_group_generation: int              = create_object.min_distance_group_generation
+    grouping_method: GroupingMethod                 = create_object.grouping
     max_potential_group_count: int                  = create_object.max_potential_group_count
     temp_min_distance_group_placement: int          = create_object.temp_min_distance_group_placement
     min_distance_group_placement: int               = create_object.min_distance_group_placement
-    size: int | Tuple[int, int]                     = create_object.number_of_objects
+    base_group_size: int | Tuple[int, int]          = create_object.number_of_objects
     loose_grouping_distance: int                    = create_object.loose_grouping_distance
     number_of_groups: float                         = create_object.number_of_groups
     scale_to_player_number: int                     = create_object.scale_to_player_number
     # @formatter:on
-
-    if not isinstance(defined_grouping_method, GroupingMethod):
-        defined_grouping_method = GroupingMethod[str(defined_grouping_method).upper()]
-    grouping_method: GroupingMethod = defined_grouping_method
-
-    if not isinstance(size, int) and not isinstance(size, tuple):
-        raise TypeError(f"Size has to be either tuple[int, int] or int, not: {type(size)}")
 
     # ----------< XS Definitions >----------
     xs_resource_name: str = f"____{name.upper()}"
@@ -151,17 +87,17 @@ for resource_index, create_object in enumerate(create_objects):
         f"\txsArraySetInt(cArray, 1, {min_distance_group_placement});",
     ])
 
-    groups = get_random_resource_spawn_locations(
+    groups = GroupsConfig(
+        name=name,
         amount=max_potential_group_count,
-        separation_distance=min_distance_group_generation,
         grouping_method=grouping_method,
+        group_size=base_group_size,
+        grid_map=asr.grid_map,
         loose_grouping_distance=loose_grouping_distance,
-        group_size=size,
-        grid_map=randomized.grid_map
-    )
+    ).resolve()
 
     for index, group in enumerate(groups):
-        spawn_group = tm.add_trigger(f"Spawn {name} blob {index}")
+        spawn_group = tm.add_trigger(f"Spawn {name} group {index}")
         spawn_group.new_condition.script_call(
             xs_function=f"bool __should_spawn_{name}_{index}() {{"
                         f"return (xsArrayGetBool(xsArrayGetInt(__ARRAY_RESOURCE_PLACED_INDICES, {xs_resource_name}), {index}));"
@@ -169,13 +105,21 @@ for resource_index, create_object in enumerate(create_objects):
             .strip().replace('  ', '')
         )
 
-        for tile in group:
+        for iindex, tile in enumerate(group):
             spawn_group.new_effect.create_object(
                 source_player=PlayerId.GAIA if unit_type != UnitInfo.LLAMA.ID else PlayerId.ONE,
                 object_list_unit_id=unit_type,
                 location_x=tile.x,
                 location_y=tile.y,
             )
+
+            if create_object.debug_place_all:
+                um.add_unit(player=PlayerId.GAIA, unit_const=unit_type, x=tile.x + .5, y=tile.y + .5)
+
+                player = PlayerId.GAIA if iindex == 0 else PlayerId.ONE
+                const = OtherInfo.FLAG_M.ID if iindex == 0 else OtherInfo.FLAG_C.ID
+
+                um.add_unit(player=player, unit_const=const, x=tile.x + .5, y=tile.y + .5)
 
         xs_resource_location_injection.append(
             f"""\txsArraySetVector(rArray, {index}, vector({group[0].x}, {group[0].y}, -1));\t// {index}"""
@@ -205,6 +149,6 @@ xm.add_script(xs_string=xs_script)
 # debug.flatten_map(scenario)
 # debug.remove_terrain_layers(scenario)
 # debug.mark_blocked_terrain_as_black(scenario, grid_map)
-# debug.mark_blocked_terrain_with_flags(scenario, grid_map)
+# debug.mark_blocked_terrain_with_flags(scenario, asr.grid_map)
 
 scenario.write_to_file(f"{folder_de}!{filename}_written.aoe2scenario")
