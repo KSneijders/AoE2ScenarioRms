@@ -35,7 +35,7 @@ class CreateObjectConfig(RmsConfig):
     **number_of_objects**:
         The size of a single group (Amount of objects per group).
         Accepts an ``int`` or a ``tuple[int, int]`` indicating a range ([1, 3] can spawn 1, 2 or 3 objects in a group).
-        This value randomized per group so is useful for spawning equal resources. Defaults to 1
+        This value randomized per group so is NOT useful for spawning equal resources. Defaults to 1
 
     **group_placement_radius**:
         **[NOT IMPLEMENTED]** The number of tiles out from the central tile that objects belonging to the same group
