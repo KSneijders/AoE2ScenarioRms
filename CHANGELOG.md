@@ -15,10 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `Debug` class (IntFlag)
 - `ApplyDebug` classes for the logic of applying the debug features (`units`/`terrain`/`triggers`/`xs`)
-  - `applyXsPrint`
-  - `applyBlockedAsBlack`
-  - `applyNoClutter`
-  - `applyAllVisible`
+  - `ApplyXsPrint`
+  - `ApplyBlockedAsBlack`
+  - `ApplyNoClutter`
+  - `ApplyAllVisible`
 
 ## 0.0.1 - 2023-February-22 (Not released)
 
