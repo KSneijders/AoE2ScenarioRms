@@ -26,7 +26,8 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 3. Move Debug logic to own class
 4. Change `asr.write()` as triggers are always added directly, so why isn't the script?
 5. Add docs, docstrings and tests
-6. More (?)
+6. Allow XS to log the amount that spawned succesfully so you can limit the amount of spawns for performance
+7. More (?)
 
 ## Potential Ideas:
 
@@ -34,7 +35,8 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 2. Scale with map size (hardcoded on parser level as map_size cannot be changed dynamically)
 3. Support larger objects (currently only 1x1 is supported)
 4. Automatically figure out what to remove based on CreateObjectConfig configs 
-5. More (?)
+5. Add ability to mock the XS spawning process to know 
+6. More (?)
 
 ---
 
