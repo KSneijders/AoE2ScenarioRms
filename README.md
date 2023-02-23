@@ -35,7 +35,7 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 2. Scale with map size (hardcoded on parser level as map_size cannot be changed dynamically)
 3. Support larger objects (currently only 1x1 is supported)
 4. Automatically figure out what to remove based on CreateObjectConfig configs 
-5. Add ability to mock the XS spawning process to know 
+5. Add ability to mock the XS spawning process to estimate the amount of necessary successful spawn attempts 
 6. More (?)
 
 ---
