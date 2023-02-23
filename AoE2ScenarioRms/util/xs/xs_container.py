@@ -3,8 +3,6 @@ from __future__ import annotations
 import copy
 from typing import Dict, List
 
-from AoE2ScenarioParser.helper.pretty_format import pretty_format_dict
-
 from AoE2ScenarioRms.enums import XsKey
 from AoE2ScenarioRms.util.xs.xs_entry import XsEntry
 
