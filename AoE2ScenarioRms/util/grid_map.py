@@ -1,16 +1,16 @@
 from __future__ import annotations
 
-from typing import Tuple
+from typing import Tuple, List
 
 from AoE2ScenarioParser.objects.support.tile import Tile
 
-from AoE2ScenarioRms.enums.tile_level import TileLevel
+from AoE2ScenarioRms.enums import TileLevel
 
 
 class GridMap:
     def __init__(self, map_size: int) -> None:
-        self.map_size = map_size
-        self.grid_map = []
+        self.map_size: int = map_size
+        self.grid_map: List[List[TileLevel]] = []
 
         self.reset_all()
 
@@ -48,7 +48,7 @@ class GridMap:
     def is_valid(self, level: TileLevel, x: int | Tile, y: int = None) -> bool:
         x, y = self._coords(x, y)
         is_within_map = 0 <= x <= self.map_size - 1 and 0 <= y <= self.map_size - 1
-        return is_within_map and self.level_is_blocked(level, x, y)
+        return is_within_map and self.level_is_available(level, x, y)
 
     @staticmethod
     def _coords(x: int | Tile, y: int | None = None) -> Tuple[int, int]:

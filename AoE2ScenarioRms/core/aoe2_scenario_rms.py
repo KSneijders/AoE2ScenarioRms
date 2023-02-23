@@ -1,4 +1,5 @@
 import math
+from pathlib import Path
 from typing import List, Set, Dict
 
 from AoE2ScenarioParser.datasets.other import OtherInfo
@@ -10,28 +11,35 @@ from AoE2ScenarioParser.objects.data_objects.unit import Unit
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from AoE2ScenarioRms.rms.create_object import CreateObject
-from AoE2ScenarioRms.util.data import Data
-from AoE2ScenarioRms.flags.object_clear import ObjectClear
-from AoE2ScenarioRms.enums.tile_level import TileLevel
-from AoE2ScenarioRms.flags.object_marks import ObjectMark
-from AoE2ScenarioRms.flags.terrain_mark import TerrainMark
 from AoE2ScenarioRms.util.grid_map import GridMap
-from AoE2ScenarioRms.util.unit import get_tiles_around_object
+from AoE2ScenarioRms.util.xs.xs_container import XsContainer
+from AoE2ScenarioRms.enums import TileLevel, XsKey
+from AoE2ScenarioRms.flags import ObjectClear, ObjectMark, TerrainMark
+from AoE2ScenarioRms.rms import CreateObjectConfig, CreateObjectFeature
+from AoE2ScenarioRms.util import UnitUtil, Data
 
 
 class AoE2ScenarioRms:
     def __init__(self, scenario: AoE2DEScenario, debug: bool = False):
         self.scenario: AoE2DEScenario = scenario
         self.grid_map: GridMap = GridMap(self.scenario.map_manager.map_size)
+        self.container = XsContainer()
 
         scenario.xs_manager.initialise_xs_trigger()
+        scenario.xs_manager.add_script(xs_file_path=str((Path(__file__).parent.parent / 'xs' / 'random.xs').resolve()))
 
         if debug:
             self.enable_debug_mode()
 
-    def resolve(self, configs: List[CreateObject]):
-        pass
+    def create_objects(self, configs: List[CreateObjectConfig]) -> None:
+        self.container += CreateObjectFeature(self.scenario)\
+            .solve(configs, self.grid_map, create_object_count=len(configs))
+        self.container.append(XsKey.RESOURCE_VARIABLE_COUNT, str(len(configs)))
+
+    def write(self) -> str:
+        with (Path(__file__).parent.parent / 'xs' / 'main.xs').open() as file:
+            script = self.container.resolve(file.read())
+        return script
 
     def enable_debug_mode(self) -> None:
         """
@@ -86,13 +94,13 @@ class AoE2ScenarioRms:
         mark_cliffs = object_marks & ObjectMark.CLIFFS
         for obj in um.units[PlayerId.GAIA]:
             if mark_trees and obj.unit_const in trees:
-                marked_tiles.update(get_tiles_around_object(obj, 1))
+                marked_tiles.update(UnitUtil.get_tiles_around_object(obj, 1))
             elif mark_cliffs and obj.unit_const in cliffs:
-                marked_tiles.update(get_tiles_around_object(obj, 2))
+                marked_tiles.update(UnitUtil.get_tiles_around_object(obj, 2))
 
         units = um.filter_units_by_const(list(object_consts.keys()))
         for unit in units:
-            marked_tiles.update(get_tiles_around_object(unit, object_consts[unit.unit_const]))
+            marked_tiles.update(UnitUtil.get_tiles_around_object(unit, object_consts[unit.unit_const]))
 
         for tile in marked_tiles:
             self.grid_map.set(TileLevel.TERRAIN, tile)

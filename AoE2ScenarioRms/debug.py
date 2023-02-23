@@ -9,8 +9,8 @@ from AoE2ScenarioParser.helper.helper import xy_to_i
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from util.spawn_grid import is_blocked
 from AoE2ScenarioRms.enums.tile_level import TileLevel
+from AoE2ScenarioRms.util import GridMap
 
 
 def flatten_map(scenario: AoE2DEScenario):
@@ -32,14 +32,14 @@ def entire_map_black(scenario: AoE2DEScenario):
         tile.terrain_id = TerrainId.BLACK
 
 
-def mark_blocked_terrain_as_black(scenario: AoE2DEScenario, grid_map: List[List[int]]):
+def mark_blocked_terrain_as_black(scenario: AoE2DEScenario, grid_map: GridMap):
     mm = scenario.map_manager
     map_size = mm.map_size
 
     # Debug write blocked terrain to file
-    for y, col in enumerate(grid_map):
+    for y, col in enumerate(grid_map.grid_map):
         for x, tile_open in enumerate(col):
-            if is_blocked(grid_map, x, y):
+            if grid_map.is_blocked(x, y):
                 mm.terrain[xy_to_i(x, y, map_size)].terrain_id = TerrainId.BLACK
 
 

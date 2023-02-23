@@ -16,4 +16,4 @@ Project to add replay-ability to scenarios by adding triggers and XS to the scen
 2. Scale with map size (hardcoded on parser level as map_size cannot be changed dynamically)
 3. More (?)
 4. Support larger objects (currently only 1x1 is supported)
-5. Automatically figure out what to remove based on CreateObject configs 
+5. Automatically figure out what to remove based on CreateObjectConfig configs 

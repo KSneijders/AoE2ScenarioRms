@@ -1,2 +1,0 @@
-from aoe2_scenario_rms import AoE2ScenarioRms
-from groups_config import GroupsConfig

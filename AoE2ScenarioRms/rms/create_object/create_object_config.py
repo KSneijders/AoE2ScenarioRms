@@ -1,15 +1,16 @@
 from __future__ import annotations
 
 import math
+from typing import Generator
 
 from AoE2ScenarioParser.helper.printers import warn
 
-from AoE2ScenarioRms.util.exceptions import ImproperCreateObjectError
-from AoE2ScenarioRms.util.warnings import ImproperCreateObjectWarning
-from AoE2ScenarioRms.enums.grouping_method import GroupingMethod
+from AoE2ScenarioRms.errors import ImproperCreateObjectError, ImproperCreateObjectWarning
+from AoE2ScenarioRms.enums import GroupingMethod
+from AoE2ScenarioRms.rms.rms_config import RmsConfig
 
 
-class CreateObject:
+class CreateObjectConfig(RmsConfig):
     """
     An object that holds the configuration of a single object group
 
@@ -24,7 +25,7 @@ class CreateObject:
     **name**:
         **[REQUIRED]** The name for this config, needs to be unique
 
-    **object**:
+    **const**:
         **[REQUIRED]** The unit to spawn
 
     **grouping**:
@@ -85,11 +86,11 @@ class CreateObject:
     def __init__(
             self,
             name: str,
-            object: int,
+            const: int,
             grouping: GroupingMethod = GroupingMethod.TIGHT,
             number_of_objects: int | tuple[int, int] = 1,
             group_placement_radius: int = 3,
-            number_of_groups: float = math.inf,  # Limited by `_max_potential_group_count`
+            number_of_groups: float = 999_999_999,  # Cannot be math.inf as it's `str(...)` is used within xs
             loose_grouping_distance: int = None,
             min_distance_group_placement: int = 4,
             temp_min_distance_group_placement: int = 20,
@@ -99,6 +100,8 @@ class CreateObject:
             _max_potential_group_count: int = 250,
             _debug_place_all: bool = False
     ):
+        super().__init__()
+
         if scale_to_player_number and number_of_groups == math.inf:
             raise ImproperCreateObjectError(f"[{name}]: cannot scale infinity with player numbers. "
                                             f"Please specify 'number_of_groups'")
@@ -115,7 +118,7 @@ class CreateObject:
             loose_grouping_distance = 3
 
         self.name: str = name
-        self.object: int = object
+        self.const: int = const
         self.grouping: GroupingMethod = grouping
         self.number_of_objects: int | tuple[int, int] = number_of_objects
         self.group_placement_radius: int = group_placement_radius  # Todo: Implement
@@ -128,3 +131,13 @@ class CreateObject:
 
         self.max_potential_group_count: int = _max_potential_group_count
         self.debug_place_all: bool = _debug_place_all
+
+        self.index = next(_counter)
+
+
+def _create_counter_generator() -> Generator[int]:
+    for i in range(999_999_999):
+        yield i
+
+
+_counter = _create_counter_generator()
