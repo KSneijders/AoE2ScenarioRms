@@ -1,17 +1,17 @@
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms import AoE2ScenarioRms
-from AoE2ScenarioRms.flags import ObjectClear, TerrainMark, ObjectMark
+from AoE2ScenarioRms.flags import ObjectClear, TerrainMark, ObjectMark, Debug
 from examples.create_objects import create_objects_config
 
 # Read scenario like usual
-filename = "SCENARI_NAME_WITHOUT_EXT"
+filename = "SCENARIO_NAME_WITHOUT_EXT"
 folder_de = "FOLDER_PATH_WITH_TRAILING_SLASH"
 scenario = AoE2DEScenario.from_file(f"{folder_de}{filename}.aoe2scenario")
 
-# Give the scenario to the module and enable debug.
-# Debug adds map revealers and a unit for p1, so it's easier to debug the map on testing
-asr = AoE2ScenarioRms(scenario, debug=True)
+# Give the scenario to the module and enable debug aspects.
+# Debug options (and their use-cases) can be found in the Debug class (see import)
+asr = AoE2ScenarioRms(scenario, debug=Debug.ALL_VISIBLE | Debug.XS_PRINT | Debug.NO_CLUTTER)
 
 # Clear the scenario of all unwanted (some to be generated) objects (except for cliffs in this example)
 asr.clear_scenario(ObjectClear.ALL & ~ObjectClear.CLIFFS)

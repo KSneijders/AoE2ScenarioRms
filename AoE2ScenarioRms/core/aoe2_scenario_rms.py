@@ -2,64 +2,68 @@ import math
 from pathlib import Path
 from typing import List, Set, Dict
 
-from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.players import PlayerId
 from AoE2ScenarioParser.datasets.terrains import TerrainId
-from AoE2ScenarioParser.datasets.units import UnitInfo
 from AoE2ScenarioParser.helper.helper import xy_to_i, i_to_xy
 from AoE2ScenarioParser.objects.data_objects.unit import Unit
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from AoE2ScenarioRms.util.grid_map import GridMap
-from AoE2ScenarioRms.util.xs.xs_container import XsContainer
+from AoE2ScenarioRms.debug import ApplyBlockedAsBlack, ApplyAllVisible, ApplyXsPrint
+from AoE2ScenarioRms.debug.apply_no_clutter import ApplyNoClutter
 from AoE2ScenarioRms.enums import TileLevel, XsKey
-from AoE2ScenarioRms.flags import ObjectClear, ObjectMark, TerrainMark
+from AoE2ScenarioRms.flags import ObjectClear, ObjectMark, TerrainMark, Debug
 from AoE2ScenarioRms.rms import CreateObjectConfig, CreateObjectFeature
-from AoE2ScenarioRms.util import UnitUtil, Data
+from AoE2ScenarioRms.util import UnitUtil, Data, GridMap, XsContainer, XsUtil
 
 
 class AoE2ScenarioRms:
-    def __init__(self, scenario: AoE2DEScenario, debug: bool = False):
+    def __init__(self, scenario: AoE2DEScenario, debug: Debug = None):
         self.scenario: AoE2DEScenario = scenario
         self.grid_map: GridMap = GridMap(self.scenario.map_manager.map_size)
-        self.container = XsContainer()
+        self.container: XsContainer = XsContainer()
+        self.debug: Debug = debug
+
+        self._debug_all_visible_enabled = False
 
         scenario.xs_manager.initialise_xs_trigger()
         scenario.xs_manager.add_script(xs_file_path=str((Path(__file__).parent.parent / 'xs' / 'random.xs').resolve()))
 
-        if debug:
-            self.enable_debug_mode()
+        if debug & Debug.ALL_VISIBLE:
+            self.enable_all_visible()
+
+        if debug & Debug.BLOCKED_AS_BLACK:
+            ApplyBlockedAsBlack(self)
+        if debug & Debug.NO_CLUTTER:
+            ApplyNoClutter(self)
 
     def create_objects(self, configs: List[CreateObjectConfig]) -> None:
-        self.container += CreateObjectFeature(self.scenario)\
+        self.container += CreateObjectFeature(self.scenario) \
             .solve(configs, self.grid_map, create_object_count=len(configs))
         self.container.append(XsKey.RESOURCE_VARIABLE_COUNT, str(len(configs)))
 
     def write(self) -> str:
-        with (Path(__file__).parent.parent / 'xs' / 'main.xs').open() as file:
-            script = self.container.resolve(file.read())
-        return script
+        if self.debug & Debug.XS_PRINT:
+            ApplyXsPrint(self)
+        return self.container.resolve(XsUtil.read('main.xs'))
 
-    def enable_debug_mode(self) -> None:
+    def enable_all_visible(self) -> None:
         """
         Adds a unit to the bottom corner of the map.
         Adds map-revealers through the entire map.
         Disables other players, so they won't spawn units either.
         """
+        if self._debug_all_visible_enabled:
+            return
+
         original_write_to_file = self.scenario.write_to_file
 
         def write_to_file_wrapper(filename: str, skip_reconstruction: bool = False):
-            mm, um, pm = self.scenario.map_manager, self.scenario.unit_manager, self.scenario.player_manager
-            pm.active_players = 1
-            um.add_unit(1, UnitInfo.HORSE_A.ID, .5, mm.map_size - .5)
-            for chunk in self.scenario.new.area().select_entire_map() \
-                    .use_pattern_grid(block_size=3, gap_size=0).to_chunks():
-                um.add_unit(1, OtherInfo.MAP_REVEALER_GIANT.ID, chunk[0].x, chunk[0].y)
-
+            ApplyAllVisible(self)
             original_write_to_file(filename, skip_reconstruction)
 
         self.scenario.write_to_file = write_to_file_wrapper
+        self._debug_all_visible_enabled = True
 
     def mark_blocked_tiles(
             self,

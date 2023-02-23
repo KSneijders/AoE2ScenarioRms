@@ -21,12 +21,14 @@ class CreateObjectFeature(RmsFeature):
         # @formatter:off
         container = XsContainer({
             XsKey.RESOURCE_VARIABLE_DECLARATION:                 XsEntry(),
+            XsKey.RESOURCE_GROUP_NAMES_DECLARATION:              XsEntry(join='\n\t'),
             XsKey.RESOURCE_VARIABLE_COUNT:                       XsEntry(join=''),
             XsKey.RESOURCE_COUNT_DECLARATION:                    XsEntry(join='\n\t'),
             XsKey.RESOURCE_MAX_SPAWN_DECLARATION:                XsEntry(join='\n\t'),
             XsKey.RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION:  XsEntry(join='\n\t'),
             XsKey.RESOURCE_LOCATION_INJECTION:                   XsEntry(join='\n\t'),
             XsKey.CONFIG_DECLARATION:                            XsEntry(join='\n\t'),
+            XsKey.AFTER_RESOURCE_SPAWN_EVENT:                    XsEntry(join='\n\t\t'),
         })
         # @formatter:on
 
@@ -44,6 +46,11 @@ class CreateObjectFeature(RmsFeature):
         self.container.append(
             XsKey.RESOURCE_VARIABLE_DECLARATION,
             f"int {name} = {config.index};"
+        )
+
+        self.container.append(
+            XsKey.RESOURCE_GROUP_NAMES_DECLARATION,
+            f"xsArraySetString(__RESOURCE_GROUP_NAMES, {name}, \"{config.name}\");"
         )
 
         self.container.append(

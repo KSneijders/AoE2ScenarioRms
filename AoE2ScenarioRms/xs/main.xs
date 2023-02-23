@@ -2,11 +2,15 @@
 
 int __RESOURCE_COUNT = /* REPLACE:RESOURCE_VARIABLE_COUNT */;
 
+// ---------< Other initialization stuff >--------- \\
+/* REPLACE:XS_ON_INIT_FILE */
+
 // ---------< Arrays where resource ID is value (1D) >--------- \\
 // Amount of potential spawns per resource
 int __RESOURCE_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = -1;
+int __RESOURCE_GROUP_NAMES = -1;
 
 // ---------< Arrays where resource ID is reference to other Array (2D) >--------- \\
 // Arrays for locations
@@ -90,6 +94,8 @@ bool spawnResource__024510896(int resourceId = -1) {
             xsArraySetVector(resourcePlacedLocationsArray, placedResourcesCount, v);
             xsArraySetInt(progressArray, 0, placedResourcesCount + 1);
             
+            /* REPLACE:XS_ON_SUCCESSFUL_SPAWN */
+            
             if (placedResourcesCount + 1 >= resourceMaxSpawnCount) {
                 // Next NOT allowed to be placed. Max is reached.
                 return (false);
@@ -113,6 +119,11 @@ rule main_initialise__023658412
     maxInterval 1
     priority 1000
 {
+/* REPLACE:XS_ON_INIT_RULE */
+
+    __RESOURCE_GROUP_NAMES = xsArrayCreateString(__RESOURCE_COUNT, "", "__RESOURCE_GROUP_NAMES__594522389");
+/* REPLACE:RESOURCE_GROUP_NAMES_DECLARATION */
+
     __RESOURCE_SPAWN_COUNTS = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__RESOURCE_SPAWN_COUNTS__538652012");
 /* REPLACE:RESOURCE_COUNT_DECLARATION */
 
@@ -156,11 +167,13 @@ rule main_initialise__023658412
     int rArray = -1;
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
-    for (i = 0; < __RESOURCE_COUNT) {
+    for (resourceId = 0; < __RESOURCE_COUNT) {
         bool b = true;
         while (b) {
-            b = spawnResource__024510896(i);
+            b = spawnResource__024510896(resourceId);
         }
+
+        /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
     }
 
     xsDisableSelf();
