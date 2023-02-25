@@ -52,6 +52,6 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 
 # License
 
-> Will be added soon
+MIT License: Please see the [LICENSE file].
 
-Most likely (but not 100% sure): GNU General Public License v3.0
+[license file]: https://github.com/KSneijders/AoE2ScenarioRms/blob/main/LICENSE
