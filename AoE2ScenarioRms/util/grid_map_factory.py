@@ -81,7 +81,7 @@ class GridMapFactory:
 
         # Mark all shores
         requested_water_but_not_shore = TerrainMark.WATER in terrain_marks and TerrainMark.SHORE not in terrain_marks
-        if terrain_marks & TerrainMark.SHORE or requested_water_but_not_shore:
+        if TerrainMark.SHORE in terrain_marks or requested_water_but_not_shore:
             shore_tiles = set()
             beach_terrains = TerrainId.beach_terrains()
             water_terrains = TerrainId.water_terrains()
@@ -97,8 +97,8 @@ class GridMapFactory:
         # Mark everything around trees and cliffs and optionally given consts
         trees, cliffs = Data.trees(), Data.cliffs()
 
-        mark_trees = object_marks & ObjectMark.TREES
-        mark_cliffs = object_marks & ObjectMark.CLIFFS
+        mark_trees = ObjectMark.TREES in object_marks
+        mark_cliffs = ObjectMark.CLIFFS in object_marks
         for obj in um.units[PlayerId.GAIA]:
             if mark_trees and obj.unit_const in trees:
                 marked_tiles.update(UnitUtil.get_tiles_around_object(obj, 1))

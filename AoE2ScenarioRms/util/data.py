@@ -24,11 +24,11 @@ class Data:
     def get_terrain_ids_by_terrain_marks(marks: TerrainMark) -> List[TerrainId]:
         ids: List[TerrainId] = []
 
-        if marks & TerrainMark.WATER:
+        if TerrainMark.WATER in marks:
             ids.extend(TerrainId.water_terrains())
-        if marks & TerrainMark.BEACH:
+        if TerrainMark.BEACH in marks:
             ids.extend(TerrainId.beach_terrains())
-        if marks & TerrainMark.LAND:
+        if TerrainMark.LAND in marks:
             water_beach = TerrainId.water_terrains() + TerrainId.beach_terrains()
             ids.extend(terrain for terrain in TerrainId if terrain not in water_beach)
 
@@ -38,7 +38,7 @@ class Data:
     def get_object_consts_by_clear_options(clear: ObjectClear) -> List[int]:
         consts: List[int] = []
 
-        if clear & ObjectClear.BOARS:
+        if ObjectClear.BOARS in clear:
             consts.extend([
                 UnitInfo.JAVELINA.ID,
                 UnitInfo.WILD_BOAR.ID,
@@ -46,7 +46,7 @@ class Data:
                 UnitInfo.RHINOCEROS.ID
             ])
 
-        if clear & ObjectClear.SHEEP:
+        if ObjectClear.SHEEP in clear:
             consts.extend([
                 UnitInfo.SHEEP.ID,
                 UnitInfo.GOAT.ID,
@@ -60,14 +60,14 @@ class Data:
                 UnitInfo.LLAMA.ID
             ])
 
-        if clear & ObjectClear.DEER:
+        if ObjectClear.DEER in clear:
             consts.extend([
                 UnitInfo.DEER.ID,
                 UnitInfo.IBEX.ID,
                 UnitInfo.ZEBRA.ID
             ])
 
-        if clear & ObjectClear.WOLFS:
+        if ObjectClear.WOLFS in clear:
             consts.extend([
                 UnitInfo.WOLF.ID,
                 UnitInfo.JAGUAR.ID,
@@ -75,25 +75,25 @@ class Data:
                 UnitInfo.SNOW_LEOPARD.ID
             ])
 
-        if clear & ObjectClear.RELICS:
+        if ObjectClear.RELICS in clear:
             consts.append(OtherInfo.RELIC.ID)
 
-        if clear & ObjectClear.GOLDS:
+        if ObjectClear.GOLDS in clear:
             consts.append(OtherInfo.GOLD_MINE.ID)
 
-        if clear & ObjectClear.STONES:
+        if ObjectClear.STONES in clear:
             consts.append(OtherInfo.STONE_MINE.ID)
 
-        if clear & ObjectClear.BUSHES:
+        if ObjectClear.BUSHES in clear:
             consts.extend([
                 OtherInfo.FORAGE_BUSH.ID,
                 OtherInfo.FRUIT_BUSH.ID
             ])
 
-        if clear & ObjectClear.CLIFFS:
+        if ObjectClear.CLIFFS in clear:
             consts.extend(Data.cliffs())
 
-        if clear & ObjectClear.DEEP_FISH:
+        if ObjectClear.DEEP_FISH in clear:
             consts.extend([
                 OtherInfo.FISH_TUNA.ID,
                 OtherInfo.FISH_PERCH.ID,
@@ -104,7 +104,7 @@ class Data:
                 OtherInfo.DOLPHIN.ID,
             ])
 
-        if clear & ObjectClear.SHORE_FISH:
+        if ObjectClear.SHORE_FISH in clear:
             consts.extend([
                 OtherInfo.SHORE_FISH.ID,
                 OtherInfo.BOX_TURTLES.ID,

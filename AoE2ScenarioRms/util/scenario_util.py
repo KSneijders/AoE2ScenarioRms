@@ -28,7 +28,7 @@ class ScenarioUtil:
         units = units if units is not None else []
 
         # Clear all player related objects
-        if clear & ObjectClear.PLAYERS:
+        if ObjectClear.PLAYERS in clear:
             for i in PlayerId.all(exclude_gaia=True):
                 um.units[i] = []
 
@@ -37,7 +37,7 @@ class ScenarioUtil:
         objects_to_remove = set(obj for obj in um.units[PlayerId.GAIA] if obj.unit_const in resource_consts)
 
         # Mark straggler trees
-        if clear & ObjectClear.STRAGGLERS:
+        if ObjectClear.STRAGGLERS in clear:
             tree_consts = Data.trees()
             for u in um.units[PlayerId.GAIA]:
                 underlying_terrain = mm.terrain[xy_to_i(math.floor(u.x), math.floor(u.y), mm.map_size)].terrain_id
