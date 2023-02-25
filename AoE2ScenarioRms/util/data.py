@@ -93,4 +93,21 @@ class Data:
         if clear & ObjectClear.CLIFFS:
             consts.extend(Data.cliffs())
 
+        if clear & ObjectClear.DEEP_FISH:
+            consts.extend([
+                OtherInfo.FISH_TUNA.ID,
+                OtherInfo.FISH_PERCH.ID,
+                OtherInfo.FISH_DORADO.ID,
+                OtherInfo.FISH_SALMON.ID,
+                OtherInfo.FISH_SNAPPER.ID,
+                OtherInfo.GREAT_FISH_MARLIN.ID,
+                OtherInfo.DOLPHIN.ID,
+            ])
+
+        if clear & ObjectClear.SHORE_FISH:
+            consts.extend([
+                OtherInfo.SHORE_FISH.ID,
+                OtherInfo.BOX_TURTLES.ID,
+            ])
+
         return consts

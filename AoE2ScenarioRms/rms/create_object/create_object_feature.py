@@ -7,6 +7,7 @@ from AoE2ScenarioParser.datasets.players import PlayerId
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms.enums import XsKey
+from AoE2ScenarioRms.errors import InvalidCreateObjectError
 from AoE2ScenarioRms.rms.create_object.create_object_config import CreateObjectConfig
 from AoE2ScenarioRms.rms.rms_feature import RmsFeature
 from AoE2ScenarioRms.util import XsUtil, XsContainer, Locator
@@ -16,6 +17,7 @@ if TYPE_CHECKING:
 
 
 class CreateObjectFeature(RmsFeature):
+    unique_names = set()
 
     def __init__(self, scenario: AoE2DEScenario) -> None:
         container = XsContainer()
@@ -24,6 +26,8 @@ class CreateObjectFeature(RmsFeature):
 
     def init(self, config: CreateObjectConfig) -> None:
         name = self._name(config)
+
+        self._validate_name_unique(name)
 
         self.xs_container.append(
             XsKey.RESOURCE_VARIABLE_DECLARATION,
@@ -75,6 +79,7 @@ class CreateObjectFeature(RmsFeature):
 
         for index, group in enumerate(groups):
             spawn_group = tm.add_trigger(f"Spawn {config.name} {index}/{len(groups)}")
+            group_const = config.get_random_const()
 
             function = f"bool __should_spawn_{config.name}_{index}() {{" \
                 f"return (xsArrayGetBool(xsArrayGetInt(__ARRAY_RESOURCE_PLACED_INDICES, {name}), {index}));" \
@@ -82,10 +87,10 @@ class CreateObjectFeature(RmsFeature):
             spawn_group.new_condition.script_call(xs_function=function.strip().replace('  ', ''))
 
             for iindex, tile in enumerate(group):
-                spawn_group.new_effect.create_object(config.const, PlayerId.GAIA, tile.x, tile.y)
+                spawn_group.new_effect.create_object(group_const, PlayerId.GAIA, tile.x, tile.y)
 
                 if config.debug_place_all:
-                    um.add_unit(PlayerId.GAIA, config.const, tile.x + .5, tile.y + .5)
+                    um.add_unit(PlayerId.GAIA, group_const, tile.x + .5, tile.y + .5)
                     player = PlayerId.GAIA if iindex == 0 else PlayerId.ONE
                     const = OtherInfo.FLAG_M.ID if iindex == 0 else OtherInfo.FLAG_C.ID
                     um.add_unit(player, const, tile.x + .5, tile.y + .5)
@@ -106,5 +111,15 @@ class CreateObjectFeature(RmsFeature):
         return self.xs_container
 
     @staticmethod
+    def _validate_name_unique(name: str) -> None:
+        if name in CreateObjectConfig.unique_names:
+            raise InvalidCreateObjectError(
+                f"A CreateObjectFeature with the name '{name}' was already initialized. "
+                f"Make sure the names are unique and are not accidentally registered more than once.\n"
+                f"Also make sure that names aren't differentiated through just casing or spaces."
+            )
+        CreateObjectConfig.unique_names.add(name)
+
+    @staticmethod
     def _name(create: CreateObjectConfig) -> str:
-        return f"____{create.name.upper()}"
+        return f"____{XsUtil.format_name(create.name)}"

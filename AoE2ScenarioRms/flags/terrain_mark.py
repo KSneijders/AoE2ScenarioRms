@@ -11,7 +11,9 @@ class TerrainMark(IntFlag):
     @staticmethod
     def water_beach() -> TerrainMark:
         return TerrainMark.WATER | TerrainMark.BEACH
-    
+
     WATER = auto()
     BEACH = auto()
+    SHORE = auto()
+    """A more specific type that points to shallow water directly next to beach tiles"""
     LAND = auto()

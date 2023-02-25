@@ -16,7 +16,8 @@ class ApplyBlockedAsBlack(ApplyDebug):
     Change all terrain tiles that are blocked (in the gridmap) to ``TerrainId.BLACK``
 
     """
-    def __init__(self, rms: 'AoE2ScenarioRms', grid_map: 'GridMap') -> None:
+
+    def __init__(self, rms: 'AoE2ScenarioRms', grid_map: 'GridMap', as_layer: bool = False) -> None:
         super().__init__(rms)
 
         mm = rms.scenario.map_manager
@@ -25,4 +26,7 @@ class ApplyBlockedAsBlack(ApplyDebug):
         for y in range(map_size):
             for x in range(map_size):
                 if grid_map.is_blocked(x, y):
-                    mm.terrain[xy_to_i(x, y, map_size)].terrain_id = TerrainId.BLACK
+                    if as_layer:
+                        mm.terrain[xy_to_i(x, y, map_size)].layer = TerrainId.BLACK
+                    else:
+                        mm.terrain[xy_to_i(x, y, map_size)].terrain_id = TerrainId.BLACK

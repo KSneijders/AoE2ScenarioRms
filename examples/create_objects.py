@@ -68,3 +68,28 @@ create_objects_config: List[CreateObjectConfig] = [
         _max_potential_group_count=100,
     ),
 ]
+
+create_objects_config_shore_fish: List[CreateObjectConfig] = [
+    CreateObjectConfig(
+        name='shore fish',
+        const=OtherInfo.SHORE_FISH.ID,
+        temp_min_distance_group_placement=8,
+        min_distance_group_placement=0,
+        _max_potential_group_count=50,
+    )
+]
+
+create_objects_config_deep_fish: List[CreateObjectConfig] = [
+    CreateObjectConfig(
+        name='deep fish',
+        const=[
+            OtherInfo.FISH_TUNA.ID,
+            OtherInfo.FISH_PERCH.ID,
+            OtherInfo.FISH_DORADO.ID,
+            OtherInfo.FISH_SALMON.ID,
+            OtherInfo.FISH_SNAPPER.ID,
+        ],
+        temp_min_distance_group_placement=8,
+        min_distance_group_placement=3,
+    )
+]

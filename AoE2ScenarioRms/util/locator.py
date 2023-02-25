@@ -9,6 +9,7 @@ from ordered_set import OrderedSet
 
 from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
 from AoE2ScenarioRms.errors import LocationNotFoundError, SpawnFailureWarning
+from AoE2ScenarioRms.util.tile_util import TileUtil
 
 if TYPE_CHECKING:
     from AoE2ScenarioRms.rms import CreateObjectConfig
@@ -103,13 +104,11 @@ class Locator:
             return None
 
     def find_random_adjacent_tile(self, tile: Tile, group: List[Tile]) -> Tile | None:
-        rand_start = random.randrange(0, 4)
-        coords = [(0, -1), (-1, 0), (0, 1), (1, 0)]
+        offset = random.randrange(0, 4)
 
+        tiles = TileUtil.adjacent(tile)
         for i in range(4):
-            x, y = coords[(rand_start + i) % 4]
-
-            new_tile = Tile(tile.x + x, tile.y + y)
+            new_tile = tiles[(i + offset) % 4]
             if new_tile not in group and self.grid_map.is_valid(TileLevel.RES, new_tile):
                 return new_tile
         return None

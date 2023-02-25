@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `GridMapFactory` class for creating `GridMap`s easily
 - `ScenarioUtil` class for utility functions regarding scenarios
+- `as_layer` parameter for `ApplyBlockedAsBlack(...)` to use the layer feature instead of the terrain itself  
+- `DEEP_FISH`, `SHORE_FISH` and `FISH_OBJECTS` (combination of the two) entries to `ObjectClear`
+- `SHORE` entry to `TerrainMark` for selecting the line of water right next to the beach
+- `TileUtil` class
 
 ### Changed
 
@@ -22,6 +26,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AoE2ScenarioRms.clear_scenario(...)` was moved to `ScenarioUtil.clear(...)`
 - Debug classes now have to be applied manually just before `scenario.write_to_file(...)`
 - `Locator` now uses a shuffled list of available tiles instead of guessing tiles
+- `const` parameter from `CreateObjectConfig(...)` can now be list to randomize const per group
+- Renamed `ImproperCreateObjectError` to `InvalidCreateObjectError`
+- Using `TerrainMark.WATER` will no longer include the first line of water around land. Add `TerrainMark.SHORE` for those tiles
 
 ### Removed
 

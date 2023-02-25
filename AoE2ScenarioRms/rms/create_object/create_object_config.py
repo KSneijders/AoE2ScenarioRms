@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 import math
+import random
 from typing import Generator
 
 from AoE2ScenarioParser.helper.printers import warn
 
-from AoE2ScenarioRms.errors import ImproperCreateObjectError, ImproperCreateObjectWarning
+from AoE2ScenarioRms.errors import InvalidCreateObjectError, ImproperCreateObjectWarning
 from AoE2ScenarioRms.enums import GroupingMethod
 from AoE2ScenarioRms.rms.rms_config import RmsConfig
+from AoE2ScenarioRms.util import XsUtil
 
 
 class CreateObjectConfig(RmsConfig):
@@ -26,7 +28,8 @@ class CreateObjectConfig(RmsConfig):
         **[REQUIRED]** The name for this config, needs to be unique
 
     **const**:
-        **[REQUIRED]** The unit to spawn
+        **[REQUIRED]** The unit to spawn. If a list is given this will be randomized per group so is **NOT** useful
+        for spawning equal & fair resources.
 
     **grouping**:
         The spread method. Use: ``GroupingMethod.TIGHT`` for spawning like gold, or: ``GroupingMethod.LOOSE`` for
@@ -35,7 +38,7 @@ class CreateObjectConfig(RmsConfig):
     **number_of_objects**:
         The size of a single group (Amount of objects per group).
         Accepts an ``int`` or a ``tuple[int, int]`` indicating a range ([1, 3] can spawn 1, 2 or 3 objects in a group).
-        This value randomized per group so is NOT useful for spawning equal resources. Defaults to 1
+        This value randomized per group so is **NOT** useful for spawning equal & fair resources. Defaults to 1
 
     **group_placement_radius**:
         **[NOT IMPLEMENTED]** The number of tiles out from the central tile that objects belonging to the same group
@@ -80,13 +83,15 @@ class CreateObjectConfig(RmsConfig):
 
     **_debug_place_all**:
         [DEBUG] Force all groups to be placed directly in the map. Not recommended with a high
-        ``_max_potential_group_count``!
+        ``_max_potential_group_count``
     """
+
+    unique_names = set()
 
     def __init__(
             self,
             name: str,
-            const: int,
+            const: int | list[int],
             grouping: GroupingMethod = GroupingMethod.TIGHT,
             number_of_objects: int | tuple[int, int] = 1,
             group_placement_radius: int = 3,
@@ -102,9 +107,13 @@ class CreateObjectConfig(RmsConfig):
     ):
         super().__init__()
 
-        if scale_to_player_number and number_of_groups == math.inf:
-            raise ImproperCreateObjectError(f"[{name}]: cannot scale infinity with player numbers. "
-                                            f"Please specify 'number_of_groups'")
+        name = self._validate_name_unique(name)\
+            .lower()
+
+        if scale_to_player_number and number_of_groups > 100_000:
+            raise InvalidCreateObjectError(
+                f"[{name}]: cannot use scale with player number when number of groups is above 100k"
+            )
 
         if not isinstance(number_of_objects, int) and not isinstance(number_of_objects, tuple):
             raise TypeError(f"[{name}]: number_of_objects has to be either int or tuple[int, int], "
@@ -133,6 +142,25 @@ class CreateObjectConfig(RmsConfig):
         self.debug_place_all: bool = _debug_place_all
 
         self.index = next(_counter)
+
+    @staticmethod
+    def _validate_name_unique(name: str) -> str:
+        xs_name = XsUtil.format_name(name)
+
+        if xs_name in CreateObjectConfig.unique_names:
+            raise InvalidCreateObjectError(
+                f"[{name}]: group with name '{name}' ('{xs_name}') already exists. Make sure all names are unique and "
+                f"aren't differentiated through just casing or spaces."
+            )
+        CreateObjectConfig.unique_names.add(xs_name)
+
+        return xs_name
+
+    def get_random_const(self) -> int:
+        if isinstance(self.const, list):
+            return random.choice(self.const)
+        else:
+            return self.const
 
 
 def _create_counter_generator() -> Generator[int]:

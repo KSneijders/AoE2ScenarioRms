@@ -6,3 +6,4 @@ from .grid_map_factory import GridMapFactory
 from .locator import Locator
 from .xs_container import XsContainer
 from .scenario_util import ScenarioUtil
+from .tile_util import TileUtil

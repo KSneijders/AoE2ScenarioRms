@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 from typing import List, Dict, Set
 
 from AoE2ScenarioParser.datasets.players import PlayerId
@@ -10,20 +12,59 @@ from AoE2ScenarioRms.enums import TileLevel
 from AoE2ScenarioRms.flags import TerrainMark, ObjectMark
 from AoE2ScenarioRms.util.data import Data
 from AoE2ScenarioRms.util.grid_map import GridMap
+from AoE2ScenarioRms.util.tile_util import TileUtil
 from AoE2ScenarioRms.util.unit_util import UnitUtil
 
 
 class GridMapFactory:
     @staticmethod
-    def default(
+    def select(
             scenario: 'AoE2DEScenario',
             terrain_marks: TerrainMark = None,
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
     ):
+        return GridMapFactory.mark(
+            scenario=scenario,
+            block_marked_tiles=False,
+            terrain_marks=terrain_marks,
+            object_marks=object_marks,
+            terrain_ids=terrain_ids,
+            object_consts=object_consts,
+        )
+
+    @staticmethod
+    def block(
+            scenario: 'AoE2DEScenario',
+            terrain_marks: TerrainMark = None,
+            object_marks: ObjectMark = None,
+            terrain_ids: List[TerrainId] = None,
+            object_consts: Dict[int, int] = None,
+    ):
+        return GridMapFactory.mark(
+            scenario=scenario,
+            block_marked_tiles=True,
+            terrain_marks=terrain_marks,
+            object_marks=object_marks,
+            terrain_ids=terrain_ids,
+            object_consts=object_consts,
+        )
+
+    @staticmethod
+    def mark(
+            scenario: 'AoE2DEScenario',
+            block_marked_tiles: bool,
+            terrain_marks: TerrainMark = None,
+            object_marks: ObjectMark = None,
+            terrain_ids: List[TerrainId] = None,
+            object_consts: Dict[int, int] = None,
+    ):
+        starting_state = TileLevel.NONE if block_marked_tiles else TileLevel.TERRAIN
+        set_marked_state = TileLevel.TERRAIN if block_marked_tiles else TileLevel.NONE
+
         mm, um = scenario.map_manager, scenario.unit_manager
-        grid_map = GridMap(mm.map_size)
+        grid_map = GridMap(mm.map_size, starting_state)
 
         terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.water_beach()
         object_marks = object_marks if object_marks is not None else ObjectMark.all()
@@ -34,9 +75,24 @@ class GridMapFactory:
         terrain_ids = Data.get_terrain_ids_by_terrain_marks(terrain_marks) + terrain_ids
         marked_tiles: Set[Tile] = set()
         if len(terrain_ids):
-            for index, t in enumerate(mm.terrain):
+            for t in mm.terrain:
                 if t.terrain_id in terrain_ids:
-                    marked_tiles.add(Tile(*i_to_xy(index, mm.map_size)))
+                    marked_tiles.add(Tile(*t.xy))
+
+        # Mark all shores
+        requested_water_but_not_shore = TerrainMark.WATER in terrain_marks and TerrainMark.SHORE not in terrain_marks
+        if terrain_marks & TerrainMark.SHORE or requested_water_but_not_shore:
+            shore_tiles = set()
+            beach_terrains = TerrainId.beach_terrains()
+            water_terrains = TerrainId.water_terrains()
+            for terrain_tile in mm.terrain:
+                if terrain_tile.terrain_id in beach_terrains:
+                    for tile in TileUtil.adjacent(*terrain_tile.xy):
+                        if mm.get_tile(tile.x, tile.y).terrain_id in water_terrains:
+                            shore_tiles.add(tile)
+
+            if requested_water_but_not_shore:
+                marked_tiles = marked_tiles.difference(shore_tiles)
 
         # Mark everything around trees and cliffs and optionally given consts
         trees, cliffs = Data.trees(), Data.cliffs()
@@ -54,5 +110,5 @@ class GridMapFactory:
             marked_tiles.update(UnitUtil.get_tiles_around_object(unit, object_consts[unit.unit_const]))
 
         for tile in marked_tiles:
-            grid_map.set(TileLevel.TERRAIN, tile)
+            grid_map.set(set_marked_state, tile)
         return grid_map

@@ -9,7 +9,7 @@ class LocationNotFoundError(AoE2ScenarioRmsError):
     pass
 
 
-class ImproperCreateObjectError(AoE2ScenarioRmsError):
+class InvalidCreateObjectError(AoE2ScenarioRmsError):
     pass
 
 
