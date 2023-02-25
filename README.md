@@ -38,7 +38,9 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 4. Automatically figure out what to remove based on CreateObjectConfig configs
 5. Add ability to mock the XS spawning process to estimate the amount of necessary successful spawn attempts
 6. Ability to bind ID to list of create objects and be able to differentiate distance to each group 
-7. More (?)
+7. (Somehow) remove spawn order bias. Currently, the earlier the spawns the more chance they have to succeed because 
+   the map isn't filled up yet.
+8. More (?)
 
 ---
 
