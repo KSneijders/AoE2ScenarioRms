@@ -13,13 +13,13 @@ class RmsFeature:
         self.container: XsContainer = xs_container
 
     @abstractmethod
-    def solve(self, config: RmsConfig, grid_map: GridMap):
-        ...
-
-    @abstractmethod
     def init(self, config: RmsConfig) -> None:
         ...
 
     @abstractmethod
     def build(self, config: RmsConfig, grid_map: GridMap) -> None:
+        ...
+
+    @abstractmethod
+    def solve(self, config: RmsConfig, grid_map: GridMap):
         ...

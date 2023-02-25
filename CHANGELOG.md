@@ -11,9 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- `GridMapFactory` class for creating `GridMap`s easily
+- `ScenarioUtil` class for utility functions regarding scenarios
+
+### Changed
+
+- `AoE2ScenarioRms.mark_blocked_tiles(...)` was moved to `GridMapFactory.default(...)`
+- `AoE2ScenarioRms.clear_scenario(...)` was moved to `ScenarioUtil.clear(...)`
+
 ### Removed
 
-- `XsEntry` class
+- `XsEntry` class 
 
 ---
 

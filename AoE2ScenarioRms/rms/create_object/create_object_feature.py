@@ -22,12 +22,6 @@ class CreateObjectFeature(RmsFeature):
 
         super().__init__(scenario, container)
 
-    def solve(self, configs: List[CreateObjectConfig], grid_map: 'GridMap', **kwargs) -> XsContainer:
-        for config_entry in configs:
-            self.init(config_entry)
-            self.build(config_entry, grid_map)
-        return self.container
-
     def init(self, config: CreateObjectConfig) -> None:
         name = self._name(config)
 
@@ -102,6 +96,12 @@ class CreateObjectFeature(RmsFeature):
             XsKey.RESOURCE_LOCATION_INJECTION,
             f"ShuffleVectorArray(rArray, xsArrayGetInt(__ARRAY_RESOURCE_INDICES, {name}));"
         )
+
+    def solve(self, configs: List[CreateObjectConfig], grid_map: 'GridMap', **kwargs) -> XsContainer:
+        for config_entry in configs:
+            self.init(config_entry)
+            self.build(config_entry, grid_map)
+        return self.container
 
     @staticmethod
     def _name(create: CreateObjectConfig) -> str:
