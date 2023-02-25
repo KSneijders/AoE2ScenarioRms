@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `XsEntry` class due to being redundant when moving the `join_string` to a global state (which it should be) 
 - `Debug` class due to being redundant as the `ApplyDebug` classes can be used themselves. 
 - `AoE2ScenarioRms.write(...)` function due to now being done automatically when calling `scenario.write_to_file(...)`
+- `debug` parameter from `AoE2ScenarioRms(...)`
 
 ---
 
@@ -43,7 +44,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- `AoE2ScenarioRms` `debug` parameter now takes the `Debug` class instead of a boolean
+- `debug` parameter from `AoE2ScenarioRms(...)` now takes the `Debug` class instead of a boolean
 
 ---
 
