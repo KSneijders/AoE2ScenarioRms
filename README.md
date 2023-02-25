@@ -1,7 +1,7 @@
 # AoE2ScenarioRms
 
-A library built on top of the [AoE2ScenarioParser]. 
-Allows you to add `triggers` and `XS` to your AoE2:DE scenarios which will add logic to allow for random resource 
+A library built on top of the [AoE2ScenarioParser].
+Allows you to add `triggers` and `XS` to your AoE2:DE scenarios which will add logic to allow for random resource
 placements each play-through.
 
 > Keep in mind this project is still heavily a **WORK-IN-PROGRESS**
@@ -10,9 +10,10 @@ placements each play-through.
 
 ## Example
 
-Please check out the example [here](https://github.com/KSneijders/AoE2ScenarioRms/tree/main/examples). (no real docs atm)
+Please check out the example [here](https://github.com/KSneijders/AoE2ScenarioRms/tree/main/examples). 
+(no real docs atm)
 
-This project is still a work-in-progress. 
+This project is still a work-in-progress.
 So everything can still change without notice (most likely will).  
 If you'd like to try anyway, for now just clone this repository to the root of your source folder and import from there.
 
@@ -34,13 +35,14 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 1. Player areas :monkaS:
 2. Scale with map size (hardcoded on parser level as map_size cannot be changed dynamically)
 3. Support larger objects (currently only 1x1 is supported)
-4. Automatically figure out what to remove based on CreateObjectConfig configs 
-5. Add ability to mock the XS spawning process to estimate the amount of necessary successful spawn attempts 
-6. More (?)
+4. Automatically figure out what to remove based on CreateObjectConfig configs
+5. Add ability to mock the XS spawning process to estimate the amount of necessary successful spawn attempts
+6. Ability to bind ID to list of create objects and be able to differentiate distance to each group 
+7. More (?)
 
 ---
 
-**Suggestions are always welcome!** 
+**Suggestions are always welcome!**
 
 # Authors
 
