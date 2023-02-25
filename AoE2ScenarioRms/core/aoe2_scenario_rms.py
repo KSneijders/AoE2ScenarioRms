@@ -20,7 +20,7 @@ class AoE2ScenarioRms:
 
         self._register_scenario_write_to_file_event()
 
-    def create_objects(self, grid_map: GridMap, configs: List[CreateObjectConfig]) -> None:
+    def create_objects(self, configs: List[CreateObjectConfig], grid_map: GridMap) -> None:
         self._verify_no_debug()
 
         create_objects = CreateObjectFeature(self.scenario)

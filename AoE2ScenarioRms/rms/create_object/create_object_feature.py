@@ -69,8 +69,10 @@ class CreateObjectFeature(RmsFeature):
         tm, um = self.scenario.trigger_manager, self.scenario.unit_manager
         name = self._name(config)
 
-        groups = Locator.from_create_object_config(config, grid_map) \
+        groups = Locator\
+            .from_create_object_config(config, grid_map)\
             .get_valid_tiles()
+
         for index, group in enumerate(groups):
             spawn_group = tm.add_trigger(f"Spawn {config.name} {index}/{len(groups)}")
 

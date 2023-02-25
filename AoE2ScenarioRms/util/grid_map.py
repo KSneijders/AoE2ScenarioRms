@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import random
 from typing import Tuple, List
 
 from AoE2ScenarioParser.objects.support.tile import Tile
@@ -13,6 +14,16 @@ class GridMap:
         self.grid_map: List[List[TileLevel]] = []
 
         self.reset_all()
+
+    def available_tiles(self, shuffle=False) -> List[Tile]:
+        tiles = []
+        for y in range(self.map_size):
+            for x in range(self.map_size):
+                if self.is_available(x, y):
+                    tiles.append(Tile(x, y))
+        if shuffle:
+            random.shuffle(tiles)
+        return tiles
 
     def set(self, level: TileLevel, x: int | Tile, y: int = None) -> None:
         x, y = self._coords(x, y)

@@ -28,7 +28,7 @@ grid_map = GridMapFactory.default(
 )
 
 # Throw in the create_object_config (Can be found in the other example file)
-asr.create_objects(grid_map, create_objects_config)
+asr.create_objects(create_objects_config, grid_map)
 
 # Apply debug options to the scenario.
 # These can only be applied at the end of the script (before scenario.write_to_file)

@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `AoE2ScenarioRms.mark_blocked_tiles(...)` was moved to `GridMapFactory.default(...)`
 - `AoE2ScenarioRms.clear_scenario(...)` was moved to `ScenarioUtil.clear(...)`
 - Debug classes now have to be applied manually just before `scenario.write_to_file(...)`
+- `Locator` now uses a shuffled list of available tiles instead of guessing tiles
 
 ### Removed
 

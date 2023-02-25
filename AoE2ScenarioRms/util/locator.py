@@ -5,6 +5,7 @@ from typing import Tuple, List, TYPE_CHECKING
 
 from AoE2ScenarioParser.helper.printers import warn
 from AoE2ScenarioParser.objects.support.tile import Tile
+from ordered_set import OrderedSet
 
 from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
 from AoE2ScenarioRms.errors import LocationNotFoundError, SpawnFailureWarning
@@ -15,6 +16,12 @@ if TYPE_CHECKING:
 
 
 class Locator:
+    """
+
+    Utility class for locating tiles in a map based on the given criteria
+
+    """
+
     def __init__(
             self,
             name: str,
@@ -33,6 +40,8 @@ class Locator:
 
         self.map_size = grid_map.map_size
 
+        self.available_tiles: List[Tile] = grid_map.available_tiles(shuffle=True)
+
     @classmethod
     def from_create_object_config(cls, create: 'CreateObjectConfig', grid_map: 'GridMap'):
         return cls(
@@ -49,7 +58,13 @@ class Locator:
         amount = amount or self.amount
         name = name or self.name
 
-        starting_tiles = self.find_random_locations(amount)
+        if amount * 2 > len(self.available_tiles):
+            warn(f"For group '{name}', the amount of groups requested is really high. "
+                 f"({amount} groups compared to {len(self.available_tiles)} available tiles).\n"
+                 f"Consider lowering the max amount of necessary groups for '{name}'.", SpawnFailureWarning)
+
+        # starting_tiles = self.find_random_locations(amount)
+        starting_tiles = self.available_tiles[:amount]
 
         failed_spawns = 0
         for starting_tile in starting_tiles:
@@ -75,7 +90,7 @@ class Locator:
 
         if failed_spawns and failed_spawns / amount > .1:
             warn(f"When generating group '{name}', out of the {amount} groups, {failed_spawns} failed. "
-                 f"Consider lowering the max amount of necessary groups for '{name}'", SpawnFailureWarning)
+                 f"Consider lowering the max amount of necessary groups for '{name}'.", SpawnFailureWarning)
 
         return tiles
 
@@ -109,6 +124,10 @@ class Locator:
         return None
 
     def find_random_locations(self, count: int) -> List[Tile]:
+        """
+        Find a list of random locations based on the grid map. Unused since shuffled list is now used.
+        Might be removed in the future.
+        """
         tries = 0
         max_tries = count * 100
         spawns_left = count
@@ -131,6 +150,10 @@ class Locator:
         return locs
 
     def find_available_location(self) -> Tile:
+        """
+        Find a list of random locations based on the grid map. Unused since shuffled list is now used.
+        Might be removed in the future.
+        """
         counter = 1000
         while counter > 0:
             counter -= 1

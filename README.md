@@ -20,8 +20,8 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 
 ## Rough todo:
 
-1. Change tile selection to `random.choice(all_possible_tiles)` instead of looking for completely random tiles
-   Potentially conditionally? Or with parameter? As big surfaces are faster with completely random tiles
+1. ~~Change tile selection to `random.choice(all_possible_tiles)` instead of looking for completely random tiles
+   Potentially conditionally? Or with parameter? As big surfaces are faster with completely random tiles~~
 2. ~~Move XS logic to own class(es)~~
 3. ~~Move Debug logic to own class~~
 4. ~~Change `asr.write()` as triggers are always added directly, so why isn't the script?~~
