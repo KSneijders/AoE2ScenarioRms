@@ -10,7 +10,7 @@ from AoE2ScenarioRms.rms.rms_config import RmsConfig
 class RmsFeature:
     def __init__(self, scenario: AoE2DEScenario, xs_container: XsContainer) -> None:
         self.scenario: AoE2DEScenario = scenario
-        self.container: XsContainer = xs_container
+        self.xs_container: XsContainer = xs_container
 
     @abstractmethod
     def init(self, config: RmsConfig) -> None:

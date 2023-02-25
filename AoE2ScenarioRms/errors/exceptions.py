@@ -11,3 +11,7 @@ class LocationNotFoundError(AoE2ScenarioRmsError):
 
 class ImproperCreateObjectError(AoE2ScenarioRmsError):
     pass
+
+
+class InvalidAoE2ScenarioRmsState(AoE2ScenarioRmsError):
+    pass

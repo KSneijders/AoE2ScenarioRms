@@ -9,8 +9,15 @@ if TYPE_CHECKING:
 
 
 class ApplyXsPrint(ApplyDebug):
+    """
+
+    When testing (in game: load scenario > test), the amount of resources that were able to spawn is printed in the chat
+
+    """
     def __init__(self, rms: 'AoE2ScenarioRms') -> None:
-        rms.container.extend(
+        super().__init__(rms)
+
+        rms.xs_container.extend(
             XsKey.AFTER_RESOURCE_SPAWN_EVENT,
             XsUtil.read('snippets/debug_print_info.xs').splitlines()
         )

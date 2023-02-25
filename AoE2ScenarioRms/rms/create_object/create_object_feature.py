@@ -25,38 +25,38 @@ class CreateObjectFeature(RmsFeature):
     def init(self, config: CreateObjectConfig) -> None:
         name = self._name(config)
 
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_VARIABLE_DECLARATION,
             f"int {name} = {config.index};"
         )
 
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_GROUP_NAMES_DECLARATION,
             f"xsArraySetString(__RESOURCE_GROUP_NAMES, {name}, \"{config.name}\");"
         )
 
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_COUNT_DECLARATION,
             f"xsArraySetInt(__RESOURCE_SPAWN_COUNTS, {name}, {config.max_potential_group_count});"
         )
 
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_MAX_SPAWN_DECLARATION,
             f"xsArraySetFloat(__RESOURCE_MAX_SPAWN_COUNTS, {name}, {config.number_of_groups});"
         )
 
         bool_ = XsUtil.bool(config.scale_to_player_number)
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION,
             f"xsArraySetBool(__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER, {name}, {bool_});"
         )
 
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_LOCATION_INJECTION,
             f"rArray = xsArrayGetInt(__ARRAY_RESOURCE_LOCATIONS, {name});"
         )
 
-        self.container.extend(
+        self.xs_container.extend(
             XsKey.CONFIG_DECLARATION,
             [
                 f"cArray = xsArrayGetInt(__ARRAY_RESOURCE_CONFIGS, {name});",
@@ -88,20 +88,20 @@ class CreateObjectFeature(RmsFeature):
                     const = OtherInfo.FLAG_M.ID if iindex == 0 else OtherInfo.FLAG_C.ID
                     um.add_unit(player, const, tile.x + .5, tile.y + .5)
 
-            self.container.append(
+            self.xs_container.append(
                 XsKey.RESOURCE_LOCATION_INJECTION,
                 f"xsArraySetVector(rArray, {index}, vector({group[0].x}, {group[0].y}, -1));\t// {index}"
             )
-        self.container.append(
+        self.xs_container.append(
             XsKey.RESOURCE_LOCATION_INJECTION,
             f"ShuffleVectorArray(rArray, xsArrayGetInt(__ARRAY_RESOURCE_INDICES, {name}));"
         )
 
-    def solve(self, configs: List[CreateObjectConfig], grid_map: 'GridMap', **kwargs) -> XsContainer:
+    def solve(self, configs: List[CreateObjectConfig], grid_map: 'GridMap') -> XsContainer:
         for config_entry in configs:
             self.init(config_entry)
             self.build(config_entry, grid_map)
-        return self.container
+        return self.xs_container
 
     @staticmethod
     def _name(create: CreateObjectConfig) -> str:

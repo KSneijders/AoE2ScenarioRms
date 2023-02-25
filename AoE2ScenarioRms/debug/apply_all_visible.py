@@ -10,7 +10,14 @@ if TYPE_CHECKING:
 
 
 class ApplyAllVisible(ApplyDebug):
+    """
+
+    Fill the entire map with map revealers and add a unit for p1 to see everything immediately when testing
+
+    """
     def __init__(self, rms: 'AoE2ScenarioRms') -> None:
+        super().__init__(rms)
+
         mm, um, pm = rms.scenario.map_manager, rms.scenario.unit_manager, rms.scenario.player_manager
         pm.active_players = 1
 

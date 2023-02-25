@@ -55,3 +55,4 @@ class GridMapFactory:
 
         for tile in marked_tiles:
             grid_map.set(TileLevel.TERRAIN, tile)
+        return grid_map

@@ -20,10 +20,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - `AoE2ScenarioRms.mark_blocked_tiles(...)` was moved to `GridMapFactory.default(...)`
 - `AoE2ScenarioRms.clear_scenario(...)` was moved to `ScenarioUtil.clear(...)`
+- Debug classes now have to be applied manually just before `scenario.write_to_file(...)`
 
 ### Removed
 
-- `XsEntry` class 
+- `XsEntry` class due to being redundant when moving the `join_string` to a global state (which it should be) 
+- `Debug` class due to being redundant as the `ApplyDebug` classes can be used themselves. 
+- `AoE2ScenarioRms.write(...)` function due to now being done automatically when calling `scenario.write_to_file(...)`
 
 ---
 

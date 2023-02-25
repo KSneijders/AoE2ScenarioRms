@@ -1,7 +1,8 @@
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms import AoE2ScenarioRms
-from AoE2ScenarioRms.flags import ObjectClear, TerrainMark, ObjectMark, Debug
+from AoE2ScenarioRms.debug import ApplyAllVisible, ApplyNoClutter, ApplyXsPrint
+from AoE2ScenarioRms.flags import ObjectClear, TerrainMark, ObjectMark
 from AoE2ScenarioRms.util import ScenarioUtil, GridMapFactory
 from examples.create_objects import create_objects_config
 
@@ -10,9 +11,8 @@ filename = "SCENARIO_NAME_WITHOUT_EXT"
 folder_de = "FOLDER_PATH_WITH_TRAILING_SLASH"
 scenario = AoE2DEScenario.from_file(f"{folder_de}{filename}.aoe2scenario")
 
-# Give the scenario to the module and enable debug aspects.
-# Debug options (and their use-cases) can be found in the Debug class (see import)
-asr = AoE2ScenarioRms(scenario, debug=Debug.ALL_VISIBLE | Debug.XS_PRINT | Debug.NO_CLUTTER)
+# Give the scenario to the module
+asr = AoE2ScenarioRms(scenario)
 
 # Clear the scenario of all unwanted (some to be generated) objects (except for cliffs in this example)
 ScenarioUtil.clear(scenario, ObjectClear.ALL & ~ObjectClear.CLIFFS)
@@ -30,9 +30,12 @@ grid_map = GridMapFactory.default(
 # Throw in the create_object_config (Can be found in the other example file)
 asr.create_objects(grid_map, create_objects_config)
 
-# Write everything to a script and save it in the scenario (this will be changed in the future)
-script = asr.write()
-scenario.xs_manager.add_script(xs_string=script)
+# Apply debug options to the scenario.
+# These can only be applied at the end of the script (before scenario.write_to_file)
+# Please refer to the docstrings of these classes (and others) to see their use cases
+ApplyAllVisible(asr)
+ApplyNoClutter(asr)
+ApplyXsPrint(asr)
 
 # Write the scenario like normal
 scenario.write_to_file(f"{folder_de}!{filename}_written.aoe2scenario")
