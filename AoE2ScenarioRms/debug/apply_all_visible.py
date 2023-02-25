@@ -1,12 +1,16 @@
+from typing import TYPE_CHECKING
+
 from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.units import UnitInfo
 
-from AoE2ScenarioRms import AoE2ScenarioRms
 from AoE2ScenarioRms.debug.apply_debug import ApplyDebug
+
+if TYPE_CHECKING:
+    from AoE2ScenarioRms import AoE2ScenarioRms
 
 
 class ApplyAllVisible(ApplyDebug):
-    def __init__(self, rms: AoE2ScenarioRms) -> None:
+    def __init__(self, rms: 'AoE2ScenarioRms') -> None:
         mm, um, pm = rms.scenario.map_manager, rms.scenario.unit_manager, rms.scenario.player_manager
         pm.active_players = 1
 

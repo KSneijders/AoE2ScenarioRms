@@ -1,12 +1,16 @@
+from typing import TYPE_CHECKING
+
 from AoE2ScenarioParser.datasets.terrains import TerrainId
 from AoE2ScenarioParser.helper.helper import xy_to_i
 
-from AoE2ScenarioRms import AoE2ScenarioRms
 from AoE2ScenarioRms.debug.apply_debug import ApplyDebug
+
+if TYPE_CHECKING:
+    from AoE2ScenarioRms import AoE2ScenarioRms
 
 
 class ApplyBlockedAsBlack(ApplyDebug):
-    def __init__(self, rms: AoE2ScenarioRms) -> None:
+    def __init__(self, rms: 'AoE2ScenarioRms') -> None:
         mm = rms.scenario.map_manager
         map_size = mm.map_size
 

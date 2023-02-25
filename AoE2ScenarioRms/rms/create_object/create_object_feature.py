@@ -9,7 +9,7 @@ from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 from AoE2ScenarioRms.enums import XsKey
 from AoE2ScenarioRms.rms.create_object.create_object_config import CreateObjectConfig
 from AoE2ScenarioRms.rms.rms_feature import RmsFeature
-from AoE2ScenarioRms.util import XsUtil, XsContainer, XsEntry, Locator
+from AoE2ScenarioRms.util import XsUtil, XsContainer, Locator
 
 if TYPE_CHECKING:
     from AoE2ScenarioRms.util import GridMap
@@ -18,19 +18,7 @@ if TYPE_CHECKING:
 class CreateObjectFeature(RmsFeature):
 
     def __init__(self, scenario: AoE2DEScenario) -> None:
-        # @formatter:off
-        container = XsContainer({
-            XsKey.RESOURCE_VARIABLE_DECLARATION:                 XsEntry(),
-            XsKey.RESOURCE_GROUP_NAMES_DECLARATION:              XsEntry(join='\n\t'),
-            XsKey.RESOURCE_VARIABLE_COUNT:                       XsEntry(join=''),
-            XsKey.RESOURCE_COUNT_DECLARATION:                    XsEntry(join='\n\t'),
-            XsKey.RESOURCE_MAX_SPAWN_DECLARATION:                XsEntry(join='\n\t'),
-            XsKey.RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION:  XsEntry(join='\n\t'),
-            XsKey.RESOURCE_LOCATION_INJECTION:                   XsEntry(join='\n\t'),
-            XsKey.CONFIG_DECLARATION:                            XsEntry(join='\n\t'),
-            XsKey.AFTER_RESOURCE_SPAWN_EVENT:                    XsEntry(join='\n\t\t'),
-        })
-        # @formatter:on
+        container = XsContainer()
 
         super().__init__(scenario, container)
 

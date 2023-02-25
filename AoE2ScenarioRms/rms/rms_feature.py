@@ -2,7 +2,7 @@ from abc import abstractmethod
 
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from AoE2ScenarioRms.util.xs.xs_container import XsContainer
+from AoE2ScenarioRms.util.xs_container import XsContainer
 from AoE2ScenarioRms.util.grid_map import GridMap
 from AoE2ScenarioRms.rms.rms_config import RmsConfig
 

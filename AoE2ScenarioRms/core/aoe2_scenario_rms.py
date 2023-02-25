@@ -9,8 +9,7 @@ from AoE2ScenarioParser.objects.data_objects.unit import Unit
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from AoE2ScenarioRms.debug import ApplyBlockedAsBlack, ApplyAllVisible, ApplyXsPrint
-from AoE2ScenarioRms.debug.apply_no_clutter import ApplyNoClutter
+from AoE2ScenarioRms.debug import ApplyBlockedAsBlack, ApplyAllVisible, ApplyXsPrint, ApplyNoClutter
 from AoE2ScenarioRms.enums import TileLevel, XsKey
 from AoE2ScenarioRms.flags import ObjectClear, ObjectMark, TerrainMark, Debug
 from AoE2ScenarioRms.rms import CreateObjectConfig, CreateObjectFeature
