@@ -145,7 +145,7 @@ class CreateObjectConfig(RmsConfig):
 
     @staticmethod
     def _validate_name_unique(name: str) -> str:
-        xs_name = XsUtil.format_name(name)
+        xs_name = XsUtil.constant(name)
 
         if xs_name in CreateObjectConfig.unique_names:
             raise InvalidCreateObjectError(

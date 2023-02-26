@@ -6,7 +6,7 @@ from AoE2ScenarioParser.objects.support.tile import Tile
 
 
 class TileUtil:
-    _relative_adjacent = [(0, -1), (-1, 0), (0, 1), (1, 0)]
+    _relative_adjacent = [(0, -1), (-1, 0), (1, 0), (0, 1)]
 
     @staticmethod
     def adjacent(x: int | Tile, y: int | None = None):

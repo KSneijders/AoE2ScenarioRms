@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Changed
+
+- `XsUtil.read(...)` renamed to `XsUtil.file(...)`
+- `XsUtil.format_name(...)` renamed to `XsUtil.constant(...)`
+- `GridMap.reset_all(...)` renamed to `GridMap.set_all(...)`
+
+### Fixed
+
+- Issue with `Locator.find_random_tile_within_range(...)` using `random.randrange` (exclusive)
+
+---
+
 ## 0.1.0 - 2023-February-25 (Not released)
 
 ### Added

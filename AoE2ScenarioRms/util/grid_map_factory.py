@@ -4,7 +4,6 @@ from typing import List, Dict, Set
 
 from AoE2ScenarioParser.datasets.players import PlayerId
 from AoE2ScenarioParser.datasets.terrains import TerrainId
-from AoE2ScenarioParser.helper.helper import i_to_xy
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 

@@ -43,7 +43,7 @@ class AoE2ScenarioRms:
         original_write_to_file = self.scenario.write_to_file
 
         def write_to_file_wrapper(filename: str, skip_reconstruction: bool = False):
-            xs_string = self.xs_container.resolve(XsUtil.read('main.xs'))
+            xs_string = self.xs_container.resolve(XsUtil.file('main.xs'))
             self.scenario.xs_manager.add_script(xs_string=xs_string)
 
             original_write_to_file(filename, skip_reconstruction)

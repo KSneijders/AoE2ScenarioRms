@@ -122,4 +122,4 @@ class CreateObjectFeature(RmsFeature):
 
     @staticmethod
     def _name(create: CreateObjectConfig) -> str:
-        return f"____{XsUtil.format_name(create.name)}"
+        return f"____{XsUtil.constant(create.name)}"

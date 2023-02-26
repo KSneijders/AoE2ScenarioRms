@@ -5,7 +5,6 @@ from typing import Tuple, List, TYPE_CHECKING
 
 from AoE2ScenarioParser.helper.printers import warn
 from AoE2ScenarioParser.objects.support.tile import Tile
-from ordered_set import OrderedSet
 
 from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
 from AoE2ScenarioRms.errors import LocationNotFoundError, SpawnFailureWarning
@@ -69,7 +68,7 @@ class Locator:
 
         failed_spawns = 0
         for starting_tile in starting_tiles:
-            min_, size = self.get_random_size(self.group_size)
+            min_, size = self.randomize_group_size(self.group_size)
 
             group = [starting_tile]
             size -= 1
@@ -114,12 +113,13 @@ class Locator:
         return None
 
     def find_random_tile_within_range(self, tile: Tile, range_: int, group: List[Tile]) -> Tile | None:
-        x_offset = random.randrange(-range_, range_)
-        y_offset = random.randrange(-range_, range_)
+        for _ in range(10):
+            x_offset = random.randint(-range_, range_)
+            y_offset = random.randint(-range_, range_)
 
-        new_tile = Tile(tile.x + x_offset, tile.y + y_offset)
-        if new_tile not in group and self.grid_map.is_valid(TileLevel.RES, new_tile):
-            return new_tile
+            new_tile = Tile(tile.x + x_offset, tile.y + y_offset)
+            if new_tile not in group and self.grid_map.is_valid(TileLevel.RES, new_tile):
+                return new_tile
         return None
 
     def find_random_locations(self, count: int) -> List[Tile]:
@@ -166,7 +166,7 @@ class Locator:
                                     "Please verify that the map and settings allow enough room for all spawn attempts.")
 
     @staticmethod
-    def get_random_size(size: int | Tuple[int, int]) -> Tuple[int, int]:
+    def randomize_group_size(size: int | Tuple[int, int]) -> Tuple[int, int]:
         if isinstance(size, tuple):
             return size[0], random.randint(size[0], size[1])
         else:

@@ -19,5 +19,5 @@ class ApplyXsPrint(ApplyDebug):
 
         rms.xs_container.extend(
             XsKey.AFTER_RESOURCE_SPAWN_EVENT,
-            XsUtil.read('snippets/debug_print_info.xs').splitlines()
+            XsUtil.file('snippets/debug_print_info.xs').splitlines()
         )

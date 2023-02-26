@@ -14,7 +14,7 @@ class GridMap:
         self.map_size: int = map_size
         self.grid_map: List[List[TileLevel]] = []
 
-        self.reset_all(starting_state)
+        self.set_all(starting_state)
 
     def available_tiles(self, shuffle=False) -> List[Tile]:
         tiles = []
@@ -46,7 +46,7 @@ class GridMap:
     def reset(self, x: int | Tile, y: int = None) -> None:
         self.set(TileLevel.NONE, x, y)
 
-    def reset_all(self, state: TileLevel) -> None:
+    def set_all(self, state: TileLevel) -> None:
         self.grid_map = [[state for _ in range(self.map_size)] for _ in range(self.map_size)]
 
     def is_available(self, x: int | Tile, y: int = None) -> bool:
