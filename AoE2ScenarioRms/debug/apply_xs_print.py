@@ -14,6 +14,7 @@ class ApplyXsPrint(ApplyDebug):
     When testing (in game: load scenario > test), the amount of resources that were able to spawn is printed in the chat
 
     """
+
     def __init__(self, rms: 'AoE2ScenarioRms') -> None:
         super().__init__(rms)
 

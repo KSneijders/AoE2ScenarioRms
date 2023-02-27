@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Docstrings to all functions
+
 ### Changed
 
 - `XsUtil.read(...)` renamed to `XsUtil.file(...)`

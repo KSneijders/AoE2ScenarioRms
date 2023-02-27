@@ -8,6 +8,7 @@ from AoE2ScenarioRms.rms.rms_config import RmsConfig
 
 
 class RmsFeature:
+    """Super class for all RMS feature classes. Not (really) used (for now?)"""
     def __init__(self, scenario: AoE2DEScenario, xs_container: XsContainer) -> None:
         self.scenario: AoE2DEScenario = scenario
         self.xs_container: XsContainer = xs_container

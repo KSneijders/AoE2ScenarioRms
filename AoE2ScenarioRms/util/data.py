@@ -9,12 +9,24 @@ from AoE2ScenarioRms.flags.terrain_mark import TerrainMark
 
 
 class Data:
+    """
+    Static class that holds functions that return specific data, mainly IDs used for removal of objects or marking of a
+    scenario.
+    """
     @staticmethod
     def trees() -> List[int]:
+        """
+        Returns:
+            A list of all tree object IDs
+        """
         return [o.ID for o in OtherInfo.trees()]
 
     @staticmethod
     def cliffs() -> List[int]:
+        """
+        Returns:
+            A list of all cliff IDs
+        """
         return [
             264, 265, 266, 267, 268, 269, 270, 271, 272,
             1339, 1340, 1341, 1342, 1344, 1346
@@ -22,6 +34,13 @@ class Data:
 
     @staticmethod
     def get_terrain_ids_by_terrain_marks(marks: TerrainMark) -> List[TerrainId]:
+        """
+        Args:
+            marks: The marks to take into account
+
+        Returns:
+            A list of Terrain Ids based on the marks given
+        """
         ids: List[TerrainId] = []
 
         if TerrainMark.WATER in marks:
@@ -36,6 +55,13 @@ class Data:
 
     @staticmethod
     def get_object_consts_by_clear_options(clear: ObjectClear) -> List[int]:
+        """
+        Args:
+            clear: The ``ObjectClear`` configuration used for removing objects from a scenario
+
+        Returns:
+            A list of IDs of object consts used for the removal of objects
+        """
         consts: List[int] = []
 
         if ObjectClear.BOARS in clear:
@@ -72,7 +98,8 @@ class Data:
                 UnitInfo.WOLF.ID,
                 UnitInfo.JAGUAR.ID,
                 UnitInfo.LION.ID,
-                UnitInfo.SNOW_LEOPARD.ID
+                UnitInfo.SNOW_LEOPARD.ID,
+                UnitInfo.CROCODILE.ID,
             ])
 
         if ObjectClear.RELICS in clear:

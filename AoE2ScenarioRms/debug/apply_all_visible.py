@@ -15,6 +15,7 @@ class ApplyAllVisible(ApplyDebug):
     Fill the entire map with map revealers and add a unit for p1 to see everything immediately when testing
 
     """
+
     def __init__(self, rms: 'AoE2ScenarioRms') -> None:
         super().__init__(rms)
 

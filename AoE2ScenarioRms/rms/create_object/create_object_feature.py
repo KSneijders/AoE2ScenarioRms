@@ -20,11 +20,23 @@ class CreateObjectFeature(RmsFeature):
     unique_names = set()
 
     def __init__(self, scenario: AoE2DEScenario) -> None:
+        """
+        Class that manages the functionality behind implementing the create_object clause
+
+        Args:
+            scenario: The scenario to apply the configs to
+        """
         container = XsContainer()
 
         super().__init__(scenario, container)
 
     def init(self, config: CreateObjectConfig) -> None:
+        """
+        Initialize the 'create object' configurations. Setting XS initializers like variable and array definitions
+
+        Args:
+            config: The configs to be added
+        """
         name = self._name(config)
 
         self._validate_name_unique(name)
@@ -70,12 +82,18 @@ class CreateObjectFeature(RmsFeature):
         )
 
     def build(self, config: CreateObjectConfig, grid_map: 'GridMap') -> None:
+        """
+        Write the functional logic (triggers) for placing the objects. Also write the functional and conditional logic
+        for XS for the given configs.
+
+        Args:
+            config: The config to implement
+            grid_map: The GridMap to take into account when generating potential locations for groups
+        """
         tm, um = self.scenario.trigger_manager, self.scenario.unit_manager
         name = self._name(config)
 
-        groups = Locator\
-            .from_create_object_config(config, grid_map)\
-            .get_valid_tiles()
+        groups = Locator.create_groups(config, grid_map)
 
         for index, group in enumerate(groups):
             spawn_group = tm.add_trigger(f"Spawn {config.name} {index}/{len(groups)}")
@@ -105,6 +123,16 @@ class CreateObjectFeature(RmsFeature):
         )
 
     def solve(self, configs: List[CreateObjectConfig], grid_map: 'GridMap') -> XsContainer:
+        """
+        Execute the init and build steps in one go for each config given.
+
+        Args:
+            configs: The configs to implement
+            grid_map: The GridMap to take into account when generating potential locations for groups of configs
+
+        Returns:
+            The XsContainer with all generated XS
+        """
         for config_entry in configs:
             self.init(config_entry)
             self.build(config_entry, grid_map)
@@ -112,6 +140,15 @@ class CreateObjectFeature(RmsFeature):
 
     @staticmethod
     def _validate_name_unique(name: str) -> None:
+        """
+        Validate if the given name is unique compared to other names used
+
+        Args:
+            name: The name to validate
+
+        Raises:
+            InvalidCreateObjectError: If the given name has already been registered before in the scenario
+        """
         if name in CreateObjectConfig.unique_names:
             raise InvalidCreateObjectError(
                 f"A CreateObjectFeature with the name '{name}' was already initialized. "

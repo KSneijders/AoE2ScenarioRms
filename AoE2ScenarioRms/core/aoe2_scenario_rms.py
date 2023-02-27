@@ -10,7 +10,15 @@ from AoE2ScenarioRms.util import GridMap, XsContainer, XsUtil
 
 
 class AoE2ScenarioRms:
+
     def __init__(self, scenario: AoE2DEScenario):
+        """
+        Core class of this AoE2ScenarioParser plugin (?). Manages the 'overarching' functionality of adding RMS features to
+        the given scenario
+
+        Args:
+            scenario: The scenario to edit with this plugin (?)
+        """
         self.scenario: AoE2DEScenario = scenario
         self.xs_container: XsContainer = XsContainer()
         self._debug_applied = False
@@ -21,13 +29,27 @@ class AoE2ScenarioRms:
         self._register_scenario_write_to_file_event()
 
     def create_objects(self, configs: List[CreateObjectConfig], grid_map: GridMap) -> None:
+        """
+        Add a set of <create object> configs to your scenario. This represents the ``create_object`` blocks in the
+        ``<OBJECTS_GENERATION>`` section of an RMS script.
+
+        Args:
+            configs: The configs for this create object block
+            grid_map: The grid map marking the area where this block should (not) be applied
+        """
         self._verify_no_debug()
 
         create_objects = CreateObjectFeature(self.scenario)
         self.xs_container += create_objects.solve(configs, grid_map)
         self.xs_container.append(XsKey.RESOURCE_VARIABLE_COUNT, str(len(configs)))
-        
+
     def _verify_no_debug(self) -> None:
+        """
+        Verify if no debug classes have been applied to this scenario
+
+        Raises:
+            InvalidAoE2ScenarioRmsState: When debug functions have previously been applied to this scenario
+        """
         if self._debug_applied:
             raise InvalidAoE2ScenarioRmsState(
                 "Debug applied before RMS functionality is called. "
@@ -36,9 +58,8 @@ class AoE2ScenarioRms:
 
     def _register_scenario_write_to_file_event(self) -> None:
         """
-        Adds a unit to the bottom corner of the map.
-        Adds map-revealers through the entire map.
-        Disables other players, so they won't spawn units either.
+        Overwrites the ``write_to_file`` function of the scenario to add custom functionality like adding the necessary
+        XS scripts to the scenario.
         """
         original_write_to_file = self.scenario.write_to_file
 

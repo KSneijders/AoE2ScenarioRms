@@ -65,8 +65,8 @@ class GridMapFactory:
         mm, um = scenario.map_manager, scenario.unit_manager
         grid_map = GridMap(mm.map_size, starting_state)
 
-        terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.water_beach()
-        object_marks = object_marks if object_marks is not None else ObjectMark.all()
+        terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.WATER_BEACH
+        object_marks = object_marks if object_marks is not None else ObjectMark.ALL
         terrain_ids = terrain_ids if terrain_ids is not None else []
         object_consts = object_consts if object_consts is not None else {}
 

@@ -19,6 +19,15 @@ class ScenarioUtil:
             consts: List[int] = None,
             units: List[Unit] = None
     ) -> None:
+        """
+        Clear objects from a scenario to make place for randomized objects
+
+        Args:
+            scenario: The scenario to clear objects from
+            clear: The flag indicating what to clear and what to leave
+            consts: A list of object consts to clear on top of the clear flag
+            units: A list of unit objects to clear on top of the flag and consts
+        """
         um, mm = scenario.unit_manager, scenario.map_manager
 
         if clear is None:

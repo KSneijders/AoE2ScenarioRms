@@ -4,6 +4,10 @@ from enum import IntEnum
 
 
 class TileLevel(IntEnum):
+    """
+    Enum to differentiate between different levels a tile can be 'marked' for.
+    Necessity of this enum is arguable right now. Might be removed in the future.
+    """
     NONE = 0
     RES = 30
     TERRAIN = 50

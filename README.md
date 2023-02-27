@@ -26,8 +26,8 @@ Make sure `AoE2ScenarioParser` is installed: [link](https://github.com/KSneijder
 2. ~~Move XS logic to own class(es)~~
 3. ~~Move Debug logic to own class~~
 4. ~~Change `asr.write()` as triggers are always added directly, so why isn't the script?~~
-5. Add docs, docstrings and ~~tests~~
-6. ~~Allow XS to log the amount that spawned succesfully so you can limit the amount of spawns for performance~~
+5. ~~Add docs, docstrings and tests~~
+6. ~~Allow XS to log the amount that spawned succesfully, so you can limit the amount of spawns for performance~~
 7. More (?)
 
 ## Potential Ideas:

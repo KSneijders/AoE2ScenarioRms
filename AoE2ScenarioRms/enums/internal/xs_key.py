@@ -4,6 +4,10 @@ from enum import Enum, auto
 
 
 class XsKey(Enum):
+    """
+    Enum used to identify the different sections of an XS script that can be replaced.
+    Only really useful in conjunction with ``XsContainer``
+    """
     RESOURCE_VARIABLE_DECLARATION = auto()
     RESOURCE_VARIABLE_COUNT = auto()
     RESOURCE_COUNT_DECLARATION = auto()

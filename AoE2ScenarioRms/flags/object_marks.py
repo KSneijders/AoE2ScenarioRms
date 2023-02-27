@@ -4,9 +4,12 @@ from enum import IntFlag, auto
 
 
 class ObjectMark(IntFlag):
-    @staticmethod
-    def all() -> ObjectMark:
-        return ObjectMark.TREES | ObjectMark.CLIFFS
+    """Flag used for marking specific object related aspects of the map"""
 
     TREES = auto()
+    """Mark around all trees"""
     CLIFFS = auto()
+    """Mark around all cliffs"""
+
+    ALL = TREES | CLIFFS
+    """Mark trees and cliffs"""
