@@ -7,7 +7,7 @@ from AoE2ScenarioParser.helper.printers import warn
 from AoE2ScenarioParser.objects.support.tile import Tile
 
 from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
-from AoE2ScenarioRms.errors import LocationNotFoundError, SpawnFailureWarning
+from AoE2ScenarioRms.errors import SpawnFailureWarning
 from AoE2ScenarioRms.util.tile_util import TileUtil
 
 if TYPE_CHECKING:
@@ -39,7 +39,7 @@ class Locator:
         amount = config.max_potential_group_count
         name = config.name
 
-        tiles: List[List[Tile]] = []
+        groups: List[List[Tile]] = []
         if amount * 2 > len(available_tiles):
             warn(f"For group '{name}', the amount of groups requested is really high. "
                  f"({amount} groups compared to {len(available_tiles)} available tiles).\n"
@@ -55,110 +55,177 @@ class Locator:
             group = [starting_tile]
             size -= 1
 
-            failed_attempts = 0
-            while size > 0 and failed_attempts < 50:
-                nearby_tile = Locator.find_nearby_tile(grid_map, config.grouping, group, config.loose_grouping_distance)
+            group, success = Locator.find_group_tiles(
+                grid_map,
+                config.grouping,
+                size,
+                group,
+                loose_grouping_distance=config.loose_grouping_distance
+            )
 
-                if nearby_tile is not None:
-                    group.append(nearby_tile)
-                    size -= 1
-                else:
-                    failed_attempts += 1
-
-            if len(group) >= min_:
-                tiles.append(group)
-            else:
+            if len(group) < min_:
                 failed_spawns += 1
+                continue
+            groups.append(group)
 
         if failed_spawns and failed_spawns / amount > .1:
             warn(f"When generating group '{name}', out of the {amount} groups, {failed_spawns} failed. "
                  f"Consider lowering the max amount of necessary groups for '{name}'.", SpawnFailureWarning)
 
-        return tiles
+        return groups
 
     @staticmethod
-    def find_nearby_tile(
+    def find_group_tiles(
             grid_map: GridMap,
             method: GroupingMethod,
+            amount: int,
             group: List[Tile],
+            *,  # after this, kwarg only
             loose_grouping_distance: int = -1
-    ) -> Tile | None:
+    ) -> Tuple[List[Tile], bool]:
         """
-        Find a nearby tile with the given GridMap based on the method given.
+        Find tiles as a group based on the method of searching given through ``method``.
 
         Args:
             grid_map: The gridmap to respect
-            method: The method to use for choosing a GroupingMethod
-            group: The current tiles belonging to this group (to not return a tile twice)
-            loose_grouping_distance: The distance loosely grouped units have to be apart (only used for LOOSE grouping)
+            method: The method of searching of tiles to use
+            amount: The amount of tiles to return
+            group: The current ranged_tiles belonging to this group (to not return a tile twice)
+            loose_grouping_distance: The range in which to search for tiles, only used with: ``GroupingMethod.LOOSE``
 
         Returns:
-            The tile found or ``None`` if no tile was found (doesn't mean that there is no tile at all)
+            A tuple containing a list of tiles and a boolean indicating if the amount of tiles in the list is equal to
+            the amount requested
         """
         if method == GroupingMethod.TIGHT:
-            return Locator.find_random_adjacent_tile(grid_map, random.choice(group), group)
+            return Locator.find_random_adjacent_tiles(grid_map, amount, group)
         elif method == GroupingMethod.LOOSE:
-            return Locator.find_random_tile_within_range(grid_map, group[0], loose_grouping_distance, group)
-        else:
-            return None
+            return Locator.find_random_tiles_within_range(grid_map, amount, group, loose_grouping_distance)
+        return [], False
 
     @staticmethod
-    def find_random_adjacent_tile(
+    def find_random_adjacent_tiles(
             grid_map: GridMap,
-            tile: Tile,
+            amount: int,
             group: List[Tile]
-    ) -> Tile | None:
+    ) -> Tuple[List[Tile], bool]:
         """
-        Find a random adjacent tile (not diagonal) around the given tile
+        Find random adjacent tiles (not diagonal) around a given tile and tiles added to the group around the initial
+        tile.
 
         Args:
             grid_map: The gridmap to respect
-            tile: The tile to look around
-            group: The current tiles belonging to this group (to not return a tile twice)
+            amount: The maximum amount of tiles to return on top of the tiles from the given group,
+            group: The current tiles belonging to this group (to not return a tile twice). Has to include at least one
+                tile
 
         Returns:
-            A random tile around the given tile, or if all are invalid, returns ``None``
+            A tuple containing a list of tiles and a boolean indicating if the amount of tiles in the list is equal to
+            the amount requested
         """
-        offset = random.randrange(0, 4)
+        if amount == 0:
+            return group, True
 
-        tiles = TileUtil.adjacent(tile)
-        for i in range(4):
-            new_tile = tiles[(i + offset) % 4]
-            if new_tile not in group and grid_map.is_valid(TileLevel.RES, new_tile):
-                return new_tile
-        return None
+        goal = amount + len(group)
+
+        for _ in range(amount):
+            for tile in TileUtil.shuffled(group):
+                adjacent_tile = Locator._find_first_valid_in_list(grid_map, group, TileUtil.adjacent(tile))
+
+                if adjacent_tile:
+                    group.append(adjacent_tile)
+                    if len(group) == goal:
+                        return group, True
+                    break
+
+        return group, False
 
     @staticmethod
-    def find_random_tile_within_range(
+    def find_random_tiles_within_range(
             grid_map: GridMap,
-            tile: Tile,
-            range_: int,
+            amount: int,
             group: List[Tile],
-            attempts: int = 10,
-    ) -> Tile | None:
+            range_: int
+    ) -> Tuple[List[Tile], bool]:
         """
-        Find a random tile within a given range
+        Find random tiles within a given range around the center of the group
 
         Args:
             grid_map: The gridmap to respect
-            tile: The tile to look around
-            range_: The range in which to search for tiles
-            group: The current tiles belonging to this group (to not return a tile twice)
-            attempts: The amount of attempts to find a tile around a given tile
+            amount: The amount of tiles to return
+            range_: The range in which to search for ranged_tiles
+            group: The current ranged_tiles belonging to this group (to not return a tile twice)
 
         Returns:
-            A random tile around the given tile within a range. If all searches resulted in invalid tiles, None is
-            returned. This does not mean there's no tiles within the range.
+            A tuple containing a list of tiles and a boolean indicating if the amount of tiles in the list is equal to
+            the amount requested
         """
-        # Todo: Change to random.choice() to make sure `None` means no tiles are valid
-        for _ in range(attempts):
-            x_offset = random.randint(-range_, range_)
-            y_offset = random.randint(-range_, range_)
+        if amount == 0:
+            return group, True
 
-            new_tile = Tile(tile.x + x_offset, tile.y + y_offset)
-            if new_tile not in group and grid_map.is_valid(TileLevel.RES, new_tile):
-                return new_tile
-        return None
+        ranged_tiles = TileUtil.within_range(group[0], range_=range_)
+        tiles, success = Locator._find_valid_in_list(grid_map, group, ranged_tiles, amount)
+
+        if success:
+            return group + tiles, True
+
+        return group, False
+
+    @staticmethod
+    def _find_first_valid_in_list(
+            grid_map: GridMap,
+            group: List[Tile],
+            lst: List[Tile],
+            *,
+            shuffled: bool = True
+    ) -> Tile | None:
+        """
+        Same as ``_find_valid_in_list`` but only requests one and returns that without the list.
+
+        Args:
+            grid_map: The gridmap to respect
+            group: The current group (to avoid returning a tile twice)
+            lst: The source list to get the tiles from
+            shuffled: If the list should be shuffled before it's checked (meaning: random result)
+
+        Returns:
+            The first tile from the list or None if nothing was found
+        """
+        tiles, success = Locator._find_valid_in_list(grid_map, group, lst, 1, shuffled=shuffled)
+        return tiles[0] if success else None
+
+    @staticmethod
+    def _find_valid_in_list(
+            grid_map: GridMap,
+            group: List[Tile],
+            lst: List[Tile],
+            amount: int = 1,
+            *,
+            shuffled: bool = True,
+    ) -> Tuple[List[Tile], bool]:
+        """
+        Find random tiles within a given list
+
+        Args:
+            grid_map: The gridmap to respect
+            group: The current group (to avoid returning a tile twice)
+            lst: The source list to get the tiles from
+            amount: The amount of tiles to return
+            shuffled: If the list should be shuffled before it's checked (meaning: shuffled result)
+
+        Returns:
+            A tuple containing a list of tiles and a boolean indicating if the amount of tiles in the list is equal to
+            the amount requested
+        """
+        tiles = []
+
+        lst = TileUtil.shuffled(lst) if shuffled else lst
+        for adjacent_tile in lst:
+            if adjacent_tile not in group and grid_map.is_valid(TileLevel.RES, adjacent_tile):
+                tiles.append(adjacent_tile)
+                if len(tiles) == amount:
+                    return tiles, True
+        return [], False
 
     @staticmethod
     def randomize_group_size(size: int | Tuple[int, int]) -> Tuple[int, int]:

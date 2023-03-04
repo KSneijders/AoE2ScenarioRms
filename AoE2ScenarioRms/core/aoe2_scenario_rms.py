@@ -41,7 +41,6 @@ class AoE2ScenarioRms:
 
         create_objects = CreateObjectFeature(self.scenario)
         self.xs_container += create_objects.solve(configs, grid_map)
-        self.xs_container.append(XsKey.RESOURCE_VARIABLE_COUNT, str(len(configs)))
 
     def _verify_no_debug(self) -> None:
         """
@@ -64,6 +63,9 @@ class AoE2ScenarioRms:
         original_write_to_file = self.scenario.write_to_file
 
         def write_to_file_wrapper(filename: str, skip_reconstruction: bool = False):
+            variable_count = str(len(self.xs_container.get(XsKey.RESOURCE_VARIABLE_DECLARATION)))
+            self.xs_container.append(XsKey.RESOURCE_VARIABLE_COUNT, variable_count)
+
             xs_string = self.xs_container.resolve(XsUtil.file('main.xs'))
             self.scenario.xs_manager.add_script(xs_string=xs_string)
 

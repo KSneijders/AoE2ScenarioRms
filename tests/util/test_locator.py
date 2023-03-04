@@ -1,6 +1,7 @@
 import random
 
 import pytest
+from AoE2ScenarioParser.helper.pretty_format import pretty_format_list
 from AoE2ScenarioParser.objects.support.tile import Tile
 
 from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
@@ -36,6 +37,9 @@ def test_locator_get_valid_tiles(create_object_config: CreateObjectConfig, grid_
     create_object_config.max_potential_group_count = 15
     groups = Locator.create_groups(create_object_config, grid_map)
 
+    print('\n\n\n')
+    print(pretty_format_list(groups))
+
     sum_ = sum([len(e) for e in groups])
     assert sum_ == 60  # 15 groups of 4
 
@@ -45,41 +49,27 @@ def test_locator_get_valid_tiles(create_object_config: CreateObjectConfig, grid_
 
 
 def test_locator_find_random_adjacent_tile(grid_map: GridMap):
-    adjacent = set(TileUtil.adjacent(Tile(3, 3)))
-    tiles = set()
-    for _ in range(20):
-        tiles.add(Locator.find_random_adjacent_tile(grid_map, Tile(3, 3), [Tile(3, 3)]))
-    assert tiles == adjacent
+    tiles, success = Locator.find_random_adjacent_tiles(grid_map, 4, [Tile(3, 3)])
+    assert success
+    assert len(tiles) == 5
 
-    # Test if it cannot get tile that is already in group
-    adjacent.remove(Tile(3, 2))
-    tiles = set()
-    for _ in range(20):
-        tiles.add(Locator.find_random_adjacent_tile(grid_map, Tile(3, 3), [Tile(3, 2)]))
-    assert tiles == adjacent
+    # Test that group gets bigger if starting group is bigger
+    tiles, success = Locator.find_random_adjacent_tiles(grid_map, 4, [Tile(3, 3), Tile(2, 3)])
+    assert success
+    assert len(tiles) == 6
 
     # Test that it won't return tiles over map edge or on blocked terrain (x=*, y=1)
-    adjacent = {Tile(3, 2), Tile(4, 3)}
-    tiles = set()
-    for _ in range(20):
-        tiles.add(Locator.find_random_adjacent_tile(grid_map, Tile(4, 2), [Tile(4, 2)]))
-    assert tiles == adjacent
-
-    # Test that it returns None when it can't find any tile
-    assert Locator.find_random_adjacent_tile(grid_map, Tile(0, 0), [Tile(0, 0), Tile(1, 0)]) is None
+    tiles, success = Locator.find_random_adjacent_tiles(grid_map, 4, [Tile(0, 0)])
+    assert success
+    assert tiles == [Tile(i, 0) for i in range(grid_map.map_size)]
 
 
 def test_locator_find_random_tile_within_range(grid_map: GridMap):
-    adjacent = {Tile(x, y) for x in range(2, 5) for y in range(2, 5) if x != 3 or y != 3}
-    tiles = set()
-    success = 0
-    while success < 100:
-        tile = Locator.find_random_tile_within_range(grid_map, Tile(3, 3), 1, [Tile(3, 3)])
+    adjacent = {Tile(x, y) for x in range(2, 5) for y in range(2, 5)}
+    tiles, success = Locator.find_random_tiles_within_range(grid_map, 8, [Tile(3, 3)], 1)
+    tiles = set(tiles)
 
-        if tile is not None:
-            success += 1
-            tiles.add(tile)
-
+    assert success
     assert tiles == adjacent
 
 

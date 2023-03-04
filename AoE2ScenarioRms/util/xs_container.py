@@ -73,6 +73,10 @@ class XsContainer:
         """Initialize (reset) a certain key"""
         self.set(key, [])
 
+    def get(self, key: XsKey) -> List[str]:
+        """Set an entry to a given value"""
+        return self.entries[key]
+
     def set(self, key: XsKey, value: List[str]) -> None:
         """Set an entry to a given value"""
         self.entries[key] = value

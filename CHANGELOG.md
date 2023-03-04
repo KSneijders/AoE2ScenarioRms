@@ -14,16 +14,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Docstrings to all functions
+- `TileUtil.within_range(...)` function to get all tiles that are within a range of a given tile
 
 ### Changed
 
 - `XsUtil.read(...)` renamed to `XsUtil.file(...)`
 - `XsUtil.format_name(...)` renamed to `XsUtil.constant(...)`
 - `GridMap.reset_all(...)` renamed to `GridMap.set_all(...)`
+- `Locator.find_...(...)` functions all return `List[Tile], bool` instead of `Tile|None`
+- `Locator.find_...(...)` functions no longer use random guessing anymore, all tiles are shuffled and looped through for consistent 100% coverage
 
 ### Fixed
 
 - Issue with `Locator.find_random_tile_within_range(...)` using `random.randrange` (exclusive)
+- Issue with multiple `create_objects` appending their counts instead of counting the total
 
 ---
 
