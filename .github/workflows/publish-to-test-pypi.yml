@@ -1,6 +1,9 @@
 name: Publish AoE2ScenarioRms 📦 to PyPI and TestPyPI
 
-on: push
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   build-n-publish:
