@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "AoE2ScenarioRms"
+version = "0.2.0"
+authors = [
+    { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
+]
+description = """A library built on top of the AoE2ScenarioParser.
+    Allows you to add triggers and XS to your AoE2:DE scenarios
+    which will add logic to allow for random resource placements each play-through
+"""
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"
+"Bug Tracker" = "https://github.com/KSneijders/AoE2ScenarioRms/issues"
+"Examples" = "https://github.com/KSneijders/AoE2ScenarioRms/tree/main/examples"
