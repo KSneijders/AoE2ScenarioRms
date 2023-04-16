@@ -3,7 +3,7 @@ name: Publish AoE2ScenarioRms 📦 to PyPI and TestPyPI
 on:
   push:
     branches:
-      - release
+      - main
 
 jobs:
   build-n-publish:

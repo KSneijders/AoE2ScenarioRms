@@ -17,6 +17,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.2.2 - 2023-April-16
+
+> Release test
+
+---
+
 ## 0.2.1 - 2023-April-16
 
 ### Fixed
@@ -48,7 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 0.1.0 - 2023-February-25 (Not released)
+## 0.1.0 - 2023-February-25 (Not on PyPI)
 
 ### Added
 
@@ -78,7 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 0.0.2 - 2023-February-23 (Not released)
+## 0.0.2 - 2023-February-23 (Not on PyPI)
 
 ### Added
 
@@ -95,7 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 0.0.1 - 2023-February-22 (Not released)
+## 0.0.1 - 2023-February-22 (Not on PyPI)
 
 - Official start of this package. (No longer just a script)
 

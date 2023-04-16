@@ -1,3 +1,2 @@
 from .core import AoE2ScenarioRms
-
-VERSION = (0, 2, 1)
+from .version import VERSION, __version__
