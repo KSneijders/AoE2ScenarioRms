@@ -17,9 +17,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 0.2.2 - 2023-April-16
+## 0.2.5 - 2023-April-16
 
-> Release test
+> `0.2.2`, `0.2.3`, `0.2.4` & `0.2.5` were just release tests
 
 ---
 

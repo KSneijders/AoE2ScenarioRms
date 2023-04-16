@@ -29,7 +29,7 @@ If you have the library already installed, you can use the following command to 
 pip install --no-cache-dir --upgrade AoE2ScenarioRms
 ```
 
-To read about the changes between versions, checkout the [changelog.md](./CHANGELOG.md) file.
+To read about the changes between versions, checkout the [CHANGELOG.md](./CHANGELOG.md) file.
 
 ## How to get started
 
