@@ -108,7 +108,7 @@ class CreateObjectConfig(RmsConfig):
             grouping: GroupingMethod = GroupingMethod.TIGHT,
             number_of_objects: int | tuple[int, int] = 1,
             group_placement_radius: int = 3,
-            number_of_groups: float = 999_999_999,  # Cannot be math.inf as it's `str(...)` is used within xs
+            number_of_groups: float = 999_999_999,  # Cannot be math.inf as `str(...)` is used within xs
             loose_grouping_distance: int = None,
             min_distance_group_placement: int = 4,
             temp_min_distance_group_placement: int = 20,
@@ -118,6 +118,7 @@ class CreateObjectConfig(RmsConfig):
             # ----- Meta Data -----
             object_size=1,
 
+            # ----- Debug & Parser -----
             _max_potential_group_count: int = 250,
             _debug_place_all: bool = False
     ):

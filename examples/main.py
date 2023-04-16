@@ -25,7 +25,7 @@ ScenarioUtil.clear(scenario, ObjectClear.ALL & ~ObjectClear.CLIFFS)
 # On top of that, all trees (forests) and cliffs are also blocked with a radius of 1 around them (default)
 grid_map = GridMapFactory.block(
     scenario=scenario,
-    terrain_marks=TerrainMark.WATER__SHORE_BEACH,
+    terrain_marks=TerrainMark.WATER_SHORE_BEACH,
     object_marks=ObjectMark.ALL,
 )
 # Throw in the create_object_config (Can be found in the other example file) to start calculating spawn positions

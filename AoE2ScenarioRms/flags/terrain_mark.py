@@ -17,9 +17,9 @@ class TerrainMark(IntFlag):
     LAND = auto()
     """Mark everything that is not water, shore or beach tiles."""
 
-    WATER__SHORE_BEACH = WATER | SHORE | BEACH
+    WATER_SHORE_BEACH = WATER | SHORE | BEACH
     """Mark the water, shore and beach tiles"""
-    ALL = WATER__SHORE_BEACH | LAND
+    ALL = WATER_SHORE_BEACH | LAND
     """
     Mark everything...... Nice and pointless... Why would you need this? 11
     

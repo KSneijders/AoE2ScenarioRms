@@ -17,7 +17,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 0.2.0 - 2023-April-16 (Not released)
+## 0.2.1 - 2023-April-16
+
+### Fixed
+
+- Typo in name `TerrainMark.WATER_SHORE_BEACH`
+
+---
+
+## 0.2.0 - 2023-April-16
 
 ### Added
 
