@@ -5,7 +5,7 @@ from AoE2ScenarioRms import AoE2ScenarioRms
 from AoE2ScenarioRms.debug import ApplyAllVisible, ApplyNoClutter, ApplyXsPrint
 from AoE2ScenarioRms.flags import ObjectClear, TerrainMark, ObjectMark
 from AoE2ScenarioRms.util import ScenarioUtil, GridMapFactory
-from examples.create_objects import create_objects_config, create_objects_config_shore_fish, \
+from examples.create_objects_config import create_objects_config, create_objects_config_shore_fish, \
     create_objects_config_deep_fish
 
 # Read scenario like usual
