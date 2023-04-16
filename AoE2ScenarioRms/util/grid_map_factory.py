@@ -23,7 +23,7 @@ class GridMapFactory:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
-    ):
+    ) -> GridMap:
         return GridMapFactory.mark(
             scenario=scenario,
             block_marked_tiles=False,
@@ -40,7 +40,7 @@ class GridMapFactory:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
-    ):
+    ) -> GridMap:
         return GridMapFactory.mark(
             scenario=scenario,
             block_marked_tiles=True,
@@ -58,15 +58,15 @@ class GridMapFactory:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
-    ):
+    ) -> GridMap:
         starting_state = TileLevel.NONE if block_marked_tiles else TileLevel.TERRAIN
         set_marked_state = TileLevel.TERRAIN if block_marked_tiles else TileLevel.NONE
 
         mm, um = scenario.map_manager, scenario.unit_manager
         grid_map = GridMap(mm.map_size, starting_state)
 
-        terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.WATER_BEACH
-        object_marks = object_marks if object_marks is not None else ObjectMark.ALL
+        terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.NONE
+        object_marks = object_marks if object_marks is not None else ObjectMark.NONE
         terrain_ids = terrain_ids if terrain_ids is not None else []
         object_consts = object_consts if object_consts is not None else {}
 
@@ -92,6 +92,8 @@ class GridMapFactory:
 
             if requested_water_but_not_shore:
                 marked_tiles = marked_tiles.difference(shore_tiles)
+            else:
+                marked_tiles.update(shore_tiles)
 
         # Mark everything around trees and cliffs and optionally given consts
         trees, cliffs = Data.trees(), Data.cliffs()

@@ -3,6 +3,7 @@ from __future__ import annotations
 import random
 from typing import List
 
+from AoE2ScenarioParser.objects.support.area import Area
 from AoE2ScenarioParser.objects.support.tile import Tile
 
 from AoE2ScenarioRms.enums import TileLevel
@@ -24,11 +25,12 @@ class GridMap:
 
         self.set_all(starting_state)
 
-    def available_tiles(self, shuffle=False) -> List[Tile]:
+    def available_tiles(self, size=1, shuffle=False) -> List[Tile]:
         """
         Get all tiles available for resource spawning. Can be shuffled if necessary
 
         Args:
+            size: The size of the object
             shuffle: If the resulting array should be returned shuffled or not
 
         Returns:
@@ -37,11 +39,27 @@ class GridMap:
         tiles = []
         for y in range(self.map_size):
             for x in range(self.map_size):
-                if self.is_available(x, y):
+                if self.is_available_size(size, x, y):
                     tiles.append(Tile(x, y))
         if shuffle:
             random.shuffle(tiles)
         return tiles
+
+    def is_available_size(self, size: int, x: int | Tile, y: int = None) -> bool:
+        """Check if a tile and tiles around it are available within a given size"""
+        x, y = TileUtil.coords(x, y)
+        if size == 1:
+            return self.is_available(x, y)
+
+        area = Area(map_size=self.map_size, x1=x, y1=y).size(size)
+        # If the area selection went below zero the 'area' gets cut off. This verifies that that didn't happen
+        if area.get_width() != size or area.get_height() != size:
+            return False
+
+        for tile in area.to_coords():
+            if self.is_blocked(tile):
+                return False
+        return True
 
     def invert(self) -> GridMap:
         """

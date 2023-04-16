@@ -71,6 +71,19 @@ class CreateObjectConfig(RmsConfig):
 
     ----
 
+    MetaData
+
+    ----
+
+    These configuration settings are necessary for the spawning of the objects or the processes around it
+
+    **object_size**:
+        The size of the object, a unit is 1x1 so this can be left blank as 1 is the default, a house is 2x2 so set this
+        to 2. Farm is 3x3 so set this to 3 etc. -- If this isn't properly configured the grid map might not be taken
+        into account properly.
+
+    ----
+
     Parser related configurations
 
     ----
@@ -101,6 +114,9 @@ class CreateObjectConfig(RmsConfig):
             temp_min_distance_group_placement: int = 20,
             min_distance_to_map_edge: int = 0,
             scale_to_player_number: bool = False,
+
+            # ----- Meta Data -----
+            object_size=1,
 
             _max_potential_group_count: int = 250,
             _debug_place_all: bool = False
@@ -137,6 +153,8 @@ class CreateObjectConfig(RmsConfig):
         self.temp_min_distance_group_placement: int = temp_min_distance_group_placement
         self.min_distance_to_map_edge: int = min_distance_to_map_edge  # Todo: Implement
         self.scale_to_player_number: bool = scale_to_player_number
+
+        self.object_size = object_size
 
         self.max_potential_group_count: int = _max_potential_group_count
         self.debug_place_all: bool = _debug_place_all

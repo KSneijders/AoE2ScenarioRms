@@ -6,6 +6,8 @@ from enum import IntFlag, auto
 class ObjectMark(IntFlag):
     """Flag used for marking specific object related aspects of the map"""
 
+    NONE = auto()
+    """Mark nothing"""
     TREES = auto()
     """Mark around all trees"""
     CLIFFS = auto()

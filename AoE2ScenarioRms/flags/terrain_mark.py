@@ -6,18 +6,20 @@ from enum import IntFlag, auto
 class TerrainMark(IntFlag):
     """Flag used for marking specific object related aspects of the map"""
 
+    NONE = auto()
+    """Mark nothing"""
     WATER = auto()
-    """Mark all water (excluding the shore line, first line of water next to the beach)"""
+    """Mark all water (excluding the shore line -> the first line of water next to the beach)"""
     BEACH = auto()
     """Mark all beach tiles"""
     SHORE = auto()
-    """Mark the shore line (first line of water around the beach tiles)"""
+    """Mark the shore line -> the first line of water next to the beach"""
     LAND = auto()
-    """Mark everything that is not water or beach tiles."""
+    """Mark everything that is not water, shore or beach tiles."""
 
-    WATER_BEACH = WATER | SHORE | BEACH
+    WATER__SHORE_BEACH = WATER | SHORE | BEACH
     """Mark the water, shore and beach tiles"""
-    ALL = WATER_BEACH | LAND
+    ALL = WATER__SHORE_BEACH | LAND
     """
     Mark everything...... Nice and pointless... Why would you need this? 11
     

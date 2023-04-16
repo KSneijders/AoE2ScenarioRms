@@ -34,7 +34,7 @@ class Locator:
         Returns:
             A list of groups. Each group is also a list of tiles.
         """
-        available_tiles = grid_map.available_tiles(shuffle=True)
+        available_tiles = grid_map.available_tiles(size=config.object_size, shuffle=True)
 
         amount = config.max_potential_group_count
         name = config.name

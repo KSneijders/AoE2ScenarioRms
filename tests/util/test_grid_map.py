@@ -92,3 +92,87 @@ def test_grid_map_available_tiles():
     grid_map.grid_map[3][3] = TileLevel.NONE
 
     assert grid_map.available_tiles() == [Tile(0, 0), Tile(1, 1), Tile(2, 2), Tile(3, 3)]
+
+
+def test_grid_map_is_available_size():
+    grid_map = GridMap(5, TileLevel.NONE)
+
+    # Overflow top, left, bottom, right of the grid (in that order)
+    assert grid_map.is_available_size(size=2, x=2, y=0) is False
+    assert grid_map.is_available_size(size=2, x=0, y=2) is False
+    assert grid_map.is_available_size(size=3, x=2, y=4) is False  # Size has to be 3 because of rounding
+    assert grid_map.is_available_size(size=3, x=4, y=2) is False  # Size has to be 3 because of rounding
+
+    # . = available; # = blocked; X = Spawn Attempt; @ = Blocked Spawn Attempt
+    # _____________
+    # | X X X X X |
+    # | X X X X X |
+    # | X X X X X |
+    # | X X X X X |
+    # | X X X X X |
+    assert grid_map.is_available_size(size=5, x=2, y=2)
+    assert grid_map.is_available_size(size=6, x=2, y=2) is False  # Size overflows the map
+    assert grid_map.is_available_size(size=7, x=2, y=2) is False  # Size overflows the map
+
+    grid_map.grid_map[0][0] = TileLevel.TERRAIN
+
+    # _____________
+    # | @ X X X X |
+    # | X X X X X |
+    # | X X X X X |
+    # | X X X X X |
+    # | X X X X X |
+    assert grid_map.is_available_size(size=5, x=2, y=2) is False
+
+    # _____________
+    # | @ X X X . |
+    # | X X X X . |
+    # | X X X X . |
+    # | X X X X . |
+    # | . . . . . |
+    assert grid_map.is_available_size(size=4, x=2, y=2) is False
+
+    grid_map.grid_map[1][1] = TileLevel.TERRAIN
+    grid_map.grid_map[2][2] = TileLevel.TERRAIN
+    grid_map.grid_map[3][3] = TileLevel.TERRAIN
+
+    # _____________
+    # | # . X X . |
+    # | . # X X . |
+    # | . . # . . |
+    # | . . . # . |
+    # | . . . . . |
+    assert grid_map.is_available_size(size=2, x=3, y=1)
+
+    # _____________
+    # | # . . . . |
+    # | . # . . . |
+    # | . . # . . |
+    # | . X X # . |
+    # | . X X . . |
+    assert grid_map.is_available_size(size=2, x=2, y=4)
+
+    # _____________
+    # | # . . . . |
+    # | . # . . . |
+    # | . . # . . |
+    # | . . . @ X |
+    # | . . . X X |
+    assert grid_map.is_available_size(size=2, x=4, y=4) is False
+
+    # _____________
+    # | # . . . . |
+    # | . # . . . |
+    # | X X @ . . |
+    # | X X X # . |
+    # | X X X . . |
+    assert grid_map.is_available_size(size=3, x=1, y=3) is False
+
+    # _____________
+    # | # . . . . |
+    # | . # . . . |
+    # | X X X . . |
+    # | X X X # . |
+    # | X X X . . |
+    grid_map.grid_map[2][2] = TileLevel.NONE
+    assert grid_map.is_available_size(size=3, x=1, y=3)

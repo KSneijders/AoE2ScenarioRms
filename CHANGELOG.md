@@ -7,14 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 
+[//]: # (---)
+
+[//]: # ()
+[//]: # (## [Unreleased])
+
+[//]: # ()
+[//]: # (- ...)
+
 ---
 
-## [Unreleased]
+## 0.2.0 - 2023-April-16 (Not released)
 
 ### Added
 
 - Docstrings to all functions
 - `TileUtil.within_range(...)` function to get all tiles that are within a range of a given tile
+- Support for objects bigger than 1x1! (Use the `object_size` config option)
 
 ### Changed
 

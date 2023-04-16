@@ -82,6 +82,7 @@ create_objects_config_shore_fish: List[CreateObjectConfig] = [
 create_objects_config_deep_fish: List[CreateObjectConfig] = [
     CreateObjectConfig(
         name='deep fish',
+        object_size=2,
         const=[
             OtherInfo.FISH_TUNA.ID,
             OtherInfo.FISH_PERCH.ID,

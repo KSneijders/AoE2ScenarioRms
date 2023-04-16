@@ -1,3 +1,4 @@
+from AoE2ScenarioParser.datasets.terrains import TerrainId
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms import AoE2ScenarioRms
@@ -24,7 +25,7 @@ ScenarioUtil.clear(scenario, ObjectClear.ALL & ~ObjectClear.CLIFFS)
 # On top of that, all trees (forests) and cliffs are also blocked with a radius of 1 around them (default)
 grid_map = GridMapFactory.block(
     scenario=scenario,
-    terrain_marks=TerrainMark.WATER_BEACH,
+    terrain_marks=TerrainMark.WATER__SHORE_BEACH,
     object_marks=ObjectMark.ALL,
 )
 # Throw in the create_object_config (Can be found in the other example file) to start calculating spawn positions
@@ -41,12 +42,14 @@ grid_map = GridMapFactory.select(
 )
 asr.create_objects(create_objects_config_shore_fish, grid_map)
 
-# Get only the water and place the deep fish in there.
-# PLEASE NOTE: PLACING NON 1X1 OBJECTS IS CURRENTLY NOT TAKEN INTO ACCOUNT WHEN PLACING. (This is a known issue)
-# So even though the selection does NOT include TerrainMark.SHORE, deep fish can sometimes still be reached by vills
+# Select only the deep water and place the deep fish in there.
 grid_map = GridMapFactory.select(
     scenario=scenario,
-    terrain_marks=TerrainMark.WATER,
+    terrain_ids=[
+        TerrainId.WATER_DEEP_OCEAN,
+        TerrainId.WATER_DEEP,
+        TerrainId.WATER_MEDIUM,
+    ]
 )
 asr.create_objects(create_objects_config_deep_fish, grid_map)
 
