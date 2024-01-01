@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.6"  # << Also change `AoE2ScenarioRms/version.py`
+version = "0.2.7"  # << Also change `AoE2ScenarioRms/version.py`
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
