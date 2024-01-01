@@ -8,9 +8,7 @@ version = "0.2.6"  # << Also change `AoE2ScenarioRms/version.py`
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
-description = """
-    Add replay-ability to scenarios through random resource placement using triggers & XS!
-"""
+description = """Add replay-ability to scenarios through random resource placement using triggers & XS!"""
 readme = "README.md"
 requires-python = ">=3.8"
 classifiers = [
@@ -23,3 +21,4 @@ classifiers = [
 "Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"
 "Bug Tracker" = "https://github.com/KSneijders/AoE2ScenarioRms/issues"
 "Examples" = "https://github.com/KSneijders/AoE2ScenarioRms/tree/main/examples"
+"Changelog" = "https://github.com/KSneijders/AoE2ScenarioRms/blob/main/CHANGELOG.md"
