@@ -4,6 +4,7 @@ from typing import List, Dict, Set
 
 from AoE2ScenarioParser.datasets.players import PlayerId
 from AoE2ScenarioParser.datasets.terrains import TerrainId
+from AoE2ScenarioParser.objects.support.area import Area
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
@@ -23,6 +24,7 @@ class GridMapFactory:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
+            area: Area = None
     ) -> GridMap:
         return GridMapFactory.mark(
             scenario=scenario,
@@ -31,6 +33,7 @@ class GridMapFactory:
             object_marks=object_marks,
             terrain_ids=terrain_ids,
             object_consts=object_consts,
+            area=area,
         )
 
     @staticmethod
@@ -40,6 +43,7 @@ class GridMapFactory:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
+            area: Area = None
     ) -> GridMap:
         return GridMapFactory.mark(
             scenario=scenario,
@@ -48,6 +52,7 @@ class GridMapFactory:
             object_marks=object_marks,
             terrain_ids=terrain_ids,
             object_consts=object_consts,
+            area=area,
         )
 
     @staticmethod
@@ -58,6 +63,7 @@ class GridMapFactory:
             object_marks: ObjectMark = None,
             terrain_ids: List[TerrainId] = None,
             object_consts: Dict[int, int] = None,
+            area: Area = None
     ) -> GridMap:
         starting_state = TileLevel.NONE if block_marked_tiles else TileLevel.TERRAIN
         set_marked_state = TileLevel.TERRAIN if block_marked_tiles else TileLevel.NONE
@@ -77,6 +83,10 @@ class GridMapFactory:
             for t in mm.terrain:
                 if t.terrain_id in terrain_ids:
                     marked_tiles.add(Tile(*t.xy))
+
+        # Mark all tiles selected by an area
+        if isinstance(area, Area):
+            marked_tiles.update(area.to_coords())
 
         # Mark all shores
         requested_water_but_not_shore = TerrainMark.WATER in terrain_marks and TerrainMark.SHORE not in terrain_marks
