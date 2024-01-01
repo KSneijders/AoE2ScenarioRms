@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0"]
+requires = ["setuptools>=61.0", "AoE2ScenarioParser>=0.1.60"]
 build-backend = "setuptools.build_meta"
 
 [project]
