@@ -17,6 +17,9 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
+[tool.setuptools.packages.find]
+where = ["AoE2ScenarioRms"]
+
 [project.urls]
 "Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"
 "Bug Tracker" = "https://github.com/KSneijders/AoE2ScenarioRms/issues"
