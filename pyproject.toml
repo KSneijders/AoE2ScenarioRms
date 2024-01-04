@@ -1,6 +1,6 @@
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.16"  # << Also change `AoE2ScenarioRms/version.py`
+version = "0.2.17"  # << Also change `AoE2ScenarioRms/version.py`
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
@@ -28,4 +28,4 @@ build-backend = "setuptools.build_meta"
 include = ["AoE2ScenarioRms*"]
 
 [tool.setuptools.package-data]
-AoE2ScenarioRms = ["xs/**.xs"]
+AoE2ScenarioRms = [".xs"]
