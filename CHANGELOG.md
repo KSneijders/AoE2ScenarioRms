@@ -17,13 +17,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## 0.2.14 - 2024-Januari-04
+## 0.2.19 - 2024-Januari-04
 
 ### Fixed
 
 - Missing `xs` files from the python package
 
-> `0.2.8`, `0.2.9`, `0.2.10`, `0.2.11`, `0.2.12` & `0.2.13` were release tests
+> All releases from `0.2.8` to `0.2.19` were release tests
 
 ---
 
