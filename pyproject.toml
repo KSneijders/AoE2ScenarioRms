@@ -1,10 +1,6 @@
-[build-system]
-requires = ["setuptools>=61.0", "AoE2ScenarioParser>=0.1.60"]
-build-backend = "setuptools.build_meta"
-
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.15"  # << Also change `AoE2ScenarioRms/version.py`
+version = "0.2.16"  # << Also change `AoE2ScenarioRms/version.py`
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
@@ -16,6 +12,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
+dependencies = ["AoE2ScenarioParser>=0.1.60"]
 
 [project.urls]
 "Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"
@@ -23,5 +20,12 @@ classifiers = [
 "Examples" = "https://github.com/KSneijders/AoE2ScenarioRms/tree/main/examples"
 "Changelog" = "https://github.com/KSneijders/AoE2ScenarioRms/blob/main/CHANGELOG.md"
 
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["AoE2ScenarioRms*"]
+
 [tool.setuptools.package-data]
-AoE2ScenarioRms = ["*.xs"]
+AoE2ScenarioRms = ["xs/**.xs"]
