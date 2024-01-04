@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.9"  # << Also change `AoE2ScenarioRms/version.py`
+version = "0.2.10"  # << Also change `AoE2ScenarioRms/version.py`
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
@@ -24,6 +24,7 @@ classifiers = [
 "Changelog" = "https://github.com/KSneijders/AoE2ScenarioRms/blob/main/CHANGELOG.md"
 
 [tool.setuptools]
+include-package-data = true  # Default
 
 [tool.setuptools.packages.find]
 where = ["AoE2ScenarioRms"]
