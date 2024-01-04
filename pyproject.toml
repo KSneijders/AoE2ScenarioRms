@@ -1,6 +1,6 @@
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.18"  # << Also change `AoE2ScenarioRms/version.py`
+version = "0.2.19"  # << Also change `AoE2ScenarioRms/version.py`
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
@@ -28,4 +28,7 @@ build-backend = "setuptools.build_meta"
 include = ["AoE2ScenarioRms*"]
 
 [tool.setuptools.package-data]
-AoE2ScenarioRms = ["*.xs"]
+# What doesn't work (absolutely no idea why):
+#  - "xs/**.xs" (snippets not included)
+#  - "*.xs" (No XS files at all)
+AoE2ScenarioRms = ["xs/*.xs", "xs/snippets/*.xs"]
