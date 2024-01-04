@@ -17,11 +17,13 @@ classifiers = [
     "Operating System :: OS Independent",
 ]
 
-[tool.setuptools.packages.find]
-where = ["AoE2ScenarioRms"]
-
 [project.urls]
 "Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"
 "Bug Tracker" = "https://github.com/KSneijders/AoE2ScenarioRms/issues"
 "Examples" = "https://github.com/KSneijders/AoE2ScenarioRms/tree/main/examples"
 "Changelog" = "https://github.com/KSneijders/AoE2ScenarioRms/blob/main/CHANGELOG.md"
+
+[tool.setuptools]
+
+[tool.setuptools.packages.find]
+where = ["AoE2ScenarioRms"]
