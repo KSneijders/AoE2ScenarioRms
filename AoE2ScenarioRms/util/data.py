@@ -100,6 +100,7 @@ class Data:
                 UnitInfo.LION.ID,
                 UnitInfo.SNOW_LEOPARD.ID,
                 UnitInfo.CROCODILE.ID,
+                UnitInfo.BEAR.ID,
             ])
 
         if ObjectClear.RELICS in clear:
