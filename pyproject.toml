@@ -12,7 +12,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = ["AoE2ScenarioParser>=0.1.60"]
+dependencies = ["AoE2ScenarioParser>=0.1.68"]
 
 [project.urls]
 "Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"
