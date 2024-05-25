@@ -1,4 +1,4 @@
 """ Expose version """
 
-__version__ = "0.2.19"  # << Also change `/pyproject.toml`
+__version__ = "<VERSION_HERE>"
 VERSION = __version__.split(".")

@@ -11,16 +11,25 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v3
+
+    - name: Update Versions for publishing
+      run: |
+           TAG=$(echo $GITHUB_REF_NAME | sed 's|v||')
+           sed -i 's|<VERSION_HERE>|'${TAG}'|' $GITHUB_WORKSPACE/pyproject.toml
+           sed -i 's|<VERSION_HERE>|'${TAG}'|' $GITHUB_WORKSPACE/AoE2ScenarioRms/version.py
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: "3.8"
+
     - name: Install pypa/build
       run: >-
         python -m
         pip install
         build
         --user
+
     - name: Build a binary wheel and a source tarball
       run: >-
         python -m
@@ -29,11 +38,13 @@ jobs:
         --wheel
         --outdir dist/
         .
+
     - name: Publish AoE2ScenarioRms 📦 to Test PyPI
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
         password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository-url: https://test.pypi.org/legacy/
+
     - name: Publish AoE2ScenarioRms 📦 to PyPI
       if: startsWith(github.ref, 'refs/tags')
       uses: pypa/gh-action-pypi-publish@release/v1

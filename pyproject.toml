@@ -1,6 +1,6 @@
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.19"  # << Also change `AoE2ScenarioRms/version.py`
+version = "<VERSION_HERE>"
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
