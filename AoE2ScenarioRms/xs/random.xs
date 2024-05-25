@@ -31,7 +31,7 @@ void ShuffleVectorArray(int arr = -1, int indexArr = -1) {
     
     int n = xsArrayGetSize(arr);
     for (i = 0; < n) {
-        int j = GetRandomRange(0, n);
+        int j = GetRandomRange(0, n - 1);
         Vector v = xsArrayGetVector(arr, j);
         int index = xsArrayGetInt(indexArr, j);
         xsArraySetVector(arr, j, xsArrayGetVector(arr, i));

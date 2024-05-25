@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.2.20 - 2024-May-25
+
+### Fixed
+
+- The `xs` `ShuffleVectorArray` function
+
+---
+
 ## 0.2.19 - 2024-Januari-04
 
 ### Fixed

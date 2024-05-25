@@ -56,20 +56,11 @@ class AoE2ScenarioRms:
             )
 
     def _register_scenario_write_to_file_event(self) -> None:
-        """
-        Overwrites the ``write_to_file`` function of the scenario to add custom functionality like adding the necessary
-        XS scripts to the scenario.
-        """
-        original_write_to_file = self.scenario.write_to_file
 
-        def write_to_file_wrapper(filename: str, skip_reconstruction: bool = False):
+        @self.scenario.on_write
+        def func(scenario: AoE2DEScenario):
             variable_count = str(len(self.xs_container.get(XsKey.RESOURCE_VARIABLE_DECLARATION)))
             self.xs_container.append(XsKey.RESOURCE_VARIABLE_COUNT, variable_count)
 
             xs_string = self.xs_container.resolve(XsUtil.file('main.xs'))
-            self.scenario.xs_manager.add_script(xs_string=xs_string)
-
-            original_write_to_file(filename, skip_reconstruction)
-
-        self.scenario.write_to_file = write_to_file_wrapper
-        self._debug_all_visible_enabled = True
+            scenario.xs_manager.add_script(xs_string=xs_string)

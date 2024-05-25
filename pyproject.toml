@@ -1,6 +1,6 @@
 [project]
 name = "AoE2ScenarioRms"
-version = "0.2.19"  # << Also change `AoE2ScenarioRms/version.py`
+version = "<VERSION_HERE>"
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
 ]
@@ -12,7 +12,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-dependencies = ["AoE2ScenarioParser>=0.1.60"]
+dependencies = ["AoE2ScenarioParser>=0.1.68"]
 
 [project.urls]
 "Homepage" = "https://github.com/KSneijders/AoE2ScenarioRms"

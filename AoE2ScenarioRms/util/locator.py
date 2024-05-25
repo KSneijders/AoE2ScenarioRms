@@ -43,7 +43,7 @@ class Locator:
         if amount * 2 > len(available_tiles):
             warn(f"For group '{name}', the amount of groups requested is really high. "
                  f"({amount} groups compared to {len(available_tiles)} available tiles).\n"
-                 f"Consider lowering the max amount of necessary groups for '{name}'.", SpawnFailureWarning)
+                 f"Consider lowering the max amount of necessary groups for '{name}'.", SpawnFailureWarning, 3)
 
         # starting_tiles = self.find_random_locations(amount)
         starting_tiles = available_tiles[:amount]
