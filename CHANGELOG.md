@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.2.21 - 2024-May-25
+
+### Fixed
+
+- `UnitInfo.BEAR.ID` missing from the list when clearing with `ObjectClear.WOLFS`
+
+---
+
 ## 0.2.20 - 2024-May-25
 
 ### Fixed
