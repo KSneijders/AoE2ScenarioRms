@@ -1,2 +1,2 @@
-AoE2ScenarioParser~=0.1.68
+AoE2ScenarioParser~=0.1.69
 PyTest~=7.2.1
