@@ -1,10 +1,63 @@
 from typing import List
 
+from AoE2ScenarioParser.datasets.buildings import BuildingInfo
 from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.units import UnitInfo
 
 from AoE2ScenarioRms.enums import GroupingMethod
+from AoE2ScenarioRms.enums.area_pattern import AreaPattern
 from AoE2ScenarioRms.rms import CreateObjectConfig
+from AoE2ScenarioRms.rms.create_group.create_area_config import CreateAreaConfig
+
+bandit_camp_area_config: list[CreateAreaConfig] = [
+    CreateAreaConfig(
+        name='camps',
+        area_pattern=AreaPattern.FLOW,
+        area_spread_radius=5,
+        min_distance_area_placement=8,  # Unused for now, no other areas
+        temp_min_distance_area_placement=40,
+        block_group_spawns=True,
+        create_objects=[
+            CreateObjectConfig(
+                name='camp_mining_camp',
+                const=BuildingInfo.MINING_CAMP.ID,
+                number_of_objects=1,
+                number_of_groups=1,
+                min_distance_group_placement=0,
+                _max_potential_group_count=3,
+            ),
+            CreateObjectConfig(
+                name='camp_barracks',
+                const=BuildingInfo.BARRACKS.ID,
+                number_of_objects=1,
+                number_of_groups=1,
+                min_distance_group_placement=0,
+                _max_potential_group_count=5,
+            ),
+            CreateObjectConfig(
+                name='camp_gold',
+                const=OtherInfo.GOLD_MINE.ID,
+                grouping=GroupingMethod.TIGHT,
+                number_of_objects=(1, 3),
+                number_of_groups=8,
+                temp_min_distance_group_placement=1,
+                min_distance_group_placement=0,
+                _max_potential_group_count=12,
+            ),
+            CreateObjectConfig(
+                name='camp_archers',
+                const=UnitInfo.ARCHER.ID,
+                grouping=GroupingMethod.TIGHT,
+                number_of_objects=1,
+                number_of_groups=4,
+                temp_min_distance_group_placement=1,
+                min_distance_group_placement=0,
+                min_distance_to_map_edge=2,
+                _max_potential_group_count=12,
+            ),
+        ]
+    )
+]
 
 create_objects_config: List[CreateObjectConfig] = [
     CreateObjectConfig(

@@ -192,8 +192,8 @@ Please check out the example [here](https://github.com/KSneijders/AoE2ScenarioRm
 - Automatically figure out what to remove based on CreateObjectConfig configs
 - Add ability to mock the XS spawning process to estimate the amount of necessary successful spawn attempts
 - Ability to bind ID to list of create objects and be able to differentiate distance to each group
-- (Somehow) remove spawn order bias. Currently, the earlier the spawns the more chance they have to succeed because
-- the map isn't filled up yet.
+- (Somehow) remove spawn order bias. Currently, the earlier the spawns the more chance they have to succeed because 
+  the map isn't filled up yet.
 - ...
 
 ---

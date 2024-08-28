@@ -7,7 +7,6 @@ from AoE2ScenarioParser.datasets.players import PlayerId
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms.enums import XsKey
-from AoE2ScenarioRms.errors import InvalidCreateObjectError
 from AoE2ScenarioRms.rms.create_object.create_object_config import CreateObjectConfig
 from AoE2ScenarioRms.rms.rms_feature import RmsFeature
 from AoE2ScenarioRms.util import XsUtil, XsContainer, Locator
@@ -17,8 +16,6 @@ if TYPE_CHECKING:
 
 
 class CreateObjectFeature(RmsFeature):
-    unique_names = set()
-
     def __init__(self, scenario: AoE2DEScenario) -> None:
         """
         Class that manages the functionality behind implementing the create_object clause
@@ -37,9 +34,7 @@ class CreateObjectFeature(RmsFeature):
         Args:
             config: The configs to be added
         """
-        name = self._name(config)
-
-        self._validate_name_unique(name)
+        name = self._validate_name_unique(config.name)
 
         self.xs_container.append(
             XsKey.RESOURCE_VARIABLE_DECLARATION,
@@ -73,11 +68,11 @@ class CreateObjectFeature(RmsFeature):
         )
 
         self.xs_container.extend(
-            XsKey.CONFIG_DECLARATION,
+            XsKey.RESOURCE_CONFIG_DECLARATION,
             [
                 f"cArray = xsArrayGetInt(__ARRAY_RESOURCE_CONFIGS, {name});",
-                f"xsArraySetInt(cArray, 0, {config.temp_min_distance_group_placement});",
-                f"xsArraySetInt(cArray, 1, {config.min_distance_group_placement});",
+                f"xsArraySetInt(cArray, 0, {config.temp_min_distance_group_placement}); // distance self: {config.temp_min_distance_group_placement}",
+                f"xsArraySetInt(cArray, 1, {config.min_distance_group_placement}); // distance other: {config.min_distance_group_placement}",
             ]
         )
 
@@ -91,7 +86,7 @@ class CreateObjectFeature(RmsFeature):
             grid_map: The GridMap to take into account when generating potential locations for groups
         """
         tm, um = self.scenario.trigger_manager, self.scenario.unit_manager
-        name = self._name(config)
+        name = self._format_name(config.name)
 
         groups = Locator.create_groups(config, grid_map)
 
@@ -137,26 +132,3 @@ class CreateObjectFeature(RmsFeature):
             self.init(config_entry)
             self.build(config_entry, grid_map)
         return self.xs_container
-
-    @staticmethod
-    def _validate_name_unique(name: str) -> None:
-        """
-        Validate if the given name is unique compared to other names used
-
-        Args:
-            name: The name to validate
-
-        Raises:
-            InvalidCreateObjectError: If the given name has already been registered before in the scenario
-        """
-        if name in CreateObjectConfig.unique_names:
-            raise InvalidCreateObjectError(
-                f"A CreateObjectFeature with the name '{name}' was already initialized. "
-                f"Make sure the names are unique and are not accidentally registered more than once.\n"
-                f"Also make sure that names aren't differentiated through just casing or spaces."
-            )
-        CreateObjectConfig.unique_names.add(name)
-
-    @staticmethod
-    def _name(create: CreateObjectConfig) -> str:
-        return f"____{XsUtil.constant(create.name)}"

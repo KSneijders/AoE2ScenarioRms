@@ -13,5 +13,13 @@ class InvalidCreateObjectError(AoE2ScenarioRmsError):
     pass
 
 
+class InvalidCreateAreaError(AoE2ScenarioRmsError):
+    pass
+
+
+class InvalidCreateFeatureStateError(AoE2ScenarioRmsError):
+    pass
+
+
 class InvalidAoE2ScenarioRmsState(AoE2ScenarioRmsError):
     pass

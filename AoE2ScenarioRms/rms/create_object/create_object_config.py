@@ -1,15 +1,14 @@
 from __future__ import annotations
 
-import math
 import random
 from typing import Generator
 
 from AoE2ScenarioParser.helper.printers import warn
 
-from AoE2ScenarioRms.errors import InvalidCreateObjectError, ImproperCreateObjectWarning
 from AoE2ScenarioRms.enums import GroupingMethod
+from AoE2ScenarioRms.errors import InvalidCreateObjectError, ImproperCreateObjectWarning
 from AoE2ScenarioRms.rms.rms_config import RmsConfig
-from AoE2ScenarioRms.util import XsUtil
+from AoE2ScenarioRms.util.rms_util import RmsUtil
 
 
 class CreateObjectConfig(RmsConfig):
@@ -108,7 +107,7 @@ class CreateObjectConfig(RmsConfig):
             grouping: GroupingMethod = GroupingMethod.TIGHT,
             number_of_objects: int | tuple[int, int] = 1,
             group_placement_radius: int = 3,
-            number_of_groups: float = 999_999_999,  # Cannot be math.inf as `str(...)` is used within xs
+            number_of_groups: float = 999_999_999,  # (As many as can fit) Cannot be math.inf as `str(...)` is used within xs
             loose_grouping_distance: int = None,
             min_distance_group_placement: int = 4,
             temp_min_distance_group_placement: int = 20,
@@ -122,28 +121,21 @@ class CreateObjectConfig(RmsConfig):
             _max_potential_group_count: int = 250,
             _debug_place_all: bool = False
     ):
-        super().__init__()
-
-        name = self._validate_name_unique(name)\
-            .lower()
+        super().__init__(name)
 
         if scale_to_player_number and number_of_groups > 100_000:
-            raise InvalidCreateObjectError(
-                f"[{name}]: cannot use scale with player number when number of groups is above 100k"
-            )
+            raise InvalidCreateObjectError(f"[{self.name}]: cannot use scale with player number when number of groups is above 100k")
 
         if not isinstance(number_of_objects, int) and not isinstance(number_of_objects, tuple):
-            raise TypeError(f"[{name}]: number_of_objects has to be either int or tuple[int, int], "
+            raise TypeError(f"[{self.name}]: number_of_objects has to be either int or tuple[int, int], "
                             f"not: {type(number_of_objects)}.")
 
         if grouping is not GroupingMethod.LOOSE and loose_grouping_distance is not None:
-            warn(f"[{name}]: Setting 'loose_grouping_distance' without GroupingMethod.LOOSE has no effect",
-                 ImproperCreateObjectWarning)
+            warn(f"[{self.name}]: Setting 'loose_grouping_distance' without GroupingMethod.LOOSE has no effect", ImproperCreateObjectWarning)
 
         if loose_grouping_distance is None:
             loose_grouping_distance = 3
 
-        self.name: str = name
         self.const: int = const
         self.grouping: GroupingMethod = grouping
         self.number_of_objects: int | tuple[int, int] = number_of_objects
@@ -160,20 +152,7 @@ class CreateObjectConfig(RmsConfig):
         self.max_potential_group_count: int = _max_potential_group_count
         self.debug_place_all: bool = _debug_place_all
 
-        self.index = next(_counter)
-
-    @staticmethod
-    def _validate_name_unique(name: str) -> str:
-        xs_name = XsUtil.constant(name)
-
-        if xs_name in CreateObjectConfig.unique_names:
-            raise InvalidCreateObjectError(
-                f"[{name}]: group with name '{name}' ('{xs_name}') already exists. Make sure all names are unique and "
-                f"aren't differentiated through just casing or spaces."
-            )
-        CreateObjectConfig.unique_names.add(xs_name)
-
-        return xs_name
+        self.index = next(_object_counter)
 
     def get_random_const(self) -> int:
         if isinstance(self.const, list):
@@ -182,9 +161,4 @@ class CreateObjectConfig(RmsConfig):
             return self.const
 
 
-def _create_counter_generator() -> Generator[int]:
-    for i in range(999_999_999):
-        yield i
-
-
-_counter = _create_counter_generator()
+_object_counter = RmsUtil.create_counter()

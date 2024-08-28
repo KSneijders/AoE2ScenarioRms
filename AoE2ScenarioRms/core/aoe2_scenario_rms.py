@@ -6,6 +6,8 @@ from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 from AoE2ScenarioRms.enums import XsKey
 from AoE2ScenarioRms.errors import InvalidAoE2ScenarioRmsState
 from AoE2ScenarioRms.rms import CreateObjectConfig, CreateObjectFeature
+from AoE2ScenarioRms.rms.create_group.create_area_config import CreateAreaConfig
+from AoE2ScenarioRms.rms.create_group.create_area_feature import CreateAreaFeature
 from AoE2ScenarioRms.util import GridMap, XsContainer, XsUtil
 
 
@@ -28,7 +30,7 @@ class AoE2ScenarioRms:
 
         self._register_scenario_write_to_file_event()
 
-    def create_objects(self, configs: List[CreateObjectConfig], grid_map: GridMap) -> None:
+    def create_objects(self, configs: list[CreateObjectConfig], grid_map: GridMap) -> None:
         """
         Add a set of <create object> configs to your scenario. This represents the ``create_object`` blocks in the
         ``<OBJECTS_GENERATION>`` section of an RMS script.
@@ -41,6 +43,12 @@ class AoE2ScenarioRms:
 
         create_objects = CreateObjectFeature(self.scenario)
         self.xs_container += create_objects.solve(configs, grid_map)
+
+    def create_areas(self, key: str, config: list[CreateAreaConfig], grid_map: GridMap) -> None:
+        self._verify_no_debug()
+
+        create_area = CreateAreaFeature(self.scenario)
+        self.xs_container += create_area.solve(config, grid_map)
 
     def _verify_no_debug(self) -> None:
         """
@@ -59,8 +67,11 @@ class AoE2ScenarioRms:
 
         @self.scenario.on_write
         def func(scenario: AoE2DEScenario):
-            variable_count = str(len(self.xs_container.get(XsKey.RESOURCE_VARIABLE_DECLARATION)))
-            self.xs_container.append(XsKey.RESOURCE_VARIABLE_COUNT, variable_count)
+            count = str(len(self.xs_container.get(XsKey.RESOURCE_VARIABLE_DECLARATION)))
+            self.xs_container.append(XsKey.RESOURCE_VARIABLE_COUNT, count)
+
+            count = str(len(self.xs_container.get(XsKey.AREA_VARIABLE_DECLARATION)))
+            self.xs_container.append(XsKey.AREA_VARIABLE_COUNT, count)
 
             xs_string = self.xs_container.resolve(XsUtil.file('main.xs'))
             scenario.xs_manager.add_script(xs_string=xs_string)
