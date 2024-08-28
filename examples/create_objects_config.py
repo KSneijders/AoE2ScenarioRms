@@ -9,6 +9,7 @@ from AoE2ScenarioRms.enums.area_pattern import AreaPattern
 from AoE2ScenarioRms.rms import CreateObjectConfig
 from AoE2ScenarioRms.rms.create_group.create_area_config import CreateAreaConfig
 
+# ⚠️ AREA CONFIGS ARE WORK IN PROGRESS -- NOT FUNCTIONAL ⚠️
 bandit_camp_area_config: list[CreateAreaConfig] = [
     CreateAreaConfig(
         name='camps',
@@ -24,6 +25,7 @@ bandit_camp_area_config: list[CreateAreaConfig] = [
                 number_of_objects=1,
                 number_of_groups=1,
                 min_distance_group_placement=0,
+                object_size=2,
                 _max_potential_group_count=3,
             ),
             CreateObjectConfig(
@@ -32,6 +34,7 @@ bandit_camp_area_config: list[CreateAreaConfig] = [
                 number_of_objects=1,
                 number_of_groups=1,
                 min_distance_group_placement=0,
+                object_size=3,
                 _max_potential_group_count=5,
             ),
             CreateObjectConfig(
