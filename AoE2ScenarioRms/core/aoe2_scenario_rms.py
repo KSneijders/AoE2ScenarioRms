@@ -1,13 +1,12 @@
 from pathlib import Path
-from typing import List
 
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms.enums import XsKey
 from AoE2ScenarioRms.errors import InvalidAoE2ScenarioRmsState
 from AoE2ScenarioRms.rms import CreateObjectConfig, CreateObjectFeature
-from AoE2ScenarioRms.rms.create_group.create_area_config import CreateAreaConfig
-from AoE2ScenarioRms.rms.create_group.create_area_feature import CreateAreaFeature
+from AoE2ScenarioRms.rms.create_area.create_area_config import CreateAreaConfig
+from AoE2ScenarioRms.rms.create_area.create_area_feature import CreateAreaFeature
 from AoE2ScenarioRms.util import GridMap, XsContainer, XsUtil
 
 

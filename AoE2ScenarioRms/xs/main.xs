@@ -10,17 +10,16 @@ int __RESOURCE_COUNT = /* REPLACE:RESOURCE_VARIABLE_COUNT */;
 // ---------< Arrays where area ID is value (1D) >--------- \\
 int __AREA_SPAWN_COUNTS = -1;
 int __AREA_MAX_SPAWN_COUNTS = -1;
-int __AREA_MAX_SPAWN_COUNTS_IS_PER_PLAYER = -1;
+int __AREA_BLOCK_RESOURCE_SPAWNS = -1;
 int __AREA_GROUP_NAMES = -1;
 
 // ---------< Arrays where area ID is reference to other Array (2D) >--------- \\
 int __ARRAY_AREA_LOCATIONS = -1;
-int __ARRAY_AREA_CONFIGS = -1;                 // [i][0]: dist self, [i][1]: dist other
-
-// int __ARRAY_RESOURCE_INDICES = -1;
-// int __ARRAY_RESOURCE_PLACED = -1;
-// int __ARRAY_RESOURCE_PLACED_INDICES = -1;
-// int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed, [i][1]: skipped
+int __ARRAY_AREA_INDICES = -1;
+int __ARRAY_AREA_PLACED = -1;
+int __ARRAY_AREA_PLACED_INDICES = -1;
+int __ARRAY_AREA_CONFIGS = -1;             // [i][0]: dist self, [i][1]: dist other
+int __ARRAY_AREA_PROGRESS = -1;            // [i][0]: placed,    [i][1]: skipped
 
 // ---------< Arrays where resource ID is value (1D) >--------- \\
 // Amount of potential spawns per resource
@@ -35,7 +34,7 @@ int __ARRAY_RESOURCE_INDICES = -1;
 int __ARRAY_RESOURCE_PLACED = -1;
 int __ARRAY_RESOURCE_PLACED_INDICES = -1;
 int __ARRAY_RESOURCE_CONFIGS = -1;          // [i][0]: dist self, [i][1]: dist other
-int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed, [i][1]: skipped
+int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed,    [i][1]: skipped
 
 // ---------< Functions >--------- \\
 float getXyDistance(vector loc1 = vector(-1, -1, -1), vector loc2 = vector(-1, -1, -1)) {
@@ -69,9 +68,9 @@ bool spawnResource__024510896(int resourceId = -1) {
     }
 
     int resourceLocationsArray             = xsArrayGetInt(__ARRAY_RESOURCE_LOCATIONS, resourceId);
-    int resourceIndicesArray               = xsArrayGetInt(__ARRAY_RESOURCE_INDICES, resourceId);
+    int resourceIndexsArray               = xsArrayGetInt(__ARRAY_RESOURCE_INDICES, resourceId);
     int resourcePlacedLocationsArray       = xsArrayGetInt(__ARRAY_RESOURCE_PLACED, resourceId);
-    int resourcePlacedLocationsIndiceArray = xsArrayGetInt(__ARRAY_RESOURCE_PLACED_INDICES, resourceId);
+    int resourcePlacedLocationsIndexArray = xsArrayGetInt(__ARRAY_RESOURCE_PLACED_INDICES, resourceId);
     int resourceConfigArray                = xsArrayGetInt(__ARRAY_RESOURCE_CONFIGS, resourceId);
     int progressArray                      = xsArrayGetInt(__ARRAY_RESOURCE_PROGRESS, resourceId);
 
@@ -115,7 +114,7 @@ bool spawnResource__024510896(int resourceId = -1) {
 		}
 
         if (allowed) {
-            xsArraySetBool(resourcePlacedLocationsIndiceArray, xsArrayGetInt(resourceIndicesArray, i), true);
+            xsArraySetBool(resourcePlacedLocationsIndexArray, xsArrayGetInt(resourceIndexsArray, i), true);
             xsArraySetVector(resourcePlacedLocationsArray, placedResourcesCount, v);
             xsArraySetInt(progressArray, 0, placedResourcesCount + 1);
             
@@ -149,6 +148,7 @@ rule main_initialise__023658412
 /* REPLACE:XS_ON_INIT_RULE */
 
     /* #######################>>> Areas <<<####################### */
+
     __AREA_GROUP_NAMES = xsArrayCreateString(__AREA_COUNT, "", "__AREA_GROUP_NAMES__245005639");
 /* REPLACE:AREA_GROUP_NAMES_DECLARATION */
 
@@ -158,31 +158,32 @@ rule main_initialise__023658412
     __AREA_MAX_SPAWN_COUNTS = xsArrayCreateFloat(__AREA_COUNT, -1, "__AREA_MAX_SPAWN_COUNTS__754202236");
 /* REPLACE:AREA_MAX_SPAWN_DECLARATION */
 
+    __AREA_BLOCK_RESOURCE_SPAWNS = xsArrayCreateBool(__AREA_COUNT, false, "__AREA_BLOCK_RESOURCE_SPAWNS__51248775");
+/* REPLACE:AREA_BLOCK_RESOURCE_SPAWNS_DECLARATION */
+
     __ARRAY_AREA_LOCATIONS = xsArrayCreateInt(__AREA_COUNT, -1, "__ARRAY_AREA_LOCATIONS__910548260");
     __ARRAY_AREA_CONFIGS   = xsArrayCreateInt(__AREA_COUNT, -1, "__ARRAY_AREA_CONFIGS__522094889");
 
     for (i = 0; < __AREA_COUNT) {
         count = xsArrayGetInt(__AREA_SPAWN_COUNTS, i);
 
+        int areaArray       = xsArrayCreateVector(count, vector(-1, -1, -1), "areaArray__582659358__v" + i);
+        int areaIndexArray  = xsArrayCreateInt(count, -1, "areaIndexArray__052691427__v" + i);
+        int areaPlaced      = xsArrayCreateVector(count, vector(-1, -1, -1), "areaPlaced__026358320__v" + i);
+        int areaIndexPlaced = xsArrayCreateBool(count, false, "areaIndexPlaced__963630218__v" + i);
+        int areaConfig      = xsArrayCreateInt(2, -1, "areaConfig__264812522__v" + i);
+        int areaProgress    = xsArrayCreateInt(2, 0, "areaProgress__536248009__v" + i);
 
+        for (ii = 0; < count) {
+            xsArraySetInt(areaIndexArray, ii, ii);
+        }
 
-        // int resourceArray        = xsArrayCreateVector(count, vector(-1, -1, -1), "resourceArray__352901574__v" + i);
-        // int indexArray           = xsArrayCreateInt(count, -1, "indexArray__456875221__v" + i);
-        // int resourcePlaced       = xsArrayCreateVector(count, vector(-1, -1, -1), "resourcePlaced__548476523__v" + i);
-        // int resourceIndicePlaced = xsArrayCreateBool(count, false, "resourceIndicePlaced__301548796__v" + i);
-        // int resourceConfig       = xsArrayCreateInt(2, -1, "resourceConfig__985256327__v" + i);
-        // int resourceProgress     = xsArrayCreateInt(2, 0, "resourceProgress__524875963__v" + i);
-
-        // for (ii = 0; < count) {
-        //     xsArraySetInt(indexArray, ii, ii);
-        // }
-
-        // xsArraySetInt(__ARRAY_RESOURCE_LOCATIONS,      i, resourceArray);
-        // xsArraySetInt(__ARRAY_RESOURCE_INDICES,        i, indexArray);
-        // xsArraySetInt(__ARRAY_RESOURCE_PLACED,         i, resourcePlaced);
-        // xsArraySetInt(__ARRAY_RESOURCE_PLACED_INDICES, i, resourceIndicePlaced);
-        // xsArraySetInt(__ARRAY_RESOURCE_CONFIGS,        i, resourceConfig);
-        // xsArraySetInt(__ARRAY_RESOURCE_PROGRESS,       i, resourceProgress);
+        xsArraySetInt(__ARRAY_AREA_LOCATIONS,      i, areaArray);
+        xsArraySetInt(__ARRAY_AREA_INDICES,        i, areaIndexArray);
+        xsArraySetInt(__ARRAY_AREA_PLACED,         i, areaPlaced);
+        xsArraySetInt(__ARRAY_AREA_PLACED_INDICES, i, areaIndexPlaced);
+        xsArraySetInt(__ARRAY_AREA_CONFIGS,        i, areaConfig);
+        xsArraySetInt(__ARRAY_AREA_PROGRESS,       i, areaProgress);
     }
 
     /*                                      S                                                      */
@@ -196,6 +197,7 @@ rule main_initialise__023658412
     /*                                                      R                                      */
 
     /* #######################>>> Resources <<<####################### */
+
     __RESOURCE_GROUP_NAMES = xsArrayCreateString(__RESOURCE_COUNT, "", "__RESOURCE_GROUP_NAMES__594522389");
 /* REPLACE:RESOURCE_GROUP_NAMES_DECLARATION */
 
@@ -218,21 +220,21 @@ rule main_initialise__023658412
     for (i = 0; < __RESOURCE_COUNT) {
         count = xsArrayGetInt(__RESOURCE_SPAWN_COUNTS, i);
 
-        int resourceArray        = xsArrayCreateVector(count, vector(-1, -1, -1), "resourceArray__352901574__v" + i);
-        int indexArray           = xsArrayCreateInt(count, -1, "indexArray__456875221__v" + i);
-        int resourcePlaced       = xsArrayCreateVector(count, vector(-1, -1, -1), "resourcePlaced__548476523__v" + i);
-        int resourceIndicePlaced = xsArrayCreateBool(count, false, "resourceIndicePlaced__301548796__v" + i);
-        int resourceConfig       = xsArrayCreateInt(2, -1, "resourceConfig__985256327__v" + i);
-        int resourceProgress     = xsArrayCreateInt(2, 0, "resourceProgress__524875963__v" + i);
+        int resourceArray       = xsArrayCreateVector(count, vector(-1, -1, -1), "resourceArray__352901574__v" + i);
+        int resourceIndexArray  = xsArrayCreateInt(count, -1, "resourceIndexArray__456875221__v" + i);
+        int resourcePlaced      = xsArrayCreateVector(count, vector(-1, -1, -1), "resourcePlaced__548476523__v" + i);
+        int resourceIndexPlaced = xsArrayCreateBool(count, false, "resourceIndexPlaced__301548796__v" + i);
+        int resourceConfig      = xsArrayCreateInt(2, -1, "resourceConfig__985256327__v" + i);
+        int resourceProgress    = xsArrayCreateInt(2, 0, "resourceProgress__524875963__v" + i);
 
         for (ii = 0; < count) {
-            xsArraySetInt(indexArray, ii, ii);
+            xsArraySetInt(resourceIndexArray, ii, ii);
         }
 
         xsArraySetInt(__ARRAY_RESOURCE_LOCATIONS,      i, resourceArray);
-        xsArraySetInt(__ARRAY_RESOURCE_INDICES,        i, indexArray);
+        xsArraySetInt(__ARRAY_RESOURCE_INDICES,        i, resourceIndexArray);
         xsArraySetInt(__ARRAY_RESOURCE_PLACED,         i, resourcePlaced);
-        xsArraySetInt(__ARRAY_RESOURCE_PLACED_INDICES, i, resourceIndicePlaced);
+        xsArraySetInt(__ARRAY_RESOURCE_PLACED_INDICES, i, resourceIndexPlaced);
         xsArraySetInt(__ARRAY_RESOURCE_CONFIGS,        i, resourceConfig);
         xsArraySetInt(__ARRAY_RESOURCE_PROGRESS,       i, resourceProgress);
     }
@@ -244,19 +246,19 @@ rule main_initialise__023658412
 /* REPLACE:AREA_LOCATION_INJECTION */
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
+    bool success = true;
     for (areaId = 0; < __AREA_COUNT) {
-        bool b = true;
-        while (b) {
-            b = spawnArea__618941981(areaId);
+        while (success) {
+            success = spawnArea__618941981(areaId);
         }
 
         /* REPLACE:AFTER_AREA_SPAWN_EVENT */
     }
 
+    success = true;
     for (resourceId = 0; < __RESOURCE_COUNT) {
-        bool b = true;
-        while (b) {
-            b = spawnResource__024510896(resourceId);
+        while (success) {
+            success = spawnResource__024510896(resourceId);
         }
 
         /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */

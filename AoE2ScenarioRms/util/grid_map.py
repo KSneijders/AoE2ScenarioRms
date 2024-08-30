@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import itertools
+import math
 import random
 from typing import List
 
@@ -25,40 +27,78 @@ class GridMap:
 
         self.set_all(starting_state)
 
-    def available_tiles(self, size=1, shuffle=False) -> List[Tile]:
+    def available_areas(self, size=1, shuffle=False, limit: int = math.inf) -> List[Area]:
+        """
+        Get all areas available given the size. Can also be shuffled if necessary
+
+        Args:
+            size: The size of an area
+            shuffle: If the resulting array should be returned shuffled or not
+            limit: The maximum number of areas to return
+
+        Returns:
+            A (shuffled) list of ``Area`` objects
+        """
+        coordinates = list(itertools.product(range(self.map_size), range(self.map_size)))
+        if shuffle:
+            random.shuffle(coordinates)
+
+        areas = []
+        for y, x in coordinates:
+            if area := self.find_available_area(size, x, y):
+                areas.append(area)
+
+                if len(areas) == limit:
+                    return areas
+
+        return areas
+
+    def available_tiles(self, size=1, shuffle=False, limit: int = math.inf) -> List[Tile]:
         """
         Get all tiles available for resource spawning. Can be shuffled if necessary
 
         Args:
             size: The size of the object
             shuffle: If the resulting array should be returned shuffled or not
+            limit: The maximum number of tiles to return
 
         Returns:
             A (shuffled) list of ``Tile`` objects that indicate which tiles are valid for spawn attempts for groups
         """
-        tiles = []
-        for y in range(self.map_size):
-            for x in range(self.map_size):
-                if self.is_available_size(size, x, y):
-                    tiles.append(Tile(x, y))
+        coordinates = list(itertools.product(range(self.map_size), range(self.map_size)))
         if shuffle:
-            random.shuffle(tiles)
+            random.shuffle(coordinates)
+
+        tiles = []
+        for y, x in coordinates:
+            if self.is_available_size(size, x, y):
+                tiles.append(Tile(x, y))
+
+                if len(tiles) == limit:
+                    return tiles
         return tiles
 
+    def find_available_area(self, size: int, x: int | Tile, y: int = None) -> Area | None:
+        """Attempt to find the area available for the given size and location. If it is not available None is returned"""
+        x, y = TileUtil.coords(x, y)
+
+        area = Area(map_size=self.map_size, x1=x, y1=y).size(size)
+        # If the area selection went out of bounds (outside the map)
+        if not area.is_within_bounds():
+            return None
+
+        return area if self.is_area_available(area) else None
+
     def is_available_size(self, size: int, x: int | Tile, y: int = None) -> bool:
-        """Check if a tile and tiles around it are available within a given size"""
+        """Check if the given tile and tiles around it are available within a given size"""
         x, y = TileUtil.coords(x, y)
         if size == 1:
             return self.is_available(x, y)
 
-        area = Area(map_size=self.map_size, x1=x, y1=y).size(size)
-        # If the area selection went below zero the 'area' gets cut off. This verifies that that didn't happen
-        if area.get_width() != size or area.get_height() != size:
+        area = self.find_available_area(size, x, y)
+        if area is None:
             return False
 
-        for tile in area.to_coords():
-            if self.is_blocked(tile):
-                return False
         return True
 
     def invert(self) -> GridMap:
@@ -93,8 +133,15 @@ class GridMap:
         """Set all coordinates to a specific level"""
         self.grid_map = [[state for _ in range(self.map_size)] for _ in range(self.map_size)]
 
+    def is_area_available(self, area: Area) -> bool:
+        """If a given area is available in this grid map"""
+        for tile in area.to_coords():
+            if self.is_blocked(tile):
+                return False
+        return True
+
     def is_available(self, x: int | Tile, y: int = None) -> bool:
-        """If a given tile is available for group spawning"""
+        """If a given tile is available in this grid map"""
         x, y = TileUtil.coords(x, y)
         return self.grid_map[y][x] == TileLevel.NONE
 
@@ -118,5 +165,5 @@ class GridMap:
     def is_valid(self, level: TileLevel, x: int | Tile, y: int = None) -> bool:
         """If a given tile is a valid (not outside the map) and available based on the given level"""
         x, y = TileUtil.coords(x, y)
-        is_within_map = 0 <= x <= self.map_size - 1 and 0 <= y <= self.map_size - 1
+        is_within_map = 0 <= x < self.map_size and 0 <= y < self.map_size
         return is_within_map and self.level_is_available(level, x, y)

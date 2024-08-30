@@ -4,6 +4,7 @@ import random
 from typing import Tuple, List, TYPE_CHECKING
 
 from AoE2ScenarioParser.helper.printers import warn
+from AoE2ScenarioParser.objects.support.area import Area
 from AoE2ScenarioParser.objects.support.tile import Tile
 
 from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
@@ -12,6 +13,7 @@ from AoE2ScenarioRms.util.tile_util import TileUtil
 
 if TYPE_CHECKING:
     from AoE2ScenarioRms.rms import CreateObjectConfig
+    from AoE2ScenarioRms.rms import CreateAreaConfig
     from AoE2ScenarioRms.util.grid_map import GridMap
 
 
@@ -21,6 +23,25 @@ class Locator:
     Utility class for locating tiles in a map based on the given criteria
 
     """
+
+    @staticmethod
+    def create_areas(config: 'CreateAreaConfig', grid_map: 'GridMap') -> List[Area]:
+        """
+        Create areas for the given create area config.
+
+        Args:
+            config: The config object to be used for the areas
+            grid_map: The grid map to be taken into account when creating the areas
+
+        Returns:
+            # todo: What does this return?
+        """
+        name = config.name
+        limit = config.max_potential_area_count
+
+        areas = grid_map.available_areas(size=config.base_size * 2, shuffle=True, limit=limit)
+
+        return areas
 
     @staticmethod
     def create_groups(config: 'CreateObjectConfig', grid_map: 'GridMap') -> List[List[Tile]]:
@@ -45,7 +66,6 @@ class Locator:
                  f"({amount} groups compared to {len(available_tiles)} available tiles).\n"
                  f"Consider lowering the max amount of necessary groups for '{name}'.", SpawnFailureWarning, 3)
 
-        # starting_tiles = self.find_random_locations(amount)
         starting_tiles = available_tiles[:amount]
 
         failed_spawns = 0

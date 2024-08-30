@@ -37,9 +37,6 @@ def test_locator_get_valid_tiles(create_object_config: CreateObjectConfig, grid_
     create_object_config.max_potential_group_count = 15
     groups = Locator.create_groups(create_object_config, grid_map)
 
-    print('\n\n\n')
-    print(pretty_format_list(groups))
-
     sum_ = sum([len(e) for e in groups])
     assert sum_ == 60  # 15 groups of 4
 

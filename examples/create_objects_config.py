@@ -2,22 +2,23 @@ from typing import List
 
 from AoE2ScenarioParser.datasets.buildings import BuildingInfo
 from AoE2ScenarioParser.datasets.other import OtherInfo
+from AoE2ScenarioParser.datasets.terrains import TerrainId
 from AoE2ScenarioParser.datasets.units import UnitInfo
 
 from AoE2ScenarioRms.enums import GroupingMethod
 from AoE2ScenarioRms.enums.area_pattern import AreaPattern
 from AoE2ScenarioRms.rms import CreateObjectConfig
-from AoE2ScenarioRms.rms.create_group.create_area_config import CreateAreaConfig
+from AoE2ScenarioRms.rms.create_area.create_area_config import CreateAreaConfig
 
 # ⚠️ AREA CONFIGS ARE WORK IN PROGRESS -- NOT FUNCTIONAL ⚠️
 bandit_camp_area_config: list[CreateAreaConfig] = [
     CreateAreaConfig(
         name='camps',
         area_pattern=AreaPattern.FLOW,
-        area_spread_radius=5,
-        min_distance_area_placement=8,  # Unused for now, no other areas
+        base_size=5,
+        min_distance_area_placement=8,  # Useless (for now), no other areas in this config
         temp_min_distance_area_placement=40,
-        block_group_spawns=True,
+        block_resource_spawns=True,
         create_objects=[
             CreateObjectConfig(
                 name='camp_mining_camp',
@@ -58,7 +59,9 @@ bandit_camp_area_config: list[CreateAreaConfig] = [
                 min_distance_to_map_edge=2,
                 _max_potential_group_count=12,
             ),
-        ]
+        ],
+        _debug_mark_area_with_terrain=(TerrainId.DIRT_MUD, TerrainId.BLACK),
+        _max_potential_area_count=250,
     )
 ]
 
