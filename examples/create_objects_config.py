@@ -19,9 +19,9 @@ bandit_camp_area_config: list[CreateAreaConfig] = [
         min_distance_area_placement=8,  # Useless (for now), no other areas in this config
         temp_min_distance_area_placement=40,
         block_resource_spawns=True,
-        create_objects=[
+        create_objects=lambda: [
             CreateObjectConfig(
-                name='camp_mining_camp',
+                name='mining_camp',
                 const=BuildingInfo.MINING_CAMP.ID,
                 number_of_objects=1,
                 number_of_groups=1,
@@ -30,26 +30,26 @@ bandit_camp_area_config: list[CreateAreaConfig] = [
                 _max_potential_group_count=3,
             ),
             CreateObjectConfig(
-                name='camp_barracks',
+                name='barracks',
                 const=BuildingInfo.BARRACKS.ID,
                 number_of_objects=1,
                 number_of_groups=1,
                 min_distance_group_placement=0,
                 object_size=3,
-                _max_potential_group_count=5,
+                _max_potential_group_count=3,
             ),
             CreateObjectConfig(
-                name='camp_gold',
+                name='gold',
                 const=OtherInfo.GOLD_MINE.ID,
                 grouping=GroupingMethod.TIGHT,
                 number_of_objects=(1, 3),
                 number_of_groups=8,
                 temp_min_distance_group_placement=1,
                 min_distance_group_placement=0,
-                _max_potential_group_count=12,
+                _max_potential_group_count=10,
             ),
             CreateObjectConfig(
-                name='camp_archers',
+                name='archers',
                 const=UnitInfo.ARCHER.ID,
                 grouping=GroupingMethod.TIGHT,
                 number_of_objects=1,
@@ -57,11 +57,12 @@ bandit_camp_area_config: list[CreateAreaConfig] = [
                 temp_min_distance_group_placement=1,
                 min_distance_group_placement=0,
                 min_distance_to_map_edge=2,
-                _max_potential_group_count=12,
+                _max_potential_group_count=8,
             ),
         ],
         _debug_mark_area_with_terrain=(TerrainId.DIRT_MUD, TerrainId.BLACK),
-        _max_potential_area_count=250,
+        # _debug_place_all=True,
+        _max_potential_area_count=10,
     )
 ]
 

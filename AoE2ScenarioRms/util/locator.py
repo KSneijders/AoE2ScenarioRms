@@ -39,7 +39,7 @@ class Locator:
         name = config.name
         limit = config.max_potential_area_count
 
-        areas = grid_map.available_areas(size=config.base_size * 2, shuffle=True, limit=limit)
+        areas = grid_map.available_areas(size=config.base_size * 2 + 1, shuffle=True, limit=limit)
 
         return areas
 

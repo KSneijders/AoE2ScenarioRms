@@ -1,8 +1,11 @@
 from typing import Generator
 
 
+def _create_counter() -> Generator[int, None, None]:
+    for i in range(999_999_999):
+        yield i
+
+
 class RmsUtil:
-    @staticmethod
-    def create_counter() -> Generator[int, None, None]:
-        for i in range(999_999_999):
-            yield i
+    object_counter = _create_counter()
+    area_counter = _create_counter()

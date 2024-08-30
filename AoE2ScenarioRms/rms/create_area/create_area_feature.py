@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 from typing import TYPE_CHECKING
 
 from AoE2ScenarioParser.helper.helper import xy_to_i
@@ -8,16 +9,18 @@ from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 from AoE2ScenarioRms.enums import XsKey
 from AoE2ScenarioRms.rms.create_area.create_area_config import CreateAreaConfig
 from AoE2ScenarioRms.rms.rms_feature import RmsFeature
-from AoE2ScenarioRms.util import XsContainer, XsUtil, Locator
+from AoE2ScenarioRms.util import XsContainer, XsUtil, Locator, GridMapFactory
+from AoE2ScenarioRms.util.rms_util import RmsUtil
 
 if TYPE_CHECKING:
     from AoE2ScenarioRms.util import GridMap
+    from AoE2ScenarioRms import AoE2ScenarioRms
 
 
 class CreateAreaFeature(RmsFeature):
     unique_names = set()
 
-    def __init__(self, scenario: AoE2DEScenario) -> None:
+    def __init__(self, scenario: AoE2DEScenario, scenario_rms: 'AoE2ScenarioRms') -> None:
         """
         Class that manages the functionality behind implementing the create_area clause
 
@@ -27,6 +30,8 @@ class CreateAreaFeature(RmsFeature):
         container = XsContainer()
 
         super().__init__(scenario, container)
+
+        self.scenario_rms = scenario_rms
 
     def init(self, config: CreateAreaConfig) -> None:
         """
@@ -93,6 +98,10 @@ class CreateAreaFeature(RmsFeature):
 
         areas = Locator.create_areas(config, grid_map)
 
+        if config.debug_place_all:
+            for object_config in config.create_objects:
+                object_config.debug_place_all = True
+
         for index, area in enumerate(areas):
             spawn_area = tm.add_trigger(f"Spawn {config.name} {index}/{len(areas)}")
             function = f"bool __should_spawn_area_{config.name}_{index}() {{" \
@@ -100,6 +109,15 @@ class CreateAreaFeature(RmsFeature):
                        f"}}"
 
             spawn_area.new_condition.script_call(xs_function=function.strip().replace('  ', ''))
+
+            create_objects_config = copy.deepcopy(config.create_objects)
+
+            for object_config in create_objects_config:
+                object_config.index = next(RmsUtil.object_counter)
+                object_config.name = f"{object_config.name}_{index}"
+
+            grid_map = GridMapFactory.select(scenario=self.scenario, area=area)
+            self.scenario_rms.create_objects(configs=create_objects_config, grid_map=grid_map)
 
             # for iindex, tile in enumerate(group):
             #     spawn_group.new_effect.create_object(group_const, PlayerId.GAIA, tile.x, tile.y)

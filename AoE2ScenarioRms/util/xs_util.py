@@ -8,6 +8,7 @@ class XsUtil:
     Class for managing common Xs shortcuts and functionality.
 
     """
+
     @staticmethod
     def bool(val: Any) -> str:
         """
@@ -47,4 +48,7 @@ class XsUtil:
             The updated string as an XS constant
         """
         xs_name = ' '.join(filter(lambda e: e, name.split(' ')))
-        return xs_name.upper().replace(' ', '_')
+        return xs_name \
+            .upper() \
+            .replace(' ', '_') \
+            .replace('.', '_')

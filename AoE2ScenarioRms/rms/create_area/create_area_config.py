@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable
 
 from AoE2ScenarioParser.datasets.terrains import TerrainId
 
@@ -18,7 +18,7 @@ class CreateAreaConfig(RmsConfig):
     def __init__(
             self,
             name: str,
-            number_of_areas: int = 999_999_999,  # (As many as can fit) Cannot be math.inf as `str(...)` is used within xs
+            number_of_areas: int = 999_999_999,  # (As many as can fit) Cannot be math.inf as `str(...)` is used
             area_pattern: AreaPattern = AreaPattern.FLOW,
             base_size: int = 5,
             min_distance_area_placement: int = 5,
@@ -30,7 +30,7 @@ class CreateAreaConfig(RmsConfig):
             scale_size_by_player_number: bool = False,
             scale_size_by_map_size: bool = False,
 
-            create_objects: list[CreateObjectConfig] = None,
+            create_objects: Callable[[], list[CreateObjectConfig]] = None,
 
             # ----- Debug & Parser -----
             _max_potential_area_count: int = 200,
@@ -61,13 +61,12 @@ class CreateAreaConfig(RmsConfig):
         self.scale_size_to_player_number: bool = scale_size_by_player_number                        # Todo: [ ✖️ Declared] [ ✖️ Implement]
         self.scale_size_to_map_size: bool = scale_size_by_map_size                                  # Todo: [ ✖️ Declared] [ ✖️ Implement]
 
-        self.create_objects = create_objects or []                                                  # Todo: [ ✖️ Declared] [ ✖️ Implement]
+        self.create_objects = create_objects() if create_objects is not None else []                # Todo: [ ✖️ Declared] [ ✖️ Implement]
 
         self.max_potential_area_count: int = _max_potential_area_count                              # Todo:                [ ✖️ Implement]
         self.debug_place_all: bool = _debug_place_all                                               # Todo:                [ ✖️ Implement]
         self.debug_mark_area_with_terrain: tuple[TerrainId, TerrainId] | TerrainId | None = _debug_mark_area_with_terrain
 
-        self.index = next(_area_counter)
+        self.index = next(RmsUtil.area_counter)
 
-
-_area_counter = RmsUtil.create_counter()
+        RmsConfig.current_construction_area_name = None

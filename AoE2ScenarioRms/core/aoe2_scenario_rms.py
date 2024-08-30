@@ -46,7 +46,7 @@ class AoE2ScenarioRms:
     def create_areas(self, key: str, config: list[CreateAreaConfig], grid_map: GridMap) -> None:
         self._verify_no_debug()
 
-        create_area = CreateAreaFeature(self.scenario)
+        create_area = CreateAreaFeature(self.scenario, self)
         self.xs_container += create_area.solve(config, grid_map)
 
     def _verify_no_debug(self) -> None:

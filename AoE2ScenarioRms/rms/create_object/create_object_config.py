@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import random
-from typing import Generator
 
 from AoE2ScenarioParser.helper.printers import warn
 
@@ -107,7 +106,7 @@ class CreateObjectConfig(RmsConfig):
             grouping: GroupingMethod = GroupingMethod.TIGHT,
             number_of_objects: int | tuple[int, int] = 1,
             group_placement_radius: int = 3,
-            number_of_groups: float = 999_999_999,  # (As many as can fit) Cannot be math.inf as `str(...)` is used within xs
+            number_of_groups: float = 999_999_999,  # (As many as can fit) Cannot be math.inf as `str(...)` is used
             loose_grouping_distance: int = None,
             min_distance_group_placement: int = 4,
             temp_min_distance_group_placement: int = 20,
@@ -124,14 +123,16 @@ class CreateObjectConfig(RmsConfig):
         super().__init__(name)
 
         if scale_to_player_number and number_of_groups > 100_000:
-            raise InvalidCreateObjectError(f"[{self.name}]: cannot use scale with player number when number of groups is above 100k")
+            raise InvalidCreateObjectError(
+                f"[{self.name}]: cannot use scale with player number when number of groups is above 100k")
 
         if not isinstance(number_of_objects, int) and not isinstance(number_of_objects, tuple):
             raise TypeError(f"[{self.name}]: number_of_objects has to be either int or tuple[int, int], "
                             f"not: {type(number_of_objects)}.")
 
         if grouping is not GroupingMethod.LOOSE and loose_grouping_distance is not None:
-            warn(f"[{self.name}]: Setting 'loose_grouping_distance' without GroupingMethod.LOOSE has no effect", ImproperCreateObjectWarning)
+            warn(f"[{self.name}]: Setting 'loose_grouping_distance' without GroupingMethod.LOOSE has no effect",
+                 ImproperCreateObjectWarning)
 
         if loose_grouping_distance is None:
             loose_grouping_distance = 3
@@ -152,13 +153,13 @@ class CreateObjectConfig(RmsConfig):
         self.max_potential_group_count: int = _max_potential_group_count
         self.debug_place_all: bool = _debug_place_all
 
-        self.index = next(_object_counter)
+        # When inside an area creation, the index will be assigned later
+        # This way, the same object config has a unique index for every area instance
+        self.index = -1 if RmsConfig.is_during_area_creation() else next(RmsUtil.object_counter)
+        # TODO DONT ASSIGN ID IN CONSTRUCTOR ANYMORE!
 
     def get_random_const(self) -> int:
         if isinstance(self.const, list):
             return random.choice(self.const)
         else:
             return self.const
-
-
-_object_counter = RmsUtil.create_counter()
