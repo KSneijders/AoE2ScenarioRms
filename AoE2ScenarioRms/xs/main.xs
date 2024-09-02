@@ -1,3 +1,5 @@
+bool __AOE2_SCENARIO_RMS_DEBUG = true;
+
 /* REPLACE:AREA_VARIABLE_DECLARATION */
 /* REPLACE:RESOURCE_VARIABLE_DECLARATION */
 
@@ -47,6 +49,16 @@ string getVectorAsString(vector loc = vector(-1, -1, -1)) {
     return ("x: " + xsVectorGetX(loc) + ", y:" + xsVectorGetY(loc));
 }
 
+void __debug__(string message = "") {
+    static int l = 0;
+
+    if (__AOE2_SCENARIO_RMS_DEBUG) {
+        xsChatData("L" + l + ": " + message);
+
+        l++;
+    }
+}
+
 bool spawnArea__618941981(int areaId = -1) {
     if (areaId == -1)
         return (false);
@@ -59,6 +71,8 @@ bool spawnArea__618941981(int areaId = -1) {
 bool spawnResource__024510896(int resourceId = -1) {
     if (resourceId == -1)
         return (false);
+
+    string name = xsArrayGetString(__RESOURCE_GROUP_NAMES, resourceId);
 
     int resourceSpawnCount = xsArrayGetInt(__RESOURCE_SPAWN_COUNTS, resourceId);
     float resourceMaxSpawnCount = xsArrayGetFloat(__RESOURCE_MAX_SPAWN_COUNTS, resourceId);
@@ -77,6 +91,8 @@ bool spawnResource__024510896(int resourceId = -1) {
     int placedResourcesCount = xsArrayGetInt(progressArray, 0);
     int skippedResourceCount = xsArrayGetInt(progressArray, 1);
     int startAtIndex = placedResourcesCount + skippedResourceCount;
+
+    __debug__("Spawning: " + name + "[ " + placedResourcesCount + " / " + skippedResourceCount + " | " + resourceSpawnCount + " | " + resourceMaxSpawnCount + " ]");
 
     int minimumDistToSelf = xsArrayGetInt(resourceConfigArray, 0);
     int minimumDistToOther = xsArrayGetInt(resourceConfigArray, 1);
@@ -121,6 +137,8 @@ bool spawnResource__024510896(int resourceId = -1) {
             /* REPLACE:XS_ON_SUCCESSFUL_SPAWN */
             
             if (placedResourcesCount + 1 >= resourceMaxSpawnCount) {
+
+                __debug__(name + " MAX IS REACHED");
                 // Next NOT allowed to be placed. Max is reached.
                 return (false);
             }
@@ -133,6 +151,7 @@ bool spawnResource__024510896(int resourceId = -1) {
     }
 
     // Next NOT allowed to be placed because the end is reached. Nothing fits anymore.
+    __debug__(name + " Nothing fits anymore");
     return (false);
 }
 
@@ -147,7 +166,9 @@ rule main_initialise__023658412
 
 /* REPLACE:XS_ON_INIT_RULE */
 
+    /* ########################################################### */
     /* #######################>>> Areas <<<####################### */
+    /* ########################################################### */
 
     __AREA_GROUP_NAMES = xsArrayCreateString(__AREA_COUNT, "", "__AREA_GROUP_NAMES__245005639");
 /* REPLACE:AREA_GROUP_NAMES_DECLARATION */
@@ -196,7 +217,9 @@ rule main_initialise__023658412
     /*                                                    O                                        */
     /*                                                      R                                      */
 
+    /* ############################################################### */
     /* #######################>>> Resources <<<####################### */
+    /* ############################################################### */
 
     __RESOURCE_GROUP_NAMES = xsArrayCreateString(__RESOURCE_COUNT, "", "__RESOURCE_GROUP_NAMES__594522389");
 /* REPLACE:RESOURCE_GROUP_NAMES_DECLARATION */
@@ -246,8 +269,14 @@ rule main_initialise__023658412
 /* REPLACE:AREA_LOCATION_INJECTION */
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
+    /* ############################################################## */
+    /* #######################>>> SPAWNING <<<####################### */
+    /* ############################################################## */
+
     bool success = true;
     for (areaId = 0; < __AREA_COUNT) {
+        success = true;
+
         while (success) {
             success = spawnArea__618941981(areaId);
         }
@@ -255,8 +284,9 @@ rule main_initialise__023658412
         /* REPLACE:AFTER_AREA_SPAWN_EVENT */
     }
 
-    success = true;
     for (resourceId = 0; < __RESOURCE_COUNT) {
+        success = true;
+
         while (success) {
             success = spawnResource__024510896(resourceId);
         }
