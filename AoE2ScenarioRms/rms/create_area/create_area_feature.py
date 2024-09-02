@@ -62,6 +62,11 @@ class CreateAreaFeature(RmsFeature):
             f"xsArraySetFloat(__AREA_MAX_SPAWN_COUNTS, {name}, {config.number_of_areas});"
         )
 
+        self.xs_container.append(
+            XsKey.AREA_RESOURCE_COUNTS_DECLARATION,
+            f"xsArraySetInt(__AREA_RESOURCE_COUNTS, {name}, {len(config.create_objects)});"
+        )
+
         # Todo: Implement scaling to player number / map size
 
         block_resource_spawns = XsUtil.bool(config.block_resource_spawns)
@@ -78,9 +83,9 @@ class CreateAreaFeature(RmsFeature):
         self.xs_container.extend(
             XsKey.AREA_CONFIG_DECLARATION,
             [
-                f"cArray = xsArrayGetInt(__ARRAY_AREA_CONFIGS, {name});",
-                f"xsArraySetInt(cArray, 0, {config.temp_min_distance_area_placement}); // distance self: {config.temp_min_distance_area_placement}",
-                f"xsArraySetInt(cArray, 1, {config.min_distance_area_placement}); // distance other: {config.min_distance_area_placement}",
+                f"tempArray = xsArrayGetInt(__ARRAY_AREA_CONFIGS, {name});",
+                f"xsArraySetInt(tempArray, 0, {config.temp_min_distance_area_placement}); // distance self: {config.temp_min_distance_area_placement}",
+                f"xsArraySetInt(tempArray, 1, {config.min_distance_area_placement}); // distance other: {config.min_distance_area_placement}",
             ]
         )
 
@@ -95,6 +100,11 @@ class CreateAreaFeature(RmsFeature):
         """
         tm, um, mm = self.scenario.trigger_manager, self.scenario.unit_manager, self.scenario.map_manager
         name = self._format_name(config.name)
+
+        self.xs_container.append(
+            XsKey.AREA_CONFIG_DECLARATION,
+            f"tempArray = xsArrayGetInt(__ARRAY_AREA_RESOURCE_IDS, {name});"
+        )
 
         areas = Locator.create_areas(config, grid_map)
 
@@ -112,21 +122,24 @@ class CreateAreaFeature(RmsFeature):
 
             create_objects_config = copy.deepcopy(config.create_objects)
 
-            for object_config in create_objects_config:
+            self.xs_container.append(
+                XsKey.AREA_CONFIG_DECLARATION,
+                f"temp2Array = xsArrayGetInt(tempArray, {index});"
+            )
+
+            for object_index, object_config in enumerate(create_objects_config):
+                object_name = object_config.name
+
                 object_config.index = next(RmsUtil.object_counter)
-                object_config.name = f"{object_config.name}_{index}"
+                object_config.name = f"{object_name}_{index}"
+
+                self.xs_container.append(
+                    XsKey.AREA_CONFIG_DECLARATION,
+                    f"xsArraySetInt(temp2Array, {object_index}, {object_config.index}); // {config.name}[{index}][{object_name}] = {object_config.index}"
+                )
 
             grid_map = GridMapFactory.select(scenario=self.scenario, area=area)
             self.scenario_rms.create_objects(configs=create_objects_config, grid_map=grid_map)
-
-            # for iindex, tile in enumerate(group):
-            #     spawn_group.new_effect.create_object(group_const, PlayerId.GAIA, tile.x, tile.y)
-            #
-            #     if config.debug_place_all:
-            #         um.add_unit(PlayerId.GAIA, group_const, tile.x + .5, tile.y + .5)
-            #         player = PlayerId.GAIA if iindex == 0 else PlayerId.ONE
-            #         const = OtherInfo.FLAG_M.ID if iindex == 0 else OtherInfo.FLAG_C.ID
-            #         um.add_unit(player, const, tile.x + .5, tile.y + .5)
 
             centre = area.get_center_int()
             self.xs_container.append(

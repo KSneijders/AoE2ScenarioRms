@@ -1,5 +1,5 @@
-int progressArray = xsArrayGetInt(__ARRAY_RESOURCE_PROGRESS, resourceId);
-string name = xsArrayGetString(__RESOURCE_GROUP_NAMES, resourceId);
-int placedResourcesCount = xsArrayGetInt(progressArray, 0);
+progressArray = xsArrayGetInt(__ARRAY_RESOURCE_PROGRESS, resourceId);
+name = xsArrayGetString(__RESOURCE_GROUP_NAMES, resourceId);
+placedResourcesCount = xsArrayGetInt(progressArray, 0);
 
-xsChatData("Group `" + name + "` spawned " + placedResourcesCount + " successfully!");
+__debug__("Group `" + name + "` spawned " + placedResourcesCount + " successfully!");

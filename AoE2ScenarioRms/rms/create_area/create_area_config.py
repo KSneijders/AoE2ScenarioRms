@@ -48,11 +48,11 @@ class CreateAreaConfig(RmsConfig):
         if (scale_number_of_areas_by_player_number or scale_number_of_areas_by_map_size) and number_of_areas > 100_000:
             raise InvalidCreateAreaError(f"[{self.name}]: cannot use scale_number_of_areas_by_x with player number when number of areas is above 100k")
 
-        self.number_of_areas: int = number_of_areas                                                 # Todo:                [ ✖️ Implement]
-        self.area_pattern: AreaPattern = area_pattern                                               # Todo:                [ ✖️ Implement]
-        self.base_size: int = base_size                                                             # Todo:                [ ✖️ Implement]
+        self.number_of_areas: int = number_of_areas
+        self.area_pattern: AreaPattern = area_pattern
+        self.base_size: int = base_size
 
-        self.min_distance_area_placement: int = min_distance_area_placement                         # Todo:                [ ✖️ Implement]
+        self.min_distance_area_placement: int = min_distance_area_placement
         self.temp_min_distance_area_placement: int = temp_min_distance_area_placement               # Todo:                [ ✖️ Implemented]
         self.block_resource_spawns: bool = block_resource_spawns                                    # Todo:                [ ✖️ Implement]
 

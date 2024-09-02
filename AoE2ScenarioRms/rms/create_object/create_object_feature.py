@@ -70,9 +70,9 @@ class CreateObjectFeature(RmsFeature):
         self.xs_container.extend(
             XsKey.RESOURCE_CONFIG_DECLARATION,
             [
-                f"cArray = xsArrayGetInt(__ARRAY_RESOURCE_CONFIGS, {name});",
-                f"xsArraySetInt(cArray, 0, {config.temp_min_distance_group_placement}); // distance self: {config.temp_min_distance_group_placement}",
-                f"xsArraySetInt(cArray, 1, {config.min_distance_group_placement}); // distance other: {config.min_distance_group_placement}",
+                f"tempArray = xsArrayGetInt(__ARRAY_RESOURCE_CONFIGS, {name});",
+                f"xsArraySetInt(tempArray, 0, {config.temp_min_distance_group_placement}); // distance self: {config.temp_min_distance_group_placement}",
+                f"xsArraySetInt(tempArray, 1, {config.min_distance_group_placement}); // distance other: {config.min_distance_group_placement}",
             ]
         )
 

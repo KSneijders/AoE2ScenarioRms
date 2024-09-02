@@ -25,13 +25,15 @@ class XsKey(Enum):
     AREA_GROUP_NAMES_DECLARATION = auto()
     AREA_BLOCK_RESOURCE_SPAWNS_DECLARATION = auto()
     AREA_CONFIG_DECLARATION = auto()
+    AREA_RESOURCE_COUNTS_DECLARATION = auto()
 
     AFTER_RESOURCE_SPAWN_EVENT = auto()
 
     XS_ON_INIT_FILE = auto()
     XS_ON_INIT_RULE = auto()
 
-    XS_ON_SUCCESSFUL_SPAWN = auto()
+    XS_ON_SUCCESSFUL_RESOURCE_SPAWN = auto()
+    XS_ON_SUCCESSFUL_AREA_SPAWN = auto()
 
     @staticmethod
     def join_string(key: XsKey):
@@ -52,6 +54,7 @@ _xs_join_strings = {
     XsKey.AREA_BLOCK_RESOURCE_SPAWNS_DECLARATION: '\n\t',
     XsKey.AREA_LOCATION_INJECTION: '\n\t',
     XsKey.AREA_CONFIG_DECLARATION: '\n\t',
+    XsKey.AREA_RESOURCE_COUNTS_DECLARATION: '\n\t',
 
     XsKey.RESOURCE_GROUP_NAMES_DECLARATION: '\n\t',
     XsKey.RESOURCE_COUNT_DECLARATION: '\n\t',
@@ -63,5 +66,6 @@ _xs_join_strings = {
 
     XsKey.AFTER_RESOURCE_SPAWN_EVENT: '\n\t\t',
 
-    XsKey.XS_ON_SUCCESSFUL_SPAWN: '\n\t\t\t',
+    XsKey.XS_ON_SUCCESSFUL_RESOURCE_SPAWN: '\n\t\t\t',
+    XsKey.XS_ON_SUCCESSFUL_AREA_SPAWN: '\n\t\t\t',
 }
