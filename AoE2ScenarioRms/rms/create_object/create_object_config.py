@@ -101,6 +101,7 @@ class CreateObjectConfig(RmsConfig):
 
     unique_names = set()
 
+    # Todo: Add a toggle for allowing/disallowing automatic spawning of this resource: Default: true
     def __init__(
             self,
             name: str,
