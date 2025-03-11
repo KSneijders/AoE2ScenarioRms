@@ -58,7 +58,7 @@ class CreateObjectFeature(RmsFeature):
 
         self.xs_container.append(
             XsKey.RESOURCE_MAX_SPAWN_DECLARATION,
-            f"xsArraySetFloat(__RESOURCE_MAX_SPAWN_COUNTS, {name}, {config.number_of_groups});"
+            f"xsArraySetFloat(__RESOURCE_MAX_SPAWN_COUNTS, {name}, {config.number_of_groups}.0);"
         )
 
         bool_ = XsUtil.bool(config.scale_to_player_number)

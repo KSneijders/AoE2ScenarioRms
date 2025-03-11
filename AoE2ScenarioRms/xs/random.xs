@@ -20,7 +20,7 @@ int GetRandomRange(int min=0,int max=999999999){
 
 void main(){
     __randomSeed = xsGetRandomNumber()*xsGetRandomNumber();
-    __randomModulus = 0 + pow(2,31);
+    __randomModulus = 0.0 + pow(2.0,31.0);
     __randomMultiplier = 999999999 + 103515246;
     __randomIncrement = 12345;
 }
