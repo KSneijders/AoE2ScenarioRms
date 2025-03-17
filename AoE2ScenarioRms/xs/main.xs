@@ -112,6 +112,15 @@ bool spawnResource__024510896(int resourceId = -1) {
     return (false);
 }
 
+void spawnAllOfResource__895621354(int resourceId = -1) {
+    bool b = true;
+    while (b) {
+        b = spawnResource__024510896(resourceId);
+    }
+
+    /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
+}
+
 rule main_initialise__023658412
     active
     runImmediately
@@ -166,15 +175,6 @@ rule main_initialise__023658412
 
     int rArray = -1;
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
-
-    for (resourceId = 0; < __RESOURCE_COUNT) {
-        bool b = true;
-        while (b) {
-            b = spawnResource__024510896(resourceId);
-        }
-
-        /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
-    }
 
     xsDisableSelf();
 }
