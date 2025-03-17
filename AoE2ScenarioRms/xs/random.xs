@@ -18,11 +18,20 @@ int GetRandomRange(int min=0,int max=999999999){
     return ((GetRandom() % (max+1-min)) + min);
 }
 
-void main(){
+
+rule main_initialise_rng__061843574
+    active
+    runImmediately
+    minInterval 1
+    maxInterval 1
+    priority 1000
+{
     __randomSeed = xsGetRandomNumber()*xsGetRandomNumber();
-    __randomModulus = 0 + pow(2,31);
+    __randomModulus = 0.0 + pow(2.0,31.0);
     __randomMultiplier = 999999999 + 103515246;
     __randomIncrement = 12345;
+
+    xsDisableSelf();
 }
 
 void ShuffleVectorArray(int arr = -1, int indexArr = -1) {

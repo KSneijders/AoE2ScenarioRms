@@ -23,8 +23,8 @@ int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed, [i][1]: skipped
 
 // ---------< Functions >--------- \\
 float getXyDistance(vector loc1 = vector(-1, -1, -1), vector loc2 = vector(-1, -1, -1)) {
-    float x = pow(xsVectorGetX(loc1) - xsVectorGetX(loc2), 2);
-    float y = pow(xsVectorGetY(loc1) - xsVectorGetY(loc2), 2);
+    float x = pow(xsVectorGetX(loc1) - xsVectorGetX(loc2), 2.0);
+    float y = pow(xsVectorGetY(loc1) - xsVectorGetY(loc2), 2.0);
     return (sqrt(x + y));
 }
 
@@ -112,6 +112,15 @@ bool spawnResource__024510896(int resourceId = -1) {
     return (false);
 }
 
+void spawnAllOfResource__895621354(int resourceId = -1) {
+    bool b = true;
+    while (b) {
+        b = spawnResource__024510896(resourceId);
+    }
+
+    /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
+}
+
 rule main_initialise__023658412
     active
     runImmediately
@@ -127,7 +136,7 @@ rule main_initialise__023658412
     __RESOURCE_SPAWN_COUNTS = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__RESOURCE_SPAWN_COUNTS__538652012");
 /* REPLACE:RESOURCE_COUNT_DECLARATION */
 
-    __RESOURCE_MAX_SPAWN_COUNTS = xsArrayCreateFloat(__RESOURCE_COUNT, -1, "__RESOURCE_MAX_SPAWN_COUNTS__503956013");
+    __RESOURCE_MAX_SPAWN_COUNTS = xsArrayCreateFloat(__RESOURCE_COUNT, -1.0, "__RESOURCE_MAX_SPAWN_COUNTS__503956013");
 /* REPLACE:RESOURCE_MAX_SPAWN_DECLARATION */
 
     __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER__024698552");
@@ -166,15 +175,6 @@ rule main_initialise__023658412
 
     int rArray = -1;
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
-
-    for (resourceId = 0; < __RESOURCE_COUNT) {
-        bool b = true;
-        while (b) {
-            b = spawnResource__024510896(resourceId);
-        }
-
-        /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
-    }
 
     xsDisableSelf();
 }
