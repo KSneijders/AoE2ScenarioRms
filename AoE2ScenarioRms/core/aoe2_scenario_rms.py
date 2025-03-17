@@ -68,6 +68,9 @@ class AoE2ScenarioRms:
 
         # Store the configs for later use
         for config in configs:
+            if config.name in self.resources:
+                raise ValueError(f"Already existing name [{config.name}] found. Config names should be unique")
+            
             self.resources[config.name] = config
             self.resource_triggers[config.name] = tm.add_trigger(
                 name=f'Spawning all [{config.name}] blobs',
