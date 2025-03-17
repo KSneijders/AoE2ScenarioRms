@@ -17,6 +17,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.3.0 - 2025-March-17
+
+### Added
+
+- Resource spawning control features
+  - New attributes to the `AoE2ScenarioRms` object:
+    - `automatic_resource_spawning` (If resources should spawn without manual activation; Default: `True`) 
+    - `staggered_resource_spawning` (If resources should spawn staggered (not all at once); Default: `False`)
+    - `staggered_resource_offset` (Seconds before staggered spawning starts; Default: `0`)
+    - `staggered_resource_delay` (Seconds between staggered spawns; Default: `1`)
+    - `staggered_resource_batch_size` (Amount of resources to spawn each staggered cycle; Default: `1`)
+  - The `AoE2ScenarioRms.create_objects(...)` function now returns a dictionary
+    - Keys are the names of the configs given to the function
+    - Values are the triggers used to activate the resource spawning. 
+      - If staggered spawning is enabled, the timer conditions will be added at scenario writing. 
+        So these cannot be adjusted manually. If you want manual timing, disable the automatic staggered 
+        spawning and add timers (or other) to the returned triggers yourself.  
+
+### Fixed
+
+- The randomization logic used in XS no longer has a `void main` function.
+
+---
+
 ## 0.2.21 - 2024-May-25
 
 ### Fixed
