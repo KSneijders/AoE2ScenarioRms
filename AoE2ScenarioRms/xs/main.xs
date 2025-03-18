@@ -1,6 +1,7 @@
 /* REPLACE:RESOURCE_VARIABLE_DECLARATION */
 
 int __RESOURCE_COUNT = /* REPLACE:RESOURCE_VARIABLE_COUNT */;
+bool __RESOURCE_SPAWNING_READY = false;
 
 // ---------< Other initialization stuff >--------- \\
 /* REPLACE:XS_ON_INIT_FILE */
@@ -22,6 +23,10 @@ int __ARRAY_RESOURCE_CONFIGS = -1;          // [i][0]: dist self, [i][1]: dist o
 int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed, [i][1]: skipped
 
 // ---------< Functions >--------- \\
+bool isReadyToSpawnResources() {
+    return (__RESOURCE_SPAWNING_READY);
+}
+
 float getXyDistance(vector loc1 = vector(-1, -1, -1), vector loc2 = vector(-1, -1, -1)) {
     float x = pow(xsVectorGetX(loc1) - xsVectorGetX(loc2), 2.0);
     float y = pow(xsVectorGetY(loc1) - xsVectorGetY(loc2), 2.0);
@@ -112,13 +117,19 @@ bool spawnResource__024510896(int resourceId = -1) {
     return (false);
 }
 
-void spawnAllOfResource__895621354(int resourceId = -1) {
+bool spawnAllOfResource__895621354(int resourceId = -1) {
+    if (__RESOURCE_SPAWNING_READY == false) {
+        return (false);
+    }
+
     bool b = true;
     while (b) {
         b = spawnResource__024510896(resourceId);
     }
 
     /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
+
+    return (true);
 }
 
 rule main_initialise__023658412
@@ -176,5 +187,6 @@ rule main_initialise__023658412
     int rArray = -1;
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
+    __RESOURCE_SPAWNING_READY = true;
     xsDisableSelf();
 }

@@ -104,6 +104,7 @@ class AoE2ScenarioRms:
             delay = self.staggered_resource_offset
             for resource_id, (resource_name, resource_config) in enumerate(self.resources.items()):
                 trigger = self.resource_triggers[resource_name]
+                trigger.new_condition.script_call('isReadyToSpawnResources')
 
                 if self.staggered_resource_spawning:
                     trigger.new_condition.timer(timer=delay)
