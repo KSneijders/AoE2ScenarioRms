@@ -4,6 +4,7 @@ from typing import TYPE_CHECKING, List
 
 from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.players import PlayerId
+from AoE2ScenarioParser.objects.data_objects.trigger import Trigger
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms.enums import XsKey
@@ -19,7 +20,7 @@ if TYPE_CHECKING:
 class CreateObjectFeature(RmsFeature):
     unique_names = set()
 
-    def __init__(self, scenario: AoE2DEScenario) -> None:
+    def __init__(self, scenario: AoE2DEScenario, disable_all_trigger: Trigger) -> None:
         """
         Class that manages the functionality behind implementing the create_object clause
 
@@ -29,6 +30,8 @@ class CreateObjectFeature(RmsFeature):
         container = XsContainer()
 
         super().__init__(scenario, container)
+
+        self.disable_all_trigger = disable_all_trigger
 
     def init(self, config: CreateObjectConfig) -> None:
         """
@@ -97,6 +100,8 @@ class CreateObjectFeature(RmsFeature):
 
         for index, group in enumerate(groups):
             spawn_group = tm.add_trigger(f"Spawn {config.name} {index}/{len(groups)}")
+            self.disable_all_trigger.new_effect.deactivate_trigger(spawn_group.trigger_id)
+
             group_const = config.get_random_const()
 
             function = f"bool __should_spawn_{config.name}_{index}() {{" \

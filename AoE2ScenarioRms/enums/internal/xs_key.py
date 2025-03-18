@@ -19,6 +19,7 @@ class XsKey(Enum):
     CONFIG_DECLARATION = auto()
 
     AFTER_RESOURCE_SPAWN_EVENT = auto()
+    AFTER_ALL_RESOURCES_SPAWNED_EVENT = auto()
 
     XS_ON_INIT_FILE = auto()
     XS_ON_INIT_RULE = auto()
@@ -46,6 +47,7 @@ _xs_join_strings = {
     XsKey.XS_ON_INIT_RULE: f'\n{_tab}',
 
     XsKey.AFTER_RESOURCE_SPAWN_EVENT: f'\n{_tab}',
+    XsKey.AFTER_ALL_RESOURCES_SPAWNED_EVENT: f'\n{_tab}{_tab}',
 
     XsKey.XS_ON_SUCCESSFUL_SPAWN: f'\n{_tab}{_tab}{_tab}',
 }

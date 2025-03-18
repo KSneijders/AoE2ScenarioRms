@@ -2,6 +2,7 @@
 
 int __RESOURCE_COUNT = /* REPLACE:RESOURCE_VARIABLE_COUNT */;
 bool __RESOURCE_SPAWNING_READY = false;
+bool __RESOURCE_SPAWNING_FINISHED = false;
 
 // ---------< Other initialization stuff >--------- \\
 /* REPLACE:XS_ON_INIT_FILE */
@@ -12,6 +13,7 @@ int __RESOURCE_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = -1;
 int __RESOURCE_GROUP_NAMES = -1;
+int __RESOURCE_FINISHED_SPAWNING = -1;
 
 // ---------< Arrays where resource ID is reference to other Array (2D) >--------- \\
 // Arrays for locations
@@ -129,6 +131,23 @@ bool spawnAllOfResource__895621354(int resourceId = -1) {
 
     /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
 
+    xsArraySetBool(__RESOURCE_FINISHED_SPAWNING, resourceId, true);
+
+    /* Verify that all resources finished spawning so triggers can be disabled */
+    bool allFinished = true;
+    for (i = 0; < __RESOURCE_COUNT) {
+        if (xsArrayGetBool(__RESOURCE_FINISHED_SPAWNING, resourceId) == false) {
+            allFinished = false;
+            break;
+        }
+    }
+
+    if (allFinished) {
+        __RESOURCE_SPAWNING_FINISHED = true;
+
+        /* REPLACE:AFTER_ALL_RESOURCES_SPAWNED_EVENT */
+    }
+
     return (true);
 }
 
@@ -152,6 +171,8 @@ rule main_initialise__023658412
 
     __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER__024698552");
 /* REPLACE:RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION */
+
+    __RESOURCE_FINISHED_SPAWNING    = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_FINISHED_SPAWNING__664401567");
 
     __ARRAY_RESOURCE_LOCATIONS      = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_LOCATIONS__056985215");
     __ARRAY_RESOURCE_INDICES        = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_INDICES__021548785");
