@@ -136,7 +136,7 @@ bool spawnAllOfResource__895621354(int resourceId = -1) {
     /* Verify that all resources finished spawning so triggers can be disabled */
     bool allFinished = true;
     for (i = 0; < __RESOURCE_COUNT) {
-        if (xsArrayGetBool(__RESOURCE_FINISHED_SPAWNING, resourceId) == false) {
+        if (xsArrayGetBool(__RESOURCE_FINISHED_SPAWNING, i) == false) {
             allFinished = false;
             break;
         }
