@@ -1,6 +1,8 @@
 /* REPLACE:RESOURCE_VARIABLE_DECLARATION */
 
 int __RESOURCE_COUNT = /* REPLACE:RESOURCE_VARIABLE_COUNT */;
+bool __RESOURCE_SPAWNING_READY = false;
+bool __RESOURCE_SPAWNING_FINISHED = false;
 
 // ---------< Other initialization stuff >--------- \\
 /* REPLACE:XS_ON_INIT_FILE */
@@ -11,6 +13,7 @@ int __RESOURCE_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS = -1;
 int __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = -1;
 int __RESOURCE_GROUP_NAMES = -1;
+int __RESOURCE_FINISHED_SPAWNING = -1;
 
 // ---------< Arrays where resource ID is reference to other Array (2D) >--------- \\
 // Arrays for locations
@@ -22,6 +25,10 @@ int __ARRAY_RESOURCE_CONFIGS = -1;          // [i][0]: dist self, [i][1]: dist o
 int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed, [i][1]: skipped
 
 // ---------< Functions >--------- \\
+bool isReadyToSpawnResources() {
+    return (__RESOURCE_SPAWNING_READY);
+}
+
 float getXyDistance(vector loc1 = vector(-1, -1, -1), vector loc2 = vector(-1, -1, -1)) {
     float x = pow(xsVectorGetX(loc1) - xsVectorGetX(loc2), 2.0);
     float y = pow(xsVectorGetY(loc1) - xsVectorGetY(loc2), 2.0);
@@ -112,13 +119,36 @@ bool spawnResource__024510896(int resourceId = -1) {
     return (false);
 }
 
-void spawnAllOfResource__895621354(int resourceId = -1) {
+bool spawnAllOfResource__895621354(int resourceId = -1) {
+    if (__RESOURCE_SPAWNING_READY == false) {
+        return (false);
+    }
+
     bool b = true;
     while (b) {
         b = spawnResource__024510896(resourceId);
     }
 
     /* REPLACE:AFTER_RESOURCE_SPAWN_EVENT */
+
+    xsArraySetBool(__RESOURCE_FINISHED_SPAWNING, resourceId, true);
+
+    /* Verify that all resources finished spawning so triggers can be disabled */
+    bool allFinished = true;
+    for (i = 0; < __RESOURCE_COUNT) {
+        if (xsArrayGetBool(__RESOURCE_FINISHED_SPAWNING, resourceId) == false) {
+            allFinished = false;
+            break;
+        }
+    }
+
+    if (allFinished) {
+        __RESOURCE_SPAWNING_FINISHED = true;
+
+        /* REPLACE:AFTER_ALL_RESOURCES_SPAWNED_EVENT */
+    }
+
+    return (true);
 }
 
 rule main_initialise__023658412
@@ -141,6 +171,8 @@ rule main_initialise__023658412
 
     __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER__024698552");
 /* REPLACE:RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION */
+
+    __RESOURCE_FINISHED_SPAWNING    = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_FINISHED_SPAWNING__664401567");
 
     __ARRAY_RESOURCE_LOCATIONS      = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_LOCATIONS__056985215");
     __ARRAY_RESOURCE_INDICES        = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_INDICES__021548785");
@@ -176,5 +208,6 @@ rule main_initialise__023658412
     int rArray = -1;
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
+    __RESOURCE_SPAWNING_READY = true;
     xsDisableSelf();
 }

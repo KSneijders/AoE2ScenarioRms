@@ -17,6 +17,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.3.8 - 2025-March-19
+
+### Added
+
+- Automatically disabling all resource spawn triggers once spawning has finished
+
+### Fixed
+
+- Resources not spawning if ran without any delay (before XS arrays init was finished)
+
+---
+
 ## 0.3.7 - 2025-March-17
 
 > All releases from `0.3.0` to `0.3.6` published correctly but the pipeline failed afterward

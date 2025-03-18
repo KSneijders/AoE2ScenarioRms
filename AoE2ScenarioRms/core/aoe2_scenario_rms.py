@@ -43,6 +43,7 @@ class AoE2ScenarioRms:
         """A map of the given configs by the given names"""
         self.resource_triggers: dict[str, Trigger] = {}
         """A map of the given configs by the given names"""
+        self._disable_all_trigger: Trigger | None = None
 
         scenario.xs_manager.initialise_xs_trigger()
         scenario.xs_manager.add_script(xs_file_path=str((Path(__file__).parent.parent / 'xs' / 'random.xs').resolve()))
@@ -63,6 +64,7 @@ class AoE2ScenarioRms:
             value
         """
         self._verify_no_debug()
+        self._create_disable_all_trigger()
 
         tm = self.scenario.trigger_manager
 
@@ -78,8 +80,9 @@ class AoE2ScenarioRms:
                 enabled=self.automatic_resource_spawning,
             )
 
-        create_objects = CreateObjectFeature(self.scenario)
-        self.xs_container += create_objects.solve(configs, grid_map)
+        create_object_feature = CreateObjectFeature(self.scenario, self._disable_all_trigger)
+
+        self.xs_container += create_object_feature.solve(configs, grid_map)
 
         return {config.name: self.resource_triggers[config.name] for config in configs}
 
@@ -104,12 +107,13 @@ class AoE2ScenarioRms:
             delay = self.staggered_resource_offset
             for resource_id, (resource_name, resource_config) in enumerate(self.resources.items()):
                 trigger = self.resource_triggers[resource_name]
+                trigger.new_condition.script_call('isReadyToSpawnResources')
 
                 if self.staggered_resource_spawning:
                     trigger.new_condition.timer(timer=delay)
 
                 trigger.new_effect.script_call(
-                    message=f'void spawnAllShort_{resource_name}() {{ spawnAllOfResource__895621354({resource_id}); }}'
+                    message=f'void spawnAllOf_{resource_name}() {{ spawnAllOfResource__895621354({resource_id}); }}'
                 )
 
                 if resource_id % self.staggered_resource_batch_size == 0:
@@ -119,3 +123,12 @@ class AoE2ScenarioRms:
 
             xs_string = self.xs_container.resolve(XsUtil.file('main.xs'))
             scenario.xs_manager.add_script(xs_string=xs_string)
+
+    def _create_disable_all_trigger(self):
+        if self._disable_all_trigger is None:
+            trigger = self.scenario.trigger_manager.add_trigger('Disable all resource spawns')
+            trigger.new_condition.script_call(
+                xs_function=f'bool disableAllOnFinish() {{ return (__RESOURCE_SPAWNING_FINISHED); }}'
+            )
+
+            self._disable_all_trigger = trigger
