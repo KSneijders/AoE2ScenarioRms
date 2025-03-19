@@ -17,6 +17,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.3.10 - 2025-March-19
+
+### Fixed
+
+- Naming issue
+
+---
+
 ## 0.3.9 - 2025-March-19
 
 ### Fixed
