@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "aoe2scenariorms"
+name = "AoE2ScenarioRms"
 version = "<VERSION_HERE>"
 authors = [
     { name = "Kerwin Sneijders", email = "ksneijders-dev@hotmail.com" },
@@ -28,10 +28,10 @@ license = {file = "LICENSE"}
 "Changelog" = "https://github.com/KSneijders/AoE2ScenarioRms/blob/main/CHANGELOG.md"
 
 [tool.setuptools.packages.find]
-include = ["aoe2scenariorms*"]
+include = ["AoE2ScenarioRms*"]
 
 [tool.setuptools.package-data]
 # What doesn't work (absolutely no idea why):
 #  - "xs/**.xs" (snippets not included)
 #  - "*.xs" (No XS files at all)
-aoe2scenariorms = ["xs/*.xs", "xs/snippets/*.xs"]
+AoE2ScenarioRms = ["xs/*.xs", "xs/snippets/*.xs"]
