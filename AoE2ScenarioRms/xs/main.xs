@@ -20,9 +20,12 @@ int __RESOURCE_FINISHED_SPAWNING = -1;
 int __ARRAY_RESOURCE_LOCATIONS = -1;
 int __ARRAY_RESOURCE_INDICES = -1;
 int __ARRAY_RESOURCE_PLACED = -1;
-int __ARRAY_RESOURCE_PLACED_INDICES = -1;
 int __ARRAY_RESOURCE_CONFIGS = -1;          // [i][0]: dist self, [i][1]: dist other
 int __ARRAY_RESOURCE_PROGRESS = -1;         // [i][0]: placed, [i][1]: skipped
+
+// ---------< Spawn data: resource ID -> group index -> value (object const / tile vectors) >--------- \\
+int __ARRAY_RESOURCE_SPAWN_CONSTS = -1;     // [resourceId][groupIndex]: object const to spawn
+int __ARRAY_RESOURCE_SPAWN_TILES = -1;      // [resourceId][groupIndex]: vector array of tiles to spawn on
 
 // ---------< Functions >--------- \\
 bool isReadyToSpawnResources() {
@@ -39,6 +42,7 @@ string getVectorAsString(vector loc = vector(-1, -1, -1)) {
     return ("x: " + xsVectorGetX(loc) + ", y:" + xsVectorGetY(loc));
 }
 
+/** @allow_discard */
 bool spawnResource__024510896(int resourceId = -1) {
     if (resourceId == -1)
         return (false);
@@ -53,8 +57,9 @@ bool spawnResource__024510896(int resourceId = -1) {
     int resourceLocationsArray             = xsArrayGetInt(__ARRAY_RESOURCE_LOCATIONS, resourceId);
     int resourceIndicesArray               = xsArrayGetInt(__ARRAY_RESOURCE_INDICES, resourceId);
     int resourcePlacedLocationsArray       = xsArrayGetInt(__ARRAY_RESOURCE_PLACED, resourceId);
-    int resourcePlacedLocationsIndiceArray = xsArrayGetInt(__ARRAY_RESOURCE_PLACED_INDICES, resourceId);
     int resourceConfigArray                = xsArrayGetInt(__ARRAY_RESOURCE_CONFIGS, resourceId);
+    int resourceSpawnConstsArray           = xsArrayGetInt(__ARRAY_RESOURCE_SPAWN_CONSTS, resourceId);
+    int resourceSpawnTilesArray            = xsArrayGetInt(__ARRAY_RESOURCE_SPAWN_TILES, resourceId);
     int progressArray                      = xsArrayGetInt(__ARRAY_RESOURCE_PROGRESS, resourceId);
 
     int placedResourcesCount = xsArrayGetInt(progressArray, 0);
@@ -97,10 +102,19 @@ bool spawnResource__024510896(int resourceId = -1) {
 		}
 
         if (allowed) {
-            xsArraySetBool(resourcePlacedLocationsIndiceArray, xsArrayGetInt(resourceIndicesArray, i), true);
+            int groupIndex = xsArrayGetInt(resourceIndicesArray, i);
+
+            // Spawn every object of this group directly through XS (no triggers needed)
+            int spawnConst = xsArrayGetInt(resourceSpawnConstsArray, groupIndex);
+            int spawnTiles = xsArrayGetInt(resourceSpawnTilesArray, groupIndex);
+            int tileCount = xsArrayGetSize(spawnTiles);
+            for (t = 0; < tileCount) {
+                xsCreateUnit(spawnConst, 0, xsArrayGetVector(spawnTiles, t), false, false, false);
+            }
+
             xsArraySetVector(resourcePlacedLocationsArray, placedResourcesCount, v);
             xsArraySetInt(progressArray, 0, placedResourcesCount + 1);
-            
+
             /* REPLACE:XS_ON_SUCCESSFUL_SPAWN */
             
             if (placedResourcesCount + 1 >= resourceMaxSpawnCount) {
@@ -119,6 +133,7 @@ bool spawnResource__024510896(int resourceId = -1) {
     return (false);
 }
 
+/** @allow_discard */
 bool spawnAllOfResource__895621354(int resourceId = -1) {
     if (__RESOURCE_SPAWNING_READY == false) {
         return (false);
@@ -160,36 +175,38 @@ rule main_initialise__023658412
 {
 /* REPLACE:XS_ON_INIT_RULE */
 
-    __RESOURCE_GROUP_NAMES = xsArrayCreateString(__RESOURCE_COUNT, "", "__RESOURCE_GROUP_NAMES__594522389");
+    __RESOURCE_GROUP_NAMES = xsArrayCreateString(__RESOURCE_COUNT, "");
 /* REPLACE:RESOURCE_GROUP_NAMES_DECLARATION */
 
-    __RESOURCE_SPAWN_COUNTS = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__RESOURCE_SPAWN_COUNTS__538652012");
+    __RESOURCE_SPAWN_COUNTS = xsArrayCreateInt(__RESOURCE_COUNT, -1);
 /* REPLACE:RESOURCE_COUNT_DECLARATION */
 
-    __RESOURCE_MAX_SPAWN_COUNTS = xsArrayCreateFloat(__RESOURCE_COUNT, -1.0, "__RESOURCE_MAX_SPAWN_COUNTS__503956013");
+    __RESOURCE_MAX_SPAWN_COUNTS = xsArrayCreateFloat(__RESOURCE_COUNT, -1.0);
 /* REPLACE:RESOURCE_MAX_SPAWN_DECLARATION */
 
-    __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER__024698552");
+    __RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER = xsArrayCreateBool(__RESOURCE_COUNT, false);
 /* REPLACE:RESOURCE_MAX_SPAWN_IS_PER_PLAYER_DECLARATION */
 
-    __RESOURCE_FINISHED_SPAWNING    = xsArrayCreateBool(__RESOURCE_COUNT, false, "__RESOURCE_FINISHED_SPAWNING__664401567");
+    __RESOURCE_FINISHED_SPAWNING    = xsArrayCreateBool(__RESOURCE_COUNT, false);
 
-    __ARRAY_RESOURCE_LOCATIONS      = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_LOCATIONS__056985215");
-    __ARRAY_RESOURCE_INDICES        = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_INDICES__021548785");
-    __ARRAY_RESOURCE_PLACED         = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_PLACED__542150369");
-    __ARRAY_RESOURCE_PLACED_INDICES = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_PLACED_INDICES__520001548");
-    __ARRAY_RESOURCE_CONFIGS        = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_CONFIGS__522094889");
-    __ARRAY_RESOURCE_PROGRESS       = xsArrayCreateInt(__RESOURCE_COUNT, -1, "__ARRAY_RESOURCE_PROGRESS__510369984");
+    __ARRAY_RESOURCE_LOCATIONS      = xsArrayCreateInt(__RESOURCE_COUNT, -1);
+    __ARRAY_RESOURCE_INDICES        = xsArrayCreateInt(__RESOURCE_COUNT, -1);
+    __ARRAY_RESOURCE_PLACED         = xsArrayCreateInt(__RESOURCE_COUNT, -1);
+    __ARRAY_RESOURCE_CONFIGS        = xsArrayCreateInt(__RESOURCE_COUNT, -1);
+    __ARRAY_RESOURCE_PROGRESS       = xsArrayCreateInt(__RESOURCE_COUNT, -1);
+    __ARRAY_RESOURCE_SPAWN_CONSTS   = xsArrayCreateInt(__RESOURCE_COUNT, -1);
+    __ARRAY_RESOURCE_SPAWN_TILES    = xsArrayCreateInt(__RESOURCE_COUNT, -1);
 
     for (i = 0; < __RESOURCE_COUNT) {
         int count = xsArrayGetInt(__RESOURCE_SPAWN_COUNTS, i);
 
-        int resourceArray        = xsArrayCreateVector(count, vector(-1, -1, -1), "resourceArray__352901574__v" + i);
-        int indexArray           = xsArrayCreateInt(count, -1, "indexArray__456875221__v" + i);
-        int resourcePlaced       = xsArrayCreateVector(count, vector(-1, -1, -1), "resourcePlaced__548476523__v" + i);
-        int resourceIndicePlaced = xsArrayCreateBool(count, false, "resourceIndicePlaced__301548796__v" + i);
-        int resourceConfig       = xsArrayCreateInt(2, -1, "resourceConfig__985256327__v" + i);
-        int resourceProgress     = xsArrayCreateInt(2, 0, "resourceProgress__524875963__v" + i);
+        int resourceArray        = xsArrayCreateVector(count, vector(-1, -1, -1));
+        int indexArray           = xsArrayCreateInt(count, -1);
+        int resourcePlaced       = xsArrayCreateVector(count, vector(-1, -1, -1));
+        int resourceConfig       = xsArrayCreateInt(2, -1);
+        int resourceProgress     = xsArrayCreateInt(2, 0);
+        int resourceConsts       = xsArrayCreateInt(count, -1);
+        int resourceTiles        = xsArrayCreateInt(count, -1);
 
         for (ii = 0; < count) {
             xsArraySetInt(indexArray, ii, ii);
@@ -198,14 +215,18 @@ rule main_initialise__023658412
         xsArraySetInt(__ARRAY_RESOURCE_LOCATIONS,      i, resourceArray);
         xsArraySetInt(__ARRAY_RESOURCE_INDICES,        i, indexArray);
         xsArraySetInt(__ARRAY_RESOURCE_PLACED,         i, resourcePlaced);
-        xsArraySetInt(__ARRAY_RESOURCE_PLACED_INDICES, i, resourceIndicePlaced);
         xsArraySetInt(__ARRAY_RESOURCE_CONFIGS,        i, resourceConfig);
         xsArraySetInt(__ARRAY_RESOURCE_PROGRESS,       i, resourceProgress);
+        xsArraySetInt(__ARRAY_RESOURCE_SPAWN_CONSTS,   i, resourceConsts);
+        xsArraySetInt(__ARRAY_RESOURCE_SPAWN_TILES,    i, resourceTiles);
     }
     int cArray = -1;
 /* REPLACE:CONFIG_DECLARATION */
 
     int rArray = -1;
+    int spawnConstArray = -1;
+    int spawnTileArray = -1;
+    int groupTileArray = -1;
 /* REPLACE:RESOURCE_LOCATION_INJECTION */
 
     __RESOURCE_SPAWNING_READY = true;
