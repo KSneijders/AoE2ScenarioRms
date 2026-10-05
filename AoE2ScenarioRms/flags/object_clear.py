@@ -13,6 +13,10 @@ class ObjectClear(IntFlag):
     """Clear all deer and deer-like animals (i.e. Zebras & IBEX)"""
     WOLFS = auto()
     """Clear all wolfs and wolf-like animals (i.e. Crocodile & Snow leopard)"""
+    CHICKENS = auto()
+    """Clear all chicken and chicken-like animals (i.e. Hares & Pheasant)"""
+    FOXES = auto()
+    """Clear all foxes and fox-like animals"""
     GOLDS = auto()
     """Clear all gold tiles"""
     STONES = auto()
@@ -30,7 +34,7 @@ class ObjectClear(IntFlag):
     SHORE_FISH = auto()
     """Clear both shore fish and box turtles"""
 
-    ANIMAL_OBJECTS = BOARS | SHEEP | DEER | WOLFS
+    ANIMAL_OBJECTS = BOARS | SHEEP | DEER | WOLFS | CHICKENS | FOXES
     """Clear all land animals objects"""
     FISH_OBJECTS = DEEP_FISH | SHORE_FISH
     """Clear all fish objects"""

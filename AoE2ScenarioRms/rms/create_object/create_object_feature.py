@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, List
 
 from AoE2ScenarioParser.datasets.other import OtherInfo
 from AoE2ScenarioParser.datasets.players import PlayerId
-from AoE2ScenarioParser.objects.data_objects.trigger import Trigger
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
 from AoE2ScenarioRms.enums import XsKey
@@ -20,7 +19,7 @@ if TYPE_CHECKING:
 class CreateObjectFeature(RmsFeature):
     unique_names = set()
 
-    def __init__(self, scenario: AoE2DEScenario, disable_all_trigger: Trigger) -> None:
+    def __init__(self, scenario: AoE2DEScenario) -> None:
         """
         Class that manages the functionality behind implementing the create_object clause
 
@@ -30,8 +29,6 @@ class CreateObjectFeature(RmsFeature):
         container = XsContainer()
 
         super().__init__(scenario, container)
-
-        self.disable_all_trigger = disable_all_trigger
 
     def init(self, config: CreateObjectConfig) -> None:
         """
@@ -55,11 +52,6 @@ class CreateObjectFeature(RmsFeature):
         )
 
         self.xs_container.append(
-            XsKey.RESOURCE_COUNT_DECLARATION,
-            f"xsArraySetInt(__RESOURCE_SPAWN_COUNTS, {name}, {config.max_potential_group_count});"
-        )
-
-        self.xs_container.append(
             XsKey.RESOURCE_MAX_SPAWN_DECLARATION,
             f"xsArraySetFloat(__RESOURCE_MAX_SPAWN_COUNTS, {name}, {config.number_of_groups}.0);"
         )
@@ -70,9 +62,13 @@ class CreateObjectFeature(RmsFeature):
             f"xsArraySetBool(__RESOURCE_MAX_SPAWN_COUNTS_IS_PER_PLAYER, {name}, {bool_});"
         )
 
-        self.xs_container.append(
+        self.xs_container.extend(
             XsKey.RESOURCE_LOCATION_INJECTION,
-            f"rArray = xsArrayGetInt(__ARRAY_RESOURCE_LOCATIONS, {name});"
+            [
+                f"rArray = xsArrayGetInt(__ARRAY_RESOURCE_LOCATIONS, {name});",
+                f"spawnConstArray = xsArrayGetInt(__ARRAY_RESOURCE_SPAWN_CONSTS, {name});",
+                f"spawnTileArray = xsArrayGetInt(__ARRAY_RESOURCE_SPAWN_TILES, {name});",
+            ]
         )
 
         self.xs_container.extend(
@@ -86,42 +82,57 @@ class CreateObjectFeature(RmsFeature):
 
     def build(self, config: CreateObjectConfig, grid_map: 'GridMap') -> None:
         """
-        Write the functional logic (triggers) for placing the objects. Also write the functional and conditional logic
-        for XS for the given configs.
+        Inject the XS that places the objects of this config. All spawning happens inside XS (through
+        ``xsCreateUnit``); no triggers are generated. For every generated group the object const and the tiles to
+        spawn on are injected so the XS runtime can place them directly when the group is selected.
 
         Args:
             config: The config to implement
             grid_map: The GridMap to take into account when generating potential locations for groups
         """
-        tm, um = self.scenario.trigger_manager, self.scenario.unit_manager
         name = self._name(config)
 
         groups = Locator.create_groups(config, grid_map)
 
-        for index, group in enumerate(groups):
-            spawn_group = tm.add_trigger(f"Spawn {config.name} {index}/{len(groups)}")
-            self.disable_all_trigger.new_effect.deactivate_trigger(spawn_group.trigger_id)
+        # The amount of groups that is actually spawn-able (sizes the XS arrays and the spawn loop)
+        self.xs_container.append(
+            XsKey.RESOURCE_COUNT_DECLARATION,
+            f"xsArraySetInt(__RESOURCE_SPAWN_COUNTS, {name}, {len(groups)});"
+        )
 
+        for index, group in enumerate(groups):
             group_const = config.get_random_const()
 
-            function = f"bool __should_spawn_{config.name}_{index}() {{" \
-                f"return (xsArrayGetBool(xsArrayGetInt(__ARRAY_RESOURCE_PLACED_INDICES, {name}), {index}));" \
-                f"}}"
-            spawn_group.new_condition.script_call(xs_function=function.strip().replace('  ', ''))
+            # Anchor location (used for the distance checks) + the spawn data for this group
+            self.xs_container.extend(
+                XsKey.RESOURCE_LOCATION_INJECTION,
+                [
+                    f"xsArraySetVector(rArray, {index}, vector({group[0].x}, {group[0].y}, -1));\t// {index}",
+                    f"xsArraySetInt(spawnConstArray, {index}, {group_const});",
+                    f"groupTileArray = xsArrayCreateVector({len(group)}, vector(-1, -1, -1));",
+                ]
+            )
+            self.xs_container.extend(
+                XsKey.RESOURCE_LOCATION_INJECTION,
+                [
+                    f"xsArraySetVector(groupTileArray, {tile_index}, vector({tile.x + .5}, {tile.y + .5}, 0));"
+                    for tile_index, tile in enumerate(group)
+                ]
+            )
+            self.xs_container.append(
+                XsKey.RESOURCE_LOCATION_INJECTION,
+                f"xsArraySetInt(spawnTileArray, {index}, groupTileArray);"
+            )
 
-            for iindex, tile in enumerate(group):
-                spawn_group.new_effect.create_object(group_const, PlayerId.GAIA, tile.x, tile.y)
+            if config.debug_place_all:
+                um = self.scenario.unit_manager
 
-                if config.debug_place_all:
+                for iindex, tile in enumerate(group):
                     um.add_unit(PlayerId.GAIA, group_const, tile.x + .5, tile.y + .5)
                     player = PlayerId.GAIA if iindex == 0 else PlayerId.ONE
                     const = OtherInfo.FLAG_M.ID if iindex == 0 else OtherInfo.FLAG_C.ID
                     um.add_unit(player, const, tile.x + .5, tile.y + .5)
 
-            self.xs_container.append(
-                XsKey.RESOURCE_LOCATION_INJECTION,
-                f"xsArraySetVector(rArray, {index}, vector({group[0].x}, {group[0].y}, -1));\t// {index}"
-            )
         self.xs_container.append(
             XsKey.RESOURCE_LOCATION_INJECTION,
             f"ShuffleVectorArray(rArray, xsArrayGetInt(__ARRAY_RESOURCE_INDICES, {name}));"

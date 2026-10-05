@@ -80,7 +80,7 @@ class AoE2ScenarioRms:
                 enabled=self.automatic_resource_spawning,
             )
 
-        create_object_feature = CreateObjectFeature(self.scenario, self._disable_all_trigger)
+        create_object_feature = CreateObjectFeature(self.scenario)
 
         self.xs_container += create_object_feature.solve(configs, grid_map)
 

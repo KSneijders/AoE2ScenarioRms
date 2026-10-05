@@ -1,6 +1,6 @@
 # AoE2ScenarioRms
 
-Add replay-ability to scenarios through random resource placement using triggers & XS!
+Add replay-ability to scenarios through random resource placement using XS!
 A library built on top of the [AoE2ScenarioParser].
 
 > Keep in mind this project is a **work-in-progress**
@@ -49,7 +49,7 @@ scenario = AoE2DEScenario.from_file("<file-path here>")
 asr = AoE2ScenarioRms(scenario)
 ```
 
-Now `AoE2ScenarioRms` can access the scenario and start adding triggers and XS to it for random resources!
+Now `AoE2ScenarioRms` can access the scenario and start adding XS to it for random resources!
 
 ### 2. Clearing the scenario
 

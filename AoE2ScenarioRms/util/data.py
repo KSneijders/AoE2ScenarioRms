@@ -66,10 +66,15 @@ class Data:
 
         if ObjectClear.BOARS in clear:
             consts.extend([
-                UnitInfo.JAVELINA.ID,
                 UnitInfo.WILD_BOAR.ID,
+                UnitInfo.IRON_BOAR.ID,
+                UnitInfo.JAVELINA.ID,
                 UnitInfo.ELEPHANT.ID,
-                UnitInfo.RHINOCEROS.ID
+                UnitInfo.RHINOCEROS.ID,
+                UnitInfo.TAPIR.ID,
+                # Not yet in UnitInfo (AoE2ScenarioParser v0.9.4) -- raw object IDs
+                2737,  # Elk
+                1924,  # Walrus
             ])
 
         if ObjectClear.SHEEP in clear:
@@ -83,24 +88,60 @@ class Data:
                 UnitInfo.COW_B.ID,
                 UnitInfo.COW_C.ID,
                 UnitInfo.COW_D.ID,
-                UnitInfo.LLAMA.ID
+                UnitInfo.LLAMA_A.ID,
+                UnitInfo.LLAMA_B.ID,
+            ])
+
+        if ObjectClear.CHICKENS in clear:
+            consts.extend([
+                UnitInfo.HARE_A.ID,
+                UnitInfo.HARE_B.ID,
+                UnitInfo.ARCTIC_HARE.ID,
+                UnitInfo.WILD_CHICKEN_A.ID,
+                UnitInfo.WILD_CHICKEN_B.ID,
+                UnitInfo.WILD_CHICKEN_C.ID,
+                UnitInfo.PEACOCK.ID,
+                # Not yet in UnitInfo (AoE2ScenarioParser v0.9.4) -- raw object IDs
+                2739,  # Pheasant
+            ])
+
+        if ObjectClear.FOXES in clear:
+            consts.extend([
+                UnitInfo.RED_FOX.ID,
+                UnitInfo.ARCTIC_FOX.ID,
             ])
 
         if ObjectClear.DEER in clear:
             consts.extend([
                 UnitInfo.DEER.ID,
                 UnitInfo.IBEX.ID,
-                UnitInfo.ZEBRA.ID
+                UnitInfo.ZEBRA.ID,
+                UnitInfo.GAZELLE.ID,
+                UnitInfo.ARGALI.ID,
+                UnitInfo.MOUFLON.ID,
+                UnitInfo.GUANACO.ID,
+                UnitInfo.OSTRICH.ID,
+                UnitInfo.RHEA.ID,
+                # Not yet in UnitInfo (AoE2ScenarioParser v0.9.4) -- raw object IDs
+                2735,  # Seal
             ])
 
         if ObjectClear.WOLFS in clear:
             consts.extend([
-                UnitInfo.WOLF.ID,
+                UnitInfo.GREY_WOLF.ID,
+                UnitInfo.DIRE_WOLF.ID,
+                UnitInfo.RABID_WOLF.ID,
+                UnitInfo.ARABIAN_WOLF.ID,
+                UnitInfo.ARCTIC_WOLF.ID,
                 UnitInfo.JAGUAR.ID,
                 UnitInfo.LION.ID,
                 UnitInfo.SNOW_LEOPARD.ID,
                 UnitInfo.CROCODILE.ID,
-                UnitInfo.BEAR.ID,
+                UnitInfo.BROWN_BEAR.ID,
+                UnitInfo.BLACK_BEAR.ID,
+                UnitInfo.POLAR_BEAR.ID,
+                # Not yet in UnitInfo (AoE2ScenarioParser v0.9.4) -- raw object IDs
+                2736,  # Lynx
             ])
 
         if ObjectClear.RELICS in clear:
@@ -115,7 +156,8 @@ class Data:
         if ObjectClear.BUSHES in clear:
             consts.extend([
                 OtherInfo.FORAGE_BUSH.ID,
-                OtherInfo.FRUIT_BUSH.ID
+                OtherInfo.FRUIT_BUSH.ID,
+                OtherInfo.PAPAYA_TREE.ID,
             ])
 
         if ObjectClear.CLIFFS in clear:

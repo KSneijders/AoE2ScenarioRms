@@ -27,6 +27,7 @@ rule main_initialise_rng__061843574
     priority 1000
 {
     __randomSeed = xsGetRandomNumber()*xsGetRandomNumber();
+    // xsc-ignore: NumDownCast
     __randomModulus = 0.0 + pow(2.0,31.0);
     __randomMultiplier = 999999999 + 103515246;
     __randomIncrement = 12345;
