@@ -7,13 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [keep a changelog]: https://keepachangelog.com/en/1.0.0/
 
-[//]: # (---)
+---
 
-[//]: # ()
-[//]: # (## [Unreleased])
+## 0.4.0 - 2026-October-05
 
-[//]: # ()
-[//]: # (- ...)
+### Added
+
+- Support for (removing) the newly added animals in the latest Vikings DLC
+
+### Changed
+
+- Object spawning is now done entirely in XS through `xsCreateUnit`. Previously an effect was needed to spawn an object. Now a vector is sent to XS.
+
+### Fixed
+
+- The XS spawn arrays are now sized to the number of groups that were actually generated (instead of the requested
+  maximum), preventing placement attempts on unused, default-valued slots.
 
 ---
 

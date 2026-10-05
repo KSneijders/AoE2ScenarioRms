@@ -59,7 +59,7 @@ create_objects_config: List[CreateObjectConfig] = [
     ),
     CreateObjectConfig(
         name='llama',
-        const=UnitInfo.LLAMA.ID,
+        const=UnitInfo.LLAMA_A.ID,
         number_of_objects=1,
         temp_min_distance_group_placement=10,
         min_distance_group_placement=0,
