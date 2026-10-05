@@ -69,10 +69,12 @@ Above you can see `ObjectClear.ALL` being used. This is quite a nuclear option, 
 Below is a list of things that can be cleared (and thus which `ObjectClear.ALL` clears).
 
 - `ObjectClear.PLAYERS` - Remove all player related object (TCs, villagers, scouts etc.)
-- `ObjectClear.BOARS` - Remove all boar-like units (e.g. Boar, Elephant, Rhinos...)
-- `ObjectClear.SHEEP` - Remove all sheep-like units (e.g. Sheep, Goat, Turkey...)
-- `ObjectClear.DEER` - Remove all deer-like units (e.g. Deer, Zebra, Ibex...) 
-- `ObjectClear.WOLFS` - Remove all wolf-like units (e.g. Wolf, Crocodile, Lion...)
+- `ObjectClear.BOARS` - Remove all boar-like units (e.g. Boar, Elephant, Rhino, Tapir, Elk, Walrus...)
+- `ObjectClear.SHEEP` - Remove all sheep-like units (e.g. Sheep, Goat, Turkey, Pig, Cow, Llama...)
+- `ObjectClear.DEER` - Remove all deer-like units (e.g. Deer, Zebra, Ibex, Gazelle, Ostrich, Seal...)
+- `ObjectClear.WOLFS` - Remove all wolf-like units (e.g. Wolf, Crocodile, Lion, Bear, Lynx...)
+- `ObjectClear.CHICKENS` - Remove all chicken-like units (e.g. Wild Chicken, Hare, Peacock, Pheasant...)
+- `ObjectClear.FOXES` - Remove all foxes (Red Fox, Arctic Fox)
 - `ObjectClear.GOLDS` - Remove all gold mines
 - `ObjectClear.STONES` - Remove all stone mines
 - `ObjectClear.BUSHES` - Remove all berry and fruit bushes
@@ -84,7 +86,7 @@ Below is a list of things that can be cleared (and thus which `ObjectClear.ALL` 
 
 There are also combinations of the above for ease of use:
 
-- `ObjectClear.ANIMAL_OBJECTS` = `BOARS` + `SHEEP` + `DEER` + `WOLFS`
+- `ObjectClear.ANIMAL_OBJECTS` = `BOARS` + `SHEEP` + `DEER` + `WOLFS` + `CHICKENS` + `FOXES`
 - `ObjectClear.FISH_OBJECTS` = `DEEP_FISH` + `SHORE_FISH`
 - `ObjectClear.RESOURCE_OBJECTS` = `GOLDS` + `STONES` + `BUSHES` + `STRAGGLERS` + `RELICS`
 - `ObjectClear.ALL` = Everything listed above
