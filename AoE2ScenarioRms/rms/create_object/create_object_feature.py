@@ -109,7 +109,7 @@ class CreateObjectFeature(RmsFeature):
                 [
                     f"xsArraySetVector(rArray, {index}, vector({group[0].x}, {group[0].y}, -1));\t// {index}",
                     f"xsArraySetInt(spawnConstArray, {index}, {group_const});",
-                    f"groupTileArray = xsArrayCreateVector({len(group)}, vector(-1, -1, -1));",
+                    f"groupTileArray = xsArrayCreateVector({len(group)}, cInvalidVector);",
                 ]
             )
             self.xs_container.extend(

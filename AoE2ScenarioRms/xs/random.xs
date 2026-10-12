@@ -15,9 +15,8 @@ int GetRandom(){
 }
 
 int GetRandomRange(int min=0,int max=999999999){
-    return ((GetRandom() % (max+1-min)) + min);
+    return (((GetRandom() / 65536) % (max+1-min)) + min);
 }
-
 
 rule main_initialise_rng__061843574
     active
