@@ -1,7 +1,6 @@
 import pytest
 from AoE2ScenarioParser.objects.support.tile import Tile
 
-from AoE2ScenarioRms.enums import TileLevel
 from AoE2ScenarioRms.util import GridMap
 
 
@@ -18,90 +17,72 @@ def test_grid_map_init(grid_map: GridMap):
 
 
 def test_grid_map_set(grid_map: GridMap):
-    grid_map.set(TileLevel.TERRAIN, 1, 1)
-    assert grid_map.grid_map[0][0] == TileLevel.NONE
-    assert grid_map.grid_map[1][1] == TileLevel.TERRAIN
-    assert grid_map.grid_map[1][2] == TileLevel.NONE
+    grid_map.set(Tile(1, 1), False)
+    assert grid_map.grid_map[0][0] is True
+    assert grid_map.grid_map[1][1] is False
+    assert grid_map.grid_map[1][2] is True
 
-    grid_map.temp(1, 1)
-    assert grid_map.grid_map[1][1] == TileLevel.TEMP
-
-    grid_map.reset(1, 1)
-    assert grid_map.grid_map[1][1] == TileLevel.NONE
+    grid_map.reset(Tile(1, 1))
+    assert grid_map.grid_map[1][1] is True
 
 
 def test_grid_map_set_all(grid_map: GridMap):
-    grid_map.set_all(TileLevel.TERRAIN)
+    grid_map.set_all(False)
 
-    assert grid_map.grid_map[0][0] == TileLevel.TERRAIN
-    assert grid_map.grid_map[5][4] == TileLevel.TERRAIN
-    assert grid_map.grid_map[9][9] == TileLevel.TERRAIN
+    assert grid_map.grid_map[0][0] is False
+    assert grid_map.grid_map[5][4] is False
+    assert grid_map.grid_map[9][9] is False
 
-    grid_map.set_all(TileLevel.NONE)
+    grid_map.set_all(True)
 
-    assert grid_map.grid_map[0][0] == TileLevel.NONE
-    assert grid_map.grid_map[5][4] == TileLevel.NONE
-    assert grid_map.grid_map[9][9] == TileLevel.NONE
+    assert grid_map.grid_map[0][0] is True
+    assert grid_map.grid_map[5][4] is True
+    assert grid_map.grid_map[9][9] is True
 
 
 def test_grid_map_is_available(grid_map: GridMap):
-    assert grid_map.is_available(4, 4)
-    assert not grid_map.is_blocked(4, 4)
+    assert grid_map.is_available(Tile(4, 4))
+    assert not grid_map.is_blocked(Tile(4, 4))
 
-    grid_map.set(TileLevel.TERRAIN, 4, 4)
+    grid_map.set(Tile(4, 4), False)
 
-    assert not grid_map.is_available(4, 4)
-    assert grid_map.is_blocked(4, 4)
-
-
-def test_grid_map_level_is_available(grid_map: GridMap):
-    assert grid_map.level_is_available(TileLevel.TERRAIN, 4, 4)
-    assert not grid_map.level_is_blocked(TileLevel.TERRAIN, 4, 4)
-
-    grid_map.set(TileLevel.TERRAIN, 4, 4)
-
-    assert not grid_map.level_is_available(TileLevel.TERRAIN, 4, 4)
-    assert grid_map.level_is_blocked(TileLevel.TERRAIN, 4, 4)
-
-    grid_map.set(TileLevel.RES, 4, 4)
-
-    assert grid_map.level_is_available(TileLevel.TERRAIN, 4, 4)
-    assert not grid_map.level_is_blocked(TileLevel.TERRAIN, 4, 4)
+    assert not grid_map.is_available(Tile(4, 4))
+    assert grid_map.is_blocked(Tile(4, 4))
 
 
 def test_grid_map_invert(grid_map):
-    grid_map.set(TileLevel.TERRAIN, 2, 2)
+    grid_map.set(Tile(2, 2), False)
 
-    assert grid_map.grid_map[0][0] == TileLevel.NONE
-    assert grid_map.grid_map[2][2] == TileLevel.TERRAIN
+    assert grid_map.grid_map[0][0] is True
+    assert grid_map.grid_map[2][2] is False
 
     grid_map.invert()
 
-    assert grid_map.grid_map[0][0] == TileLevel.TERRAIN
-    assert grid_map.grid_map[2][2] == TileLevel.NONE
-    assert grid_map.grid_map[4][5] == TileLevel.TERRAIN
-    assert grid_map.grid_map[9][9] == TileLevel.TERRAIN
+    assert grid_map.grid_map[0][0] is False
+    assert grid_map.grid_map[2][2] is True
+    assert grid_map.grid_map[4][5] is False
+    assert grid_map.grid_map[9][9] is False
 
 
 def test_grid_map_available_tiles():
-    grid_map = GridMap(5, TileLevel.TERRAIN)
+    grid_map = GridMap(5, default_availability=False)
 
-    grid_map.grid_map[0][0] = TileLevel.NONE
-    grid_map.grid_map[1][1] = TileLevel.NONE
-    grid_map.grid_map[2][2] = TileLevel.NONE
-    grid_map.grid_map[3][3] = TileLevel.NONE
+    grid_map.grid_map[0][0] = True
+    grid_map.grid_map[1][1] = True
+    grid_map.grid_map[2][2] = True
+    grid_map.grid_map[3][3] = True
 
     assert grid_map.available_tiles() == [Tile(0, 0), Tile(1, 1), Tile(2, 2), Tile(3, 3)]
 
 
 def test_grid_map_is_available_size():
-    grid_map = GridMap(5, TileLevel.NONE)
+    grid_map = GridMap(5, default_availability=True)
 
     # Overflow top, left, bottom, right of the grid (in that order)
-    assert grid_map.is_available_size(size=2, x=2, y=0) is False
-    assert grid_map.is_available_size(size=2, x=0, y=2) is False
-    assert grid_map.is_available_size(size=3, x=2, y=4) is False  # Size has to be 3 because of rounding
-    assert grid_map.is_available_size(size=3, x=4, y=2) is False  # Size has to be 3 because of rounding
+    assert grid_map.is_available_size(size=2, tile=Tile(2, 0)) is False
+    assert grid_map.is_available_size(size=2, tile=Tile(0, 2)) is False
+    assert grid_map.is_available_size(size=3, tile=Tile(2, 4)) is False  # Size has to be 3 because of rounding
+    assert grid_map.is_available_size(size=3, tile=Tile(4, 2)) is False  # Size has to be 3 because of rounding
 
     # . = available; # = blocked; X = Spawn Attempt; @ = Blocked Spawn Attempt
     # _____________
@@ -110,11 +91,11 @@ def test_grid_map_is_available_size():
     # | X X X X X |
     # | X X X X X |
     # | X X X X X |
-    assert grid_map.is_available_size(size=5, x=2, y=2)
-    assert grid_map.is_available_size(size=6, x=2, y=2) is False  # Size overflows the map
-    assert grid_map.is_available_size(size=7, x=2, y=2) is False  # Size overflows the map
+    assert grid_map.is_available_size(size=5, tile=Tile(2, 2)) is True
+    assert grid_map.is_available_size(size=6, tile=Tile(2, 2)) is False  # Size overflows the map
+    assert grid_map.is_available_size(size=7, tile=Tile(2, 2)) is False  # Size overflows the map
 
-    grid_map.grid_map[0][0] = TileLevel.TERRAIN
+    grid_map.grid_map[0][0] = False
 
     # _____________
     # | @ X X X X |
@@ -122,7 +103,7 @@ def test_grid_map_is_available_size():
     # | X X X X X |
     # | X X X X X |
     # | X X X X X |
-    assert grid_map.is_available_size(size=5, x=2, y=2) is False
+    assert grid_map.is_available_size(size=5, tile=Tile(2, 2)) is False
 
     # _____________
     # | @ X X X . |
@@ -130,11 +111,11 @@ def test_grid_map_is_available_size():
     # | X X X X . |
     # | X X X X . |
     # | . . . . . |
-    assert grid_map.is_available_size(size=4, x=2, y=2) is False
+    assert grid_map.is_available_size(size=4, tile=Tile(2, 2)) is False
 
-    grid_map.grid_map[1][1] = TileLevel.TERRAIN
-    grid_map.grid_map[2][2] = TileLevel.TERRAIN
-    grid_map.grid_map[3][3] = TileLevel.TERRAIN
+    grid_map.grid_map[1][1] = False
+    grid_map.grid_map[2][2] = False
+    grid_map.grid_map[3][3] = False
 
     # _____________
     # | # . X X . |
@@ -142,7 +123,7 @@ def test_grid_map_is_available_size():
     # | . . # . . |
     # | . . . # . |
     # | . . . . . |
-    assert grid_map.is_available_size(size=2, x=3, y=1)
+    assert grid_map.is_available_size(size=2, tile=Tile(3, 1))
 
     # _____________
     # | # . . . . |
@@ -150,7 +131,7 @@ def test_grid_map_is_available_size():
     # | . . # . . |
     # | . X X # . |
     # | . X X . . |
-    assert grid_map.is_available_size(size=2, x=2, y=4)
+    assert grid_map.is_available_size(size=2, tile=Tile(2, 4))
 
     # _____________
     # | # . . . . |
@@ -158,7 +139,7 @@ def test_grid_map_is_available_size():
     # | . . # . . |
     # | . . . @ X |
     # | . . . X X |
-    assert grid_map.is_available_size(size=2, x=4, y=4) is False
+    assert grid_map.is_available_size(size=2, tile=Tile(4, 4)) is False
 
     # _____________
     # | # . . . . |
@@ -166,7 +147,7 @@ def test_grid_map_is_available_size():
     # | X X @ . . |
     # | X X X # . |
     # | X X X . . |
-    assert grid_map.is_available_size(size=3, x=1, y=3) is False
+    assert grid_map.is_available_size(size=3, tile=Tile(1, 3)) is False
 
     # _____________
     # | # . . . . |
@@ -174,5 +155,5 @@ def test_grid_map_is_available_size():
     # | X X X . . |
     # | X X X # . |
     # | X X X . . |
-    grid_map.grid_map[2][2] = TileLevel.NONE
-    assert grid_map.is_available_size(size=3, x=1, y=3)
+    grid_map.grid_map[2][2] = True
+    assert grid_map.is_available_size(size=3, tile=Tile(1, 3))

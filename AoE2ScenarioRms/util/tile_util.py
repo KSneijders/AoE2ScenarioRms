@@ -45,11 +45,13 @@ class TileUtil:
         return tiles
 
     @staticmethod
-    def coords(x: int | Tile, y: int | None = None) -> Tuple[int, int]:
+    def coords(x: int | Tile, y: int | None = None) -> Tile:
         """Get the coords of a tile or xy params to make them consistent in functions."""
         if isinstance(x, Tile):
             return x
-        return x, y
+        if y is None:
+            raise ValueError("")
+        return Tile(x, y)
 
     @staticmethod
     def shuffled(tiles: List[Tile]) -> List[Tile]:

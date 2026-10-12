@@ -32,13 +32,13 @@ bool isReadyToSpawnResources() {
     return (__RESOURCE_SPAWNING_READY);
 }
 
-float getXyDistance(vector loc1 = vector(-1, -1, -1), vector loc2 = vector(-1, -1, -1)) {
+float getXyDistance(vector loc1 = cInvalidVector, vector loc2 = cInvalidVector) {
     float x = pow(xsVectorGetX(loc1) - xsVectorGetX(loc2), 2.0);
     float y = pow(xsVectorGetY(loc1) - xsVectorGetY(loc2), 2.0);
     return (sqrt(x + y));
 }
 
-string getVectorAsString(vector loc = vector(-1, -1, -1)) {
+string getVectorAsString(vector loc = cInvalidVector) {
     return ("x: " + xsVectorGetX(loc) + ", y:" + xsVectorGetY(loc));
 }
 
@@ -109,7 +109,7 @@ bool spawnResource__024510896(int resourceId = -1) {
             int spawnTiles = xsArrayGetInt(resourceSpawnTilesArray, groupIndex);
             int tileCount = xsArrayGetSize(spawnTiles);
             for (t = 0; < tileCount) {
-                xsCreateUnit(spawnConst, 0, xsArrayGetVector(spawnTiles, t), false, false, false);
+                xsCreateUnit(spawnConst, 0, xsArrayGetVector(spawnTiles, t), false, false, true);
             }
 
             xsArraySetVector(resourcePlacedLocationsArray, placedResourcesCount, v);
@@ -200,9 +200,9 @@ rule main_initialise__023658412
     for (i = 0; < __RESOURCE_COUNT) {
         int count = xsArrayGetInt(__RESOURCE_SPAWN_COUNTS, i);
 
-        int resourceArray        = xsArrayCreateVector(count, vector(-1, -1, -1));
+        int resourceArray        = xsArrayCreateVector(count, cInvalidVector);
         int indexArray           = xsArrayCreateInt(count, -1);
-        int resourcePlaced       = xsArrayCreateVector(count, vector(-1, -1, -1));
+        int resourcePlaced       = xsArrayCreateVector(count, cInvalidVector);
         int resourceConfig       = xsArrayCreateInt(2, -1);
         int resourceProgress     = xsArrayCreateInt(2, 0);
         int resourceConsts       = xsArrayCreateInt(count, -1);

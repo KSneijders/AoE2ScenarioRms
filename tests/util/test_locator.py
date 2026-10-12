@@ -4,16 +4,16 @@ import pytest
 from AoE2ScenarioParser.helper.pretty_format import pretty_format_list
 from AoE2ScenarioParser.objects.support.tile import Tile
 
-from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
+from AoE2ScenarioRms.enums import GroupingMethod
 from AoE2ScenarioRms.rms import CreateObjectConfig
-from AoE2ScenarioRms.util import Locator, GridMap, TileUtil
+from AoE2ScenarioRms.util import Locator, GridMap
 
 
 @pytest.fixture
 def grid_map():
     grid_map = GridMap(5)
     for i in range(5):
-        grid_map.set(TileLevel.TERRAIN, i, 1)
+        grid_map.set(Tile(i, 1), False)
     return grid_map
 
 

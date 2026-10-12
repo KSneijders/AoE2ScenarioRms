@@ -6,7 +6,7 @@ from typing import Tuple, List, TYPE_CHECKING
 from AoE2ScenarioParser.helper.printers import warn
 from AoE2ScenarioParser.objects.support.tile import Tile
 
-from AoE2ScenarioRms.enums import GroupingMethod, TileLevel
+from AoE2ScenarioRms.enums import GroupingMethod
 from AoE2ScenarioRms.errors import SpawnFailureWarning
 from AoE2ScenarioRms.util.tile_util import TileUtil
 
@@ -221,7 +221,7 @@ class Locator:
 
         lst = TileUtil.shuffled(lst) if shuffled else lst
         for adjacent_tile in lst:
-            if adjacent_tile not in group and grid_map.is_valid(TileLevel.RES, adjacent_tile):
+            if adjacent_tile not in group and grid_map.is_available(adjacent_tile):
                 tiles.append(adjacent_tile)
                 if len(tiles) == amount:
                     return tiles, True

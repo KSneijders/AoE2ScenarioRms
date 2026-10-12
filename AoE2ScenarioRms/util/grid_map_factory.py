@@ -8,7 +8,6 @@ from AoE2ScenarioParser.objects.support.area import Area
 from AoE2ScenarioParser.objects.support.tile import Tile
 from AoE2ScenarioParser.scenarios.aoe2_de_scenario import AoE2DEScenario
 
-from AoE2ScenarioRms.enums import TileLevel
 from AoE2ScenarioRms.flags import TerrainMark, ObjectMark
 from AoE2ScenarioRms.util.data import Data
 from AoE2ScenarioRms.util.grid_map import GridMap
@@ -20,56 +19,53 @@ class GridMapFactory:
     @staticmethod
     def select(
             scenario: 'AoE2DEScenario',
-            terrain_marks: TerrainMark = None,
-            object_marks: ObjectMark = None,
-            terrain_ids: List[TerrainId] = None,
-            object_consts: Dict[int, int] = None,
-            area: Area = None
+            terrain_marks: TerrainMark | None = None,
+            object_marks: ObjectMark | None = None,
+            terrain_ids: List[TerrainId] | None = None,
+            object_consts: Dict[int, int] | None = None,
+            areas: list[Area] | None = None
     ) -> GridMap:
         return GridMapFactory.mark(
             scenario=scenario,
-            block_marked_tiles=False,
+            default_availability=False,
             terrain_marks=terrain_marks,
             object_marks=object_marks,
             terrain_ids=terrain_ids,
             object_consts=object_consts,
-            area=area,
+            areas=areas,
         )
 
     @staticmethod
     def block(
             scenario: 'AoE2DEScenario',
-            terrain_marks: TerrainMark = None,
-            object_marks: ObjectMark = None,
-            terrain_ids: List[TerrainId] = None,
-            object_consts: Dict[int, int] = None,
-            area: Area = None
+            terrain_marks: TerrainMark | None = None,
+            object_marks: ObjectMark | None = None,
+            terrain_ids: List[TerrainId] | None = None,
+            object_consts: Dict[int, int] | None = None,
+            areas: list[Area] | None = None
     ) -> GridMap:
         return GridMapFactory.mark(
             scenario=scenario,
-            block_marked_tiles=True,
+            default_availability=True,
             terrain_marks=terrain_marks,
             object_marks=object_marks,
             terrain_ids=terrain_ids,
             object_consts=object_consts,
-            area=area,
+            areas=areas,
         )
 
     @staticmethod
     def mark(
             scenario: 'AoE2DEScenario',
-            block_marked_tiles: bool,
-            terrain_marks: TerrainMark = None,
-            object_marks: ObjectMark = None,
-            terrain_ids: List[TerrainId] = None,
-            object_consts: Dict[int, int] = None,
-            area: Area = None
+            default_availability: bool,
+            terrain_marks: TerrainMark | None = None,
+            object_marks: ObjectMark | None = None,
+            terrain_ids: List[TerrainId] | None = None,
+            object_consts: Dict[int, int] | None = None,
+            areas: list[Area] | None = None
     ) -> GridMap:
-        starting_state = TileLevel.NONE if block_marked_tiles else TileLevel.TERRAIN
-        set_marked_state = TileLevel.TERRAIN if block_marked_tiles else TileLevel.NONE
-
         mm, um = scenario.map_manager, scenario.unit_manager
-        grid_map = GridMap(mm.map_size, starting_state)
+        grid_map = GridMap(mm.map_size, default_availability)
 
         terrain_marks = terrain_marks if terrain_marks is not None else TerrainMark.NONE
         object_marks = object_marks if object_marks is not None else ObjectMark.NONE
@@ -84,9 +80,10 @@ class GridMapFactory:
                 if t.terrain_id in terrain_ids:
                     marked_tiles.add(Tile(*t.xy))
 
-        # Mark all tiles selected by an area
-        if isinstance(area, Area):
-            marked_tiles.update(area.to_coords())
+        # Mark all tiles selected by areas
+        for area in (areas or []):
+            if isinstance(area, Area):
+                marked_tiles.update(area.to_coords())  # type:ignore
 
         # Mark all shores
         requested_water_but_not_shore = TerrainMark.WATER in terrain_marks and TerrainMark.SHORE not in terrain_marks
@@ -121,5 +118,5 @@ class GridMapFactory:
             marked_tiles.update(UnitUtil.get_tiles_around_object(unit, object_consts[unit.unit_const]))
 
         for tile in marked_tiles:
-            grid_map.set(set_marked_state, tile)
+            grid_map.set(tile, True)
         return grid_map
