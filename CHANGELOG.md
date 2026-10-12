@@ -9,6 +9,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.4.1 - 2026-October-12
+
+### Updated
+
+- `GridMapFactory.select` and `GridMapFactory.block` now have `areas` instead of `area`
+  - All areas coordinate (`area.to_coords()`) are merged and marked
+- `GridMap` now uses `availability: bool` array. 
+  - `grid_map[y][x] is True`: The tile is free and no blocked markers (from factory) were present on this tile
+  - `grid_map[y][x] is False`: The tile is blocked 
+- `GridMap.set_all(...)` now overrides the default availability
+- `GridMap.reset(...)` now resets to the default availability
+
+## Removed
+
+- `TileLevel` enum
+
+---
+
 ## 0.4.0 - 2026-October-05
 
 ### Added
