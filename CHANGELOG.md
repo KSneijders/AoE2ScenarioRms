@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## 0.4.2 - 2026-October-16
+
+### Fixes
+
+- `GridMapFactory.block` incorrectly applying given area objects 
+
+---
+
 ## 0.4.1 - 2026-October-12
 
 ### Updated

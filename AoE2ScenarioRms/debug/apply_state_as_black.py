@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from AoE2ScenarioParser.datasets.terrains import TerrainId
 from AoE2ScenarioParser.helper.helper import xy_to_i
+from AoE2ScenarioParser.objects.support.tile import Tile
 
 from AoE2ScenarioRms.debug.apply_debug import ApplyDebug
 from AoE2ScenarioRms.util import GridMap
@@ -43,7 +44,7 @@ class ApplyBlockedAsBlack(ApplyStateAsBlack):
     """
 
     def tile_should_be_black(self, grid_map: 'GridMap', x: int, y: int) -> bool:
-        return grid_map.is_blocked(x, y)
+        return grid_map.is_blocked(Tile(x, y))
 
 
 class ApplyAvailableAsBlack(ApplyStateAsBlack):
@@ -54,4 +55,4 @@ class ApplyAvailableAsBlack(ApplyStateAsBlack):
     """
 
     def tile_should_be_black(self, grid_map: 'GridMap', x: int, y: int) -> bool:
-        return grid_map.is_available(x, y)
+        return grid_map.is_available(Tile(x, y))
