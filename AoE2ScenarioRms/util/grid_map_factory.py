@@ -118,5 +118,5 @@ class GridMapFactory:
             marked_tiles.update(UnitUtil.get_tiles_around_object(unit, object_consts[unit.unit_const]))
 
         for tile in marked_tiles:
-            grid_map.set(tile, True)
+            grid_map.set(tile, not default_availability)
         return grid_map
